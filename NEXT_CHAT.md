@@ -1,4 +1,4 @@
-# Kult: передача дел в новый чат
+# Shaqyru: передача дел в новый чат
 
 Снимок на **12 ноября 2026**. Для агента, который откроет проект без
 прошлой переписки.
@@ -7,7 +7,7 @@
 `DESIGN_PRINCIPLES.md` → `DESIGN.md` → `README.md` → `docs/PLAN.md`.**
 
 ## 1. Продукт и концепт
-Пилот закрытого lifestyle-комьюнити в Алматы. Участницы (1–3k
+Shaqyru (шақыру — «приглашение») — пилот закрытого lifestyle-комьюнити в Алматы. Участницы (1–3k
 подписчиков) получают ужин или услугу в заведении, публикуют сторис с
 личной ссылкой `/{участница}/{заведение}`. Подписчики бронируют по ссылке
 или называют фразу «я от {имя}». Цель пилота — гостей на один визит
@@ -26,7 +26,9 @@
 Next.js 16.4 (App Router, Server Actions, `proxy.ts` вместо middleware),
 React 19, Tailwind 4 (токены в `src/app/tokens.css`), postgres.js по
 `DATABASE_URL`, Supabase Storage через `@supabase/supabase-js`, шрифты
-`@fontsource` (Cormorant Garamond, Inter), Vercel `fra1`.
+`@fontsource-variable` (Inter Tight, Onest) + `public/fonts/*-tenge-v1.woff2`,
+Vercel `fra1`. Сеть сессии: окружение `kult` (iitaly.net и CDN Higgsfield
+разрешены).
 
 ## 4. Карта страниц
 | Путь | Что там |
@@ -38,6 +40,10 @@ React 19, Tailwind 4 (токены в `src/app/tokens.css`), postgres.js по
 | `/admin/*` | дашборд, заявки, участницы, заведения, ссылки, CSV |
 
 ## 5. Что сделано
+- 12 ноября, вторая правка: название Shaqyru и знак S; шрифт как на
+  iitaly.net (SF Pro / Inter Tight, Onest, ₸ из файлов владельца); первый
+  экран по композиции iitaly.net; семь сцен Higgsfield (hero и заглушки
+  категорий заведений).
 - 12 ноября: план и схема БД; всё приложение по брифу; README.
 
 ## 6. Что работает (проверено локально, Postgres 16 + `next start`)
@@ -57,6 +63,8 @@ React 19, Tailwind 4 (токены в `src/app/tokens.css`), postgres.js по
 - Файлы дизайна владельца (`DESIGN (47).md`, `tokens (45).json`,
   `variables (45).css`, `theme (44).css`) в сессию не попали — свести с
   `tokens.css`, когда появятся.
+- Репозиторий по-прежнему называется `kult`; переименование на GitHub —
+  только по просьбе владельца.
 - Имена в русских фразах не склоняются («от Камила»): так задано брифом
   («я от {имя}»).
 

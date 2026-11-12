@@ -5,7 +5,7 @@ import postgres from "postgres";
 // Supabase transaction pooler (port 6543), which does not support prepared
 // statements — hence prepare: false.
 declare global {
-  var __kultSql: postgres.Sql | undefined;
+  var __shaqyruSql: postgres.Sql | undefined;
 }
 
 function create() {
@@ -28,6 +28,6 @@ function create() {
 }
 
 export function db(): postgres.Sql {
-  if (!globalThis.__kultSql) globalThis.__kultSql = create();
-  return globalThis.__kultSql;
+  if (!globalThis.__shaqyruSql) globalThis.__shaqyruSql = create();
+  return globalThis.__shaqyruSql;
 }

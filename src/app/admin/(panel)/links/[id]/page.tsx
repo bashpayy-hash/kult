@@ -127,7 +127,7 @@ export default async function LinkPage({ params }: { params: Promise<{ id: strin
               <article key={v.id} className="rounded-tile-r bg-tile p-5 md:p-6">
                 <div className="flex flex-wrap items-start justify-between gap-3">
                   <div>
-                    <h3 className="text-[26px]">{formatDay(v.visit_date)}</h3>
+                    <h3 className="text-[20px]">{formatDay(v.visit_date)}</h3>
                     <p className="mt-1 text-[14px] text-ink-3">
                       {[v.received, v.reward_value != null ? formatMoney(v.reward_value) : null, v.source === "host" ? "отметила хостес" : "добавлено в админке", v.notes]
                         .filter(Boolean)

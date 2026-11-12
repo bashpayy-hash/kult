@@ -12,7 +12,7 @@ export default function LoginPage() {
       </header>
       <div className="flex flex-1 items-center pb-24">
         <div className="w-full max-w-[26rem]">
-          <h1 className="text-[44px]">Вход</h1>
+          <h1 className="text-[38px]">Вход</h1>
           <div className="mt-8">
             <LoginForm />
           </div>

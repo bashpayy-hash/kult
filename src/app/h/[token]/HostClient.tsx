@@ -45,7 +45,7 @@ export function BookingCard({ b, token, lang }: { b: HostBooking; token: string;
     <article className="rounded-tile-r bg-tile p-5">
       <div className="flex items-start justify-between gap-4">
         <div className="min-w-0">
-          <p className="font-serif text-[30px] leading-none text-ink">{formatTime(b.booking_time)}</p>
+          <p className="font-display text-[28px] font-semibold leading-none tracking-[-0.035em] tabular-nums text-ink">{formatTime(b.booking_time)}</p>
           <p className="mt-2 text-[17px] text-ink">
             {b.guest_name} · {t.guests(b.party_size)}
           </p>

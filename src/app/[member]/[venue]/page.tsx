@@ -8,6 +8,7 @@ import { publicImageUrl } from "@/lib/storage";
 import { almatyToday, instagramHandle } from "@/lib/format";
 import { SiteFooter, SiteHeader } from "@/components/SiteChrome";
 import { Orb, toneFor } from "@/components/Orb";
+import { sceneFor } from "@/lib/scenes";
 import { loadInvite } from "./data";
 import { BookingForm } from "./BookingForm";
 
@@ -18,13 +19,13 @@ type Props = { params: Promise<{ member: string; venue: string }> };
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { member, venue } = await params;
   const d = await loadInvite(member, venue);
-  if (!d) return { title: "Kult", robots: { index: false, follow: false } };
+  if (!d) return { title: "Shaqyru", robots: { index: false, follow: false } };
   const photo = publicImageUrl(d.photo_path);
   return {
     title: d.venue_name,
     description: d.guest_perk || d.description || undefined,
     robots: { index: false, follow: false },
-    openGraph: { title: `${d.venue_name} · Kult`, description: d.guest_perk || undefined, images: photo ? [photo] : undefined },
+    openGraph: { title: `${d.venue_name} · Shaqyru`, description: d.guest_perk || undefined, images: photo ? [photo] : undefined },
   };
 }
 
@@ -69,9 +70,8 @@ export default async function InvitePage({ params }: Props) {
               {photo ? (
                 <img src={photo} alt={d.venue_name} className="h-full w-full object-cover" fetchPriority="high" />
               ) : (
-                <div aria-hidden="true" className="absolute inset-0 grid place-items-center">
-                  <Orb tone={toneFor(d.venue_slug)} size="46%" />
-                </div>
+                // No photo yet: the category scene from the same Higgsfield set.
+                <img {...sceneFor(d.category)} sizes="(min-width: 768px) 55vw, 100vw" alt="" className="h-full w-full object-cover" fetchPriority="high" />
               )}
             </div>
 
@@ -80,7 +80,7 @@ export default async function InvitePage({ params }: Props) {
                 <Orb tone={toneFor(d.member_slug)} size={22} still />
                 {t.invite.from(d.member_name)}
               </p>
-              <h1 className="mt-4 text-[44px] md:text-[56px]">{d.venue_name}</h1>
+              <h1 className="mt-4 text-[38px] md:text-[48px]">{d.venue_name}</h1>
               <p className="mt-3 text-[15px] text-ink-3">
                 {[t.categories[d.category], d.address].filter(Boolean).join(" · ")}
                 {ig ? (
@@ -97,7 +97,7 @@ export default async function InvitePage({ params }: Props) {
 
             {!active ? (
               <div className="rounded-tile-r bg-tile p-6 md:p-8">
-                <h2 className="text-[30px]">{t.invite.inactiveTitle}</h2>
+                <h2 className="text-[26px]">{t.invite.inactiveTitle}</h2>
                 <p className="mt-2 text-ink-2">{t.invite.inactiveText}</p>
               </div>
             ) : (
@@ -105,13 +105,13 @@ export default async function InvitePage({ params }: Props) {
                 {perk ? (
                   <div className="rounded-tile-r bg-tile p-6 md:p-8">
                     <p className="label">{t.invite.perkTitle}</p>
-                    <p className="mt-3 font-serif text-[28px] leading-tight text-ink md:text-[32px]">{perk}</p>
+                    <p className="mt-3 font-display text-[24px] font-semibold leading-tight tracking-[-0.03em] text-ink md:text-[28px]">{perk}</p>
                     {d.terms ? <p className="mt-3 text-[14px] text-ink-3">{d.terms}</p> : null}
                   </div>
                 ) : null}
                 <div className="rounded-tile-r bg-tile p-6 md:p-8">
                   <p className="label">{t.invite.phraseTitle}</p>
-                  <p className="mt-3 font-serif text-[34px] italic leading-tight text-ink md:text-[40px]">«{phrase}»</p>
+                  <p className="mt-3 font-display text-[30px] font-semibold leading-tight tracking-[-0.035em] text-accent md:text-[36px]">«{phrase}»</p>
                   <p className="mt-3 text-[15px] text-ink-2">{t.invite.phraseHint}</p>
                 </div>
               </div>
@@ -121,7 +121,7 @@ export default async function InvitePage({ params }: Props) {
           {active ? (
             <section aria-labelledby="book" className="rise rise-3 md:pt-1">
               <div className="rounded-tile-r bg-tile p-6 sm:p-8">
-                <h2 id="book" className="text-[34px] md:text-[40px]">
+                <h2 id="book" className="text-[28px] md:text-[32px]">
                   {t.invite.bookingTitle}
                 </h2>
                 <div className="mt-6">

@@ -37,7 +37,7 @@ function Inner({
     return (
       <div role="status" className="sheet-in flex flex-col items-start gap-5 py-2">
         <Orb tone="aqua" size={64} />
-        <h3 className="text-[32px]">{f.successTitle}</h3>
+        <h3 className="text-[28px]">{f.successTitle}</h3>
         <p className="text-ink-2">{f.successText(phrase)}</p>
         <button type="button" onClick={onAgain} className="link-quiet text-[15px]">
           {f.another}

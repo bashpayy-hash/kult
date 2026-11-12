@@ -1,7 +1,7 @@
 // Signed admin session cookie: "<expiresAt>.<hmac>". Web Crypto only, so the
 // same code runs in proxy.ts and in server actions. The key mixes the session
 // secret with the admin password: changing ADMIN_PASSWORD logs everyone out.
-export const ADMIN_COOKIE = "kult_admin";
+export const ADMIN_COOKIE = "shaqyru_admin";
 
 function secret(): string {
   const s = process.env.SESSION_SECRET || (process.env.NODE_ENV === "production" ? "" : "dev-only-session-secret");

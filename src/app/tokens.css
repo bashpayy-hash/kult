@@ -1,7 +1,6 @@
 /*
- * Kult design tokens — the one place to change colour, type, radius, motion.
- * Dark and restrained (brief, 12 Nov 2026: «тёмный, сдержанный, serif-заголовки,
- * mobile first»); the iridescent orbs come from the owner's Wallet reference and
+ * Shaqyru design tokens — the one place to change colour, type, radius, motion.
+ * Dark and restrained (brief, 12 Nov 2026: «тёмный, сдержанный, mobile first»); the iridescent orbs come from the owner's Wallet reference and
  * are the only place gradients appear. Rationale: DESIGN.md.
  */
 @theme {
@@ -17,8 +16,12 @@
   --color-success: #8fd8b5;  /* «пришли», pairs at the pilot threshold */
   --color-danger: #ff9a8b;   /* errors, «не пришли» */
 
-  --font-serif: "Cormorant Garamond", ui-serif, Georgia, "Times New Roman", serif;
-  --font-sans: "Inter Variable", "Inter", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  /* The owner's site iitaly.net (12 Nov 2026: «используй такой же шрифт»):
+     SF Pro where the device has it, Inter Tight everywhere else (Windows,
+     Android), Onest for navigation and labels. Same stack, same order. */
+  --font-display: "SF Pro Display", "Inter Tight Variable", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --font-sans: "SF Pro Text", "Inter Tight Variable", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --font-ui: "Onest Variable", "Helvetica Neue", Arial, sans-serif;
 
   --radius-pill: 999px;
   --radius-tile: 28px;

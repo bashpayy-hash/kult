@@ -29,7 +29,7 @@ export default async function HostPage({ params, searchParams }: Props) {
     return (
       <main className="px-edge flex min-h-dvh flex-col items-start justify-center gap-5">
         <Orb tone="pearl" size={64} />
-        <h1 className="text-[40px]">{t.host.badTitle}</h1>
+        <h1 className="text-[34px]">{t.host.badTitle}</h1>
         <p className="text-ink-2">{t.host.badText}</p>
       </main>
     );
@@ -94,7 +94,7 @@ export default async function HostPage({ params, searchParams }: Props) {
       </header>
 
       <div className="max-w-[40rem]">
-        <h1 className="text-[40px] md:text-[48px]">{venue.name}</h1>
+        <h1 className="text-[34px] md:text-[40px]">{venue.name}</h1>
         <p className="mt-2 text-[15px] text-ink-3 first-letter:uppercase">{formatDay(date, lang, true)}</p>
 
         <nav aria-label="День" className="mt-6 flex gap-2">
@@ -120,7 +120,7 @@ export default async function HostPage({ params, searchParams }: Props) {
         </p>
 
         <section aria-labelledby="bookings" className="mt-8">
-          <h2 id="bookings" className="text-[30px]">
+          <h2 id="bookings" className="text-[24px]">
             {t.host.bookings}
           </h2>
           {bookings.length === 0 ? (
@@ -148,7 +148,7 @@ export default async function HostPage({ params, searchParams }: Props) {
         </section>
 
         <section aria-labelledby="log" className="mt-10">
-          <h2 id="log" className="text-[30px]">
+          <h2 id="log" className="text-[24px]">
             {t.host.logTitle}
           </h2>
           {phraseGuests.length + memberVisits.length === 0 ? (

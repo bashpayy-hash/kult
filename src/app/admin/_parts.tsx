@@ -5,7 +5,7 @@ export function PageHead({ title, lead, action }: { title: string; lead?: ReactN
   return (
     <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
       <div>
-        <h1 className="text-[40px] md:text-[52px]">{title}</h1>
+        <h1 className="text-[34px] md:text-[44px]">{title}</h1>
         {lead ? <p className="mt-2 max-w-[44rem] text-[15px] text-ink-3">{lead}</p> : null}
       </div>
       {action ? <div className="flex flex-wrap items-center gap-3">{action}</div> : null}
@@ -17,7 +17,7 @@ export function Section({ title, children, aside }: { title: string; children: R
   return (
     <section className="mt-12">
       <div className="mb-4 flex flex-wrap items-baseline justify-between gap-3">
-        <h2 className="text-[30px]">{title}</h2>
+        <h2 className="text-[24px] md:text-[28px]">{title}</h2>
         {aside}
       </div>
       {children}
@@ -29,7 +29,7 @@ export function Stat({ label, value, hint, good }: { label: string; value: React
   return (
     <div className="rounded-tile-r bg-tile p-5 md:p-6">
       <p className="label">{label}</p>
-      <p className={`mt-2 font-serif text-[40px] leading-none md:text-[48px] ${good ? "text-success" : "text-ink"}`}>{value}</p>
+      <p className={`mt-2 font-display text-[28px] font-semibold leading-none tracking-[-0.035em] tabular-nums sm:text-[34px] lg:text-[40px] ${good ? "text-success" : "text-ink"}`}>{value}</p>
       {hint ? <p className="mt-2 text-[13px] text-ink-3">{hint}</p> : null}
     </div>
   );

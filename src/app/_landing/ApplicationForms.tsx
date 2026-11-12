@@ -11,7 +11,7 @@ function Success({ title, text }: { title: string; text: string }) {
   return (
     <div role="status" className="sheet-in flex flex-col items-start gap-5 py-6">
       <Orb tone="aqua" size={64} />
-      <h3 className="text-[34px]">{title}</h3>
+      <h3 className="text-[28px]">{title}</h3>
       <p className="max-w-[34rem] text-ink-2">{text}</p>
     </div>
   );

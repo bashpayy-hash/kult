@@ -36,7 +36,7 @@ export async function GET() {
   return new NextResponse(body, {
     headers: {
       "content-type": "text/csv; charset=utf-8",
-      "content-disposition": `attachment; filename="kult-pilot-${almatyToday()}.csv"`,
+      "content-disposition": `attachment; filename="shaqyru-pilot-${almatyToday()}.csv"`,
       "cache-control": "no-store",
     },
   });

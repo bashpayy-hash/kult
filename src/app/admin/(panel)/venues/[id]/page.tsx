@@ -5,6 +5,7 @@ import { isUuid } from "@/lib/forms";
 import { siteUrl } from "@/lib/env";
 import { formatMoney } from "@/lib/format";
 import { publicImageUrl } from "@/lib/storage";
+import { sceneFor } from "@/lib/scenes";
 import type { Offer, Venue } from "@/lib/types";
 import {
   createOffer,
@@ -100,13 +101,14 @@ export default async function VenuePage({ params }: { params: Promise<{ id: stri
       <Section title="Фото для страницы гостей">
         <div className="grid gap-5 rounded-tile-r bg-tile p-5 md:grid-cols-[16rem_1fr] md:p-6">
           <div className="aspect-[4/3] overflow-hidden rounded-[var(--radius-inner)] bg-raised">
-            {photo ? <img src={photo} alt={v.name} className="h-full w-full object-cover" /> : <p className="grid h-full place-items-center text-[14px] text-ink-3">Фото нет</p>}
+            <img src={photo ?? sceneFor(v.category).src} alt={v.name} className="h-full w-full object-cover" />
           </div>
           <div className="flex flex-col gap-4">
             <ActionForm action={uploadVenuePhoto} submit="Загрузить">
               <input type="hidden" name="id" value={v.id} />
               <div className="flex flex-col gap-2">
                 <label htmlFor="venue-photo" className="label">Фото, горизонтальное 4:3</label>
+                {photo ? null : <p className="text-[13px] text-ink-3">Пока своего фото нет, гости видят картинку категории.</p>}
                 <ImageInput id="venue-photo" name="photo" required />
               </div>
             </ActionForm>

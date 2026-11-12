@@ -41,7 +41,7 @@ export default async function Dashboard() {
         />
       </div>
 
-      <h2 className="mt-12 text-[30px]">Пары участница и заведение</h2>
+      <h2 className="mt-12 text-[24px] md:text-[28px]">Пары участница и заведение</h2>
       {rows.length === 0 ? (
         <div className="mt-4">
           <Empty>
@@ -106,7 +106,7 @@ export default async function Dashboard() {
                   <div className="flex items-start justify-between gap-3">
                     <Person name={r.member_name} slug={r.member_slug} sub={`${r.venue_name}${r.active ? "" : " · выключена"}`} />
                     <div className="text-right">
-                      <p className={`font-serif text-[32px] leading-none ${pass(r) ? "text-success" : "text-ink"}`}>{formatNumber(r.guests_per_visit, 2)}</p>
+                      <p className={`font-display text-[28px] font-semibold leading-none tracking-[-0.035em] tabular-nums ${pass(r) ? "text-success" : "text-ink"}`}>{formatNumber(r.guests_per_visit, 2)}</p>
                       <p className="mt-1 text-[12px] text-ink-3">гостей на визит</p>
                     </div>
                   </div>

@@ -6,7 +6,7 @@ export const metadata: Metadata = { title: "Обработка персонал�
 
 // The operator's legal name and contact come from env, so the text can go live
 // before the legal entity is final. README: «Перед запуском».
-const operator = process.env.NEXT_PUBLIC_OPERATOR_NAME || "Kult";
+const operator = process.env.NEXT_PUBLIC_OPERATOR_NAME || "Shaqyru";
 const contact = process.env.NEXT_PUBLIC_CONTACT_EMAIL || "";
 
 const content = {
@@ -34,11 +34,11 @@ export default async function PrivacyPage() {
     <>
       <SiteHeader lang={lang} t={t} />
       <main className="px-edge pt-8">
-        <h1 className="text-[40px] md:text-[56px]">{t.privacy.title}</h1>
+        <h1 className="text-[36px] md:text-[48px]">{t.privacy.title}</h1>
         <div className="mt-10 flex max-w-[44rem] flex-col gap-8">
           {content[lang].map(([h, p]) => (
             <section key={h}>
-              <h2 className="text-[26px]">{h}</h2>
+              <h2 className="text-[20px]">{h}</h2>
               <p className="mt-2 text-ink-2">{p}</p>
             </section>
           ))}

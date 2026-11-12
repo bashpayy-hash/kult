@@ -1,4 +1,6 @@
-# Kult — пилот закрытого комьюнити в Алматы
+# Shaqyru — пилот закрытого комьюнити в Алматы
+
+**Shaqyru** — от казахского «шақыру», «приглашение».
 
 Участница (micro-аккаунт 1–3k) получает ужин или услугу в заведении и
 публикует сторис с личной ссылкой. Подписчики бронируют по ссылке или
@@ -16,7 +18,9 @@
 | `/admin` | Админка по паролю |
 
 Стек: Next.js 16 (App Router, Server Actions), Supabase (Postgres +
-Storage), Tailwind 4, Vercel.
+Storage), Tailwind 4, Vercel. Шрифты как на iitaly.net: SF Pro / Inter
+Tight и Onest. Картинки сгенерированы в Higgsfield
+(`design/illustrations/scenes-2026-11-12.json`).
 
 ---
 
@@ -64,7 +68,7 @@ Storage), Tailwind 4, Vercel.
    | `SUPABASE_SERVICE_ROLE_KEY` | ключ `service_role` |
    | `ADMIN_PASSWORD` | пароль админки, длинный |
    | `SESSION_SECRET` | `openssl rand -hex 32` |
-   | `NEXT_PUBLIC_SITE_URL` | адрес сайта без слеша в конце, например `https://kult.vercel.app` |
+   | `NEXT_PUBLIC_SITE_URL` | адрес сайта без слеша в конце, например `https://shaqyru.vercel.app` |
    | `PILOT_THRESHOLD` | `2` (необязательно) |
    | `NEXT_PUBLIC_OPERATOR_NAME` | юрлицо оператора данных для `/privacy` (необязательно) |
    | `NEXT_PUBLIC_CONTACT_EMAIL` | почта для запросов по данным (необязательно) |
@@ -108,7 +112,8 @@ npm run typecheck && npm run lint && npm run build
    **Заявки** — карточка создастся сама).
 2. В карточке заведения:
    - **Фото для страницы гостей** — горизонтальное, 4:3. Большие фото
-     сжимаются в браузере перед загрузкой.
+     сжимаются в браузере перед загрузкой. Пока фото нет, гости видят
+     картинку категории (ресторан, кафе, бар, бьюти, спа, фитнес).
    - **Offers и perks → Добавить offer**:
      - «Что получает участница» — например, «Ужин на двоих и два коктейля»,
        и номинал в тенге;

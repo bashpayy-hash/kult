@@ -54,7 +54,7 @@ export function OrbRoad({ steps }: { steps: { title: string; text: string }[] })
             >
               <Orb tone={TONES[i % TONES.length]} size={size} />
               <div className="min-w-0 max-w-[30rem]">
-                <h3 className={last ? "text-[32px] md:text-[40px]" : "text-[26px] md:text-[30px]"}>{s.title}</h3>
+                <h3 className={last ? "text-[28px] md:text-[34px]" : "text-[22px] md:text-[26px]"}>{s.title}</h3>
                 <p className="mt-1.5 text-[15px] leading-snug text-ink-2 md:text-[16px]">{s.text}</p>
               </div>
             </li>

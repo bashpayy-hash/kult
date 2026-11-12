@@ -65,7 +65,7 @@ export default async function Applications({ searchParams }: { searchParams: Pro
             <div className="flex items-start justify-between gap-3">
               <div>
                 <p className="label">{a.kind === "member" ? "Участница" : "Заведение"} · {formatDateTime(a.created_at)}</p>
-                <h3 className="mt-2 text-[28px]">{a.kind === "member" ? a.name : a.venue_name}</h3>
+                <h3 className="mt-2 text-[22px]">{a.kind === "member" ? a.name : a.venue_name}</h3>
               </div>
               <StatusText status={a.status} />
             </div>
