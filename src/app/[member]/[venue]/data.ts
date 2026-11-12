@@ -25,7 +25,7 @@ export const loadInvite = cache(async (member: string, venue: string): Promise<I
     select tl.id as link_id, tl.active as link_active, tl.code_phrase,
            m.name as member_name, m.slug as member_slug, m.status = 'active' as member_active,
            v.id as venue_id, v.name as venue_name, v.slug as venue_slug, v.status = 'active' as venue_active,
-           v.category, v.description, v.description_kk, v.address, v.instagram, v.photo_path,
+           v.category, v.description, v.description_kk, v.address, v.instagram, v.photo_path, v.logo_path, v.avg_check,
            v.open_time::text, v.close_time::text, v.slot_minutes, v.hold_minutes,
            case when o.active then o.guest_perk end as perk,
            case when o.active then o.guest_perk_kk end as perk_kk,

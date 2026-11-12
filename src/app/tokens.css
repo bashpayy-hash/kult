@@ -4,17 +4,20 @@
  * are the only place gradients appear. Rationale: DESIGN.md.
  */
 @theme {
-  --color-canvas: #0a0a0b;   /* page */
-  --color-tile: #141416;     /* cards */
-  --color-raised: #1c1c1f;   /* inputs, chips, inner surfaces */
-  --color-line: #2a2a2e;     /* hairlines */
-  --color-ink: #f4f2ee;      /* text 1: headings, values */
-  --color-ink-2: #c4c1bb;    /* text 2: body */
-  --color-ink-3: #918e88;    /* text 3: labels, meta */
-  --color-ink-4: #6f6c67;    /* text 4: placeholders, disabled — never for content */
-  --color-accent: #c9bcff;   /* lilac from the orbs: focus, active, links */
-  --color-success: #8fd8b5;  /* «пришли», pairs at the pilot threshold */
-  --color-danger: #ff9a8b;   /* errors, «не пришли» */
+  /* 12 Nov 2026, owner: «слишком ии слопно». Warm near-black and milk, one
+     amber accent for «your choice / active» only. The lilac accent and the
+     purple orbs read as generated; they are gone. Every text pair ≥ 4.5:1. */
+  --color-canvas: #0f0e0c;   /* page */
+  --color-tile: #181614;     /* cards */
+  --color-raised: #211f1c;   /* inputs, chips, inner surfaces */
+  --color-line: #302d29;     /* hairlines */
+  --color-ink: #f3eee6;      /* text 1: headings, values — 16.7:1 */
+  --color-ink-2: #cfc8bc;    /* text 2: body — 11.6:1 */
+  --color-ink-3: #aca599;    /* text 3: labels, meta — 7.8:1 */
+  --color-ink-4: #8f887d;    /* text 4: placeholders, hints — 4.7:1 on inputs */
+  --color-accent: #e9b562;   /* amber: selected date, time, table; active filter; focus */
+  --color-success: #8ccb9b;  /* «пришли», pairs at the pilot threshold */
+  --color-danger: #f08f7a;   /* errors, «не пришли» */
 
   /* The owner's site iitaly.net (12 Nov 2026: «используй такой же шрифт»):
      SF Pro where the device has it, Inter Tight everywhere else (Windows,

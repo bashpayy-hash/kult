@@ -32,6 +32,7 @@ export type Venue = {
   phone: string | null;
   avg_check: number | null;
   photo_path: string | null;
+  logo_path: string | null;
   host_token: string;
   status: Status;
   notes: string | null;

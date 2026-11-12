@@ -1,28 +1,24 @@
 import { setLang } from "@/app/actions";
 import type { Lang } from "@/lib/i18n/dicts";
 
-/** Two quiet pills. Saves the choice in a cookie; the page re-renders in place. */
+/**
+ * One 44px button naming the other language (12 Nov 2026: the two 32px
+ * pills were below the touch-target minimum and crowded the phone header).
+ */
 export function LangSwitch({ lang, label }: { lang: Lang; label: string }) {
-  const opts: { value: Lang; text: string }[] = [
-    { value: "ru", text: "Рус" },
-    { value: "kk", text: "Қаз" },
-  ];
+  const other: Lang = lang === "ru" ? "kk" : "ru";
   return (
-    <form action={setLang} aria-label={label} className="flex items-center rounded-full border border-line p-1">
-      {opts.map((o) => (
-        <button
-          key={o.value}
-          type="submit"
-          name="lang"
-          value={o.value}
-          aria-pressed={lang === o.value}
-          className={`min-h-8 rounded-full px-3 text-[13px] font-semibold transition-colors duration-150 ${
-            lang === o.value ? "bg-raised text-ink" : "text-ink-3 hover:text-ink"
-          }`}
-        >
-          {o.text}
-        </button>
-      ))}
+    <form action={setLang}>
+      <button
+        type="submit"
+        name="lang"
+        value={other}
+        lang={other}
+        aria-label={`${label}: ${other === "kk" ? "Қазақша" : "Русский"}`}
+        className="grid h-11 min-w-11 place-items-center rounded-full border border-line px-3 font-[family-name:var(--font-ui)] text-[14px] font-semibold text-ink-2 transition-colors duration-150 hover:border-ink-4 hover:text-ink"
+      >
+        {other === "kk" ? "Қаз" : "Рус"}
+      </button>
     </form>
   );
 }

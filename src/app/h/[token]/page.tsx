@@ -5,7 +5,6 @@ import { getDict } from "@/lib/i18n";
 import { almatyToday, formatDay, formatMoney, isIsoDate, shiftDate } from "@/lib/format";
 import { Mark } from "@/components/Logo";
 import { LangSwitch } from "@/components/LangSwitch";
-import { Orb } from "@/components/Orb";
 import { BookingCard, LogEntry, MemberVisitPanel, PhraseGuestPanel, type HostBooking, type HostLink } from "./HostClient";
 
 export const dynamic = "force-dynamic";
@@ -28,7 +27,6 @@ export default async function HostPage({ params, searchParams }: Props) {
   if (!venue) {
     return (
       <main className="px-edge flex min-h-dvh flex-col items-start justify-center gap-5">
-        <Orb tone="pearl" size={64} />
         <h1 className="text-[34px]">{t.host.badTitle}</h1>
         <p className="text-ink-2">{t.host.badText}</p>
       </main>
@@ -167,7 +165,6 @@ export default async function HostPage({ params, searchParams }: Props) {
                   lang={lang}
                   kind="guest"
                   id={g.id}
-                  slug={g.member_slug}
                   title={t.host.logPhrase(g.member_name)}
                   meta={`${t.host.guests(g.guests_count)} · ${formatMoney(g.check_amount)}`}
                 />
@@ -179,7 +176,6 @@ export default async function HostPage({ params, searchParams }: Props) {
                   lang={lang}
                   kind="member"
                   id={m.id}
-                  slug={m.member_slug}
                   title={t.host.logMember(m.member_name)}
                   meta={m.received || ""}
                   removable={m.source === "host" && !m.locked}

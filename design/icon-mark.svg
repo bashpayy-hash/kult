@@ -1,18 +1,8 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
-  <defs>
-    <linearGradient id="s-top" x1="150" y1="0" x2="362" y2="0" gradientUnits="userSpaceOnUse">
-      <stop offset="0" stop-color="#3b4cff"/>
-      <stop offset="1" stop-color="#7a4ff8"/>
-    </linearGradient>
-    <linearGradient id="s-bottom" x1="150" y1="0" x2="362" y2="0" gradientUnits="userSpaceOnUse">
-      <stop offset="0" stop-color="#8b54f6"/>
-      <stop offset="0.55" stop-color="#d0569f"/>
-      <stop offset="1" stop-color="#ff6a5c"/>
-    </linearGradient>
-  </defs>
-  <rect width="512" height="512" rx="116" fill="#0a0a0b"/>
-  <!-- Two ribbons, like the reference: the upper bends left, the lower bends
-       right; flat-cut ends, a soft inner bend, a gap where they meet. -->
-  <path transform="translate(-6 -9)" d="M362 112 L362 176 L262 176 Q226 176 226 204 Q226 226 256 238 L302 256 L210 256 L190 248 Q150 232 150 196 Q150 112 250 112 Z" fill="url(#s-top)"/>
-  <path transform="translate(6 9)" d="M150 400 L150 336 L250 336 Q286 336 286 308 Q286 286 256 274 L210 256 L302 256 L322 264 Q362 280 362 316 Q362 400 262 400 Z" fill="url(#s-bottom)"/>
+  <!-- Flat since 12 Nov 2026: warm near-black tile, milk S from two ribbons. -->
+  <rect width="512" height="512" rx="116" fill="#0f0e0c"/>
+  <g fill="#f3eee6">
+    <path transform="translate(-6 -9)" d="M362 112 L362 176 L262 176 Q226 176 226 204 Q226 226 256 238 L302 256 L210 256 L190 248 Q150 232 150 196 Q150 112 250 112 Z"/>
+    <path transform="translate(6 9)" d="M150 400 L150 336 L250 336 Q286 336 286 308 Q286 286 256 274 L210 256 L302 256 L322 264 Q362 280 362 316 Q362 400 262 400 Z"/>
+  </g>
 </svg>

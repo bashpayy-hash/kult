@@ -74,3 +74,11 @@ export function toCalendar(serviceDate: string, min: number): { date: string; ti
   d.setUTCDate(d.getUTCDate() + Math.floor(min / 1440));
   return { date: d.toISOString().slice(0, 10), time: clock(min) };
 }
+
+/** «Открыто до 02:00» or «Откроется в 17:00», from Almaty wall-clock minutes. */
+export function openNow(h: Pick<VenueHours, "open_time" | "close_time">, nowMin: number): { open: boolean; at: string } {
+  const open = toMinutes(h.open_time);
+  const close = toMinutes(h.close_time);
+  const isOpen = close > open ? nowMin >= open && nowMin < close : nowMin >= open || nowMin < close;
+  return { open: isOpen, at: isOpen ? clock(close) : clock(open) };
+}

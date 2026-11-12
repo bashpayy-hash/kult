@@ -46,7 +46,7 @@ export function VenueFields({ v }: { v?: Venue }) {
       </div>
       <div className="flex flex-col gap-3 sm:flex-row sm:gap-8">
         <Checkbox label="Показывать в каталоге" name="is_listed" defaultChecked={v?.is_listed ?? false} />
-        <Checkbox label="В «Популярных заведениях»" name="featured" defaultChecked={v?.featured ?? false} />
+        <Checkbox label="Поднять выше в каталоге" name="featured" defaultChecked={v?.featured ?? false} />
       </div>
       <TextArea label="Заметки" name="notes" defaultValue={v?.notes} rows={2} />
     </>

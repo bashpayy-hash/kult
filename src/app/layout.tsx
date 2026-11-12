@@ -9,7 +9,7 @@ export const metadata: Metadata = {
   metadataBase: new URL(siteUrl()),
   title: { default: "Shaqyru — закрытое комьюнити Алматы", template: "%s · Shaqyru" },
   description: "Закрытое lifestyle-комьюнити Алматы: лучшие места города по совету тех, кому доверяют.",
-  openGraph: { images: ["/og.jpg"], siteName: "Shaqyru" },
+  openGraph: { images: ["/og.png"], siteName: "Shaqyru" },
 };
 
 export const viewport: Viewport = {

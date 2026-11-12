@@ -4,7 +4,6 @@ import { useActionState, useEffect, useMemo, useState } from "react";
 import { submitBooking } from "@/app/actions";
 import { Consent, errProps, Field, FormError, Honeypot, SubmitButton } from "@/components/form";
 import { FloorPlan, type TableState } from "@/components/FloorPlan";
-import { Orb } from "@/components/Orb";
 import { clock, fits, isFree, slotList, type PlanHall, type PlanItem, type Taken, type VenueHours } from "@/lib/booking";
 import { formatDay, shiftDate } from "@/lib/format";
 import { dicts, type Lang } from "@/lib/i18n/dicts";
@@ -20,6 +19,9 @@ type Props = {
   /** Member link: the booking counts for her pair; the phrase is repeated on success. */
   linkId?: string;
   phrase?: string;
+  /** From a catalog card: «20:00» was tapped, so open with that day and time. */
+  initialDate?: string;
+  initialSlot?: number;
 };
 
 const DAYS = 14;
@@ -35,15 +37,16 @@ export function BookingWidget(props: Props) {
   return <Flow key={round} {...props} onAgain={() => setRound((r) => r + 1)} />;
 }
 
-function Flow({ lang, venueId, hours, halls, items, today, linkId, phrase, onAgain }: Props & { onAgain: () => void }) {
+function Flow({ lang, venueId, hours, halls, items, today, linkId, phrase, initialDate, initialSlot, onAgain }: Props & { onAgain: () => void }) {
   const t = dicts[lang];
   const b = t.booking;
   const tables = useMemo(() => items.filter((i) => i.kind === "table"), [items]);
   const plannedHalls = halls.filter((h) => items.some((i) => i.hall_id === h.id && i.kind === "table"));
 
-  const [date, setDate] = useState(today);
+  const startDate = initialDate && initialDate >= today && initialDate <= shiftDate(today, DAYS - 1) ? initialDate : today;
+  const [date, setDate] = useState(startDate);
   const [party, setParty] = useState(2);
-  const [slot, setSlot] = useState<number | null>(null);
+  const [slot, setSlot] = useState<number | null>(initialSlot ?? null);
   const [tableId, setTableId] = useState<string | null>(null);
   const [hallId, setHallId] = useState(plannedHalls[0]?.id ?? "");
   const [avail, setAvail] = useState<{ date: string; taken: Taken[]; earliest: number } | null>(null);
@@ -94,8 +97,7 @@ function Flow({ lang, venueId, hours, halls, items, today, linkId, phrase, onAga
     const v = state.values || {};
     const when = `${formatDay(v.date || date, lang)}, ${v.time}`;
     return (
-      <div role="status" className="sheet-in flex flex-col items-start gap-5 py-2">
-        <Orb tone="aqua" size={64} />
+      <div role="status" className="sheet-in flex flex-col items-start gap-3 py-2">
         <h3 className="text-[28px]">{b.successTitle}</h3>
         <p className="text-ink-2">
           {b.successText(when, v.table ? b.tableName(v.table) : "")}
@@ -132,11 +134,9 @@ function Flow({ lang, venueId, hours, halls, items, today, linkId, phrase, onAga
               type="button"
               aria-pressed={d === date}
               onClick={() => setDate(d)}
-              className={`flex min-w-[4.25rem] shrink-0 snap-start flex-col items-center rounded-[var(--radius-inner)] border px-3 py-2.5 transition-colors duration-150 ${
-                d === date ? "border-ink bg-ink text-canvas" : "border-line bg-raised text-ink hover:border-ink-4"
-              }`}
+              className="pick group flex min-w-[4.25rem] shrink-0 snap-start flex-col items-center rounded-[var(--radius-inner)] px-3 py-2.5 transition-colors duration-150"
             >
-              <span className={`text-[12px] font-semibold first-letter:uppercase ${d === date ? "text-canvas/70" : "text-ink-3"}`}>{dayLabel(d)}</span>
+              <span className="text-[12px] font-semibold text-ink-3 first-letter:uppercase group-aria-pressed:text-canvas">{dayLabel(d)}</span>
               <span className="mt-0.5 font-display text-[20px] font-semibold leading-none tabular-nums">{Number(d.slice(8))}</span>
             </button>
           ))}
@@ -144,13 +144,13 @@ function Flow({ lang, venueId, hours, halls, items, today, linkId, phrase, onAga
         <div className="mt-2 flex items-center justify-between gap-4 rounded-[var(--radius-inner)] border border-line bg-raised px-4 py-2">
           <span className="text-[15px] text-ink">{b.guests}</span>
           <div className="flex items-center gap-3">
-            <button type="button" aria-label={b.fewer} disabled={party <= 1} onClick={() => setParty((p) => Math.max(1, p - 1))} className="grid h-9 w-9 place-items-center rounded-full bg-line text-[20px] leading-none text-ink disabled:opacity-30">
+            <button type="button" aria-label={b.fewer} disabled={party <= 1} onClick={() => setParty((p) => Math.max(1, p - 1))} className="grid h-11 w-11 place-items-center rounded-full bg-line text-[20px] leading-none text-ink disabled:opacity-30">
               −
             </button>
             <output aria-live="polite" className="w-6 text-center font-display text-[20px] font-semibold tabular-nums text-ink">
               {party}
             </output>
-            <button type="button" aria-label={b.more} disabled={party >= 30} onClick={() => setParty((p) => Math.min(30, p + 1))} className="grid h-9 w-9 place-items-center rounded-full bg-line text-[20px] leading-none text-ink disabled:opacity-30">
+            <button type="button" aria-label={b.more} disabled={party >= 30} onClick={() => setParty((p) => Math.min(30, p + 1))} className="grid h-11 w-11 place-items-center rounded-full bg-line text-[20px] leading-none text-ink disabled:opacity-30">
               +
             </button>
           </div>
@@ -178,9 +178,7 @@ function Flow({ lang, venueId, hours, halls, items, today, linkId, phrase, onAga
                     disabled={!ok}
                     aria-pressed={on}
                     onClick={() => setSlot(on ? null : m)}
-                    className={`min-h-11 rounded-full border text-[15px] font-medium tabular-nums transition-colors duration-150 ${
-                      on ? "border-ink bg-ink text-canvas" : ok ? "border-line bg-raised text-ink hover:border-ink-4" : "border-transparent text-ink-4 line-through"
-                    }`}
+                    className="pick min-h-11 rounded-full text-[15px] font-medium tabular-nums transition-colors duration-150"
                   >
                     {clock(m)}
                   </button>
@@ -200,29 +198,57 @@ function Flow({ lang, venueId, hours, halls, items, today, linkId, phrase, onAga
                 <button
                   key={h.id}
                   type="button"
-                  aria-pressed={h.id === hallId}
+                  aria-current={h.id === hallId ? "true" : undefined}
                   onClick={() => setHallId(h.id)}
-                  className={`btn btn-sm ${h.id === hallId ? "bg-raised text-ink ring-1 ring-ink-4" : "text-ink-3 hover:text-ink"}`}
+                  className="chip"
                 >
                   {(lang === "kk" && h.name_kk) || h.name}
                 </button>
               ))}
             </div>
           ) : null}
-          <div className="rounded-[var(--radius-inner)] border border-line bg-canvas p-2">
-            {plannedHalls
-              .filter((h) => h.id === hallId)
-              .map((h) => (
-                <FloorPlan
-                  key={h.id}
-                  hall={h}
-                  items={items}
-                  stateOf={stateOf}
-                  describe={describe}
-                  onSelect={chosenSlot === null ? undefined : (x) => setTableId(chosenTable?.id === x.id ? null : x.id)}
-                />
-              ))}
-          </div>
+          {plannedHalls
+            .filter((h) => h.id === hallId)
+            .map((h) => {
+              // Wide enough that the smallest table is a 44px target; on a
+              // phone the plan then scrolls sideways instead of shrinking.
+              const smallest = Math.min(...items.filter((i) => i.hall_id === h.id && i.kind === "table").map((i) => Math.min(i.w, i.h)));
+              const minWidth = Math.min(960, Math.ceil(((h.width + 4) * 44) / smallest));
+              return (
+                <div key={h.id}>
+                  <div className="overflow-x-auto rounded-[var(--radius-inner)] border border-line bg-canvas p-2">
+                    <div style={{ minWidth }}>
+                      <FloorPlan hall={h} items={items} stateOf={stateOf} describe={describe} onSelect={chosenSlot === null ? undefined : (x) => setTableId(chosenTable?.id === x.id ? null : x.id)} />
+                    </div>
+                  </div>
+                  {minWidth > 330 ? <p className="mt-2 text-[13px] text-ink-3 sm:hidden">{b.scrollHint}</p> : null}
+                  {chosenSlot !== null ? (
+                    <div className="mt-4">
+                      <p className="label mb-2">{b.tables}</p>
+                      <div className="flex flex-wrap gap-2">
+                        {items
+                          .filter((x) => x.hall_id === h.id && x.kind === "table" && fits(x, party))
+                          .map((x) => {
+                            const s = stateOf(x);
+                            return (
+                              <button
+                                key={x.id}
+                                type="button"
+                                disabled={s === "busy"}
+                                aria-pressed={s === "selected"}
+                                onClick={() => setTableId(s === "selected" ? null : x.id)}
+                                className="pick min-h-11 rounded-full px-4 text-[14px] font-medium"
+                              >
+                                {b.tableName(x.label)} · {b.upTo(x.seats_max)}
+                              </button>
+                            );
+                          })}
+                      </div>
+                    </div>
+                  ) : null}
+                </div>
+              );
+            })}
           <p className="mt-3 text-[14px] text-ink-3" aria-live="polite">
             {chosenSlot === null
               ? b.pickTimeFirst

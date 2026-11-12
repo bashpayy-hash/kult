@@ -1,20 +1,63 @@
 {
-  "date": "2026-11-12",
-  "request": "Владелец, 12 ноября 2026: «называем приложение shaqiru <…> шақыру, https://iitaly.net/ вот пример моего сайта, используй такой же шрифт, используй хигсфилд».",
-  "use": "hero — первый экран лендинга во всю ширину (как на iitaly.net). Остальные — заглушки на странице /[member]/[venue] и в админке, пока у заведения нет своего фото (src/lib/scenes.ts, категория other → restaurant).",
-  "model": "Higgsfield gpt_image_2_6, quality high; hero 16:9 2k (2688×1520), сцены 4:3 1k (1168×880), png",
-  "world": "Вечер в Алматы. Тёплый низкий свет свечи и ламп слева, глубокие мягкие тени, холодная синяя подсветка сумерек. 35 мм, уровень глаз чуть выше стола, малая глубина резкости. Палитра: почти чёрный, тёплый янтарь, пыльная роза, сиреневые блики. Без людей, рук, лиц, текста, вывесок, логотипов, этикеток и цифр.",
-  "promptTemplate": "Cinematic editorial photograph, evening in Almaty. [subject]. Light: warm low candle and tungsten light from the left, deep soft shadows, cool blue dusk fill. 35mm lens, eye level slightly above the table, shallow depth of field. Palette: near-black, warm amber, dusty rose and soft lilac highlights. Quiet, premium, restrained, photoreal. No people, no hands, no faces, no text, no letters, no signs, no logos, no numbers.",
-  "processing": "ImageMagick: WebP q80 method 6 — hero 640/1024/1600/2400, сцены 640/1168; мастер WebP q90 в design/illustrations/source/; public/og.jpg 1200×630 из hero.",
-  "items": [
-    { "name": "hero", "job": "4cd72fe7-1046-4127-ac08-357769bbc205", "subject": "стол на двоих на террасе на крыше, вино, свеча, десерт; за перилами огни города, Кок-Тобе и снежный Заилийский Алатау; правая половина спокойная под карточку", "files": ["public/illustrations/scenes/hero-640.webp", "public/illustrations/scenes/hero-1024.webp", "public/illustrations/scenes/hero-1600.webp", "public/illustrations/scenes/hero-2400.webp", "public/og.jpg"], "master": "design/illustrations/source/hero.webp" },
-    { "name": "restaurant", "job": "f12ff422-2423-4067-960d-8f93a20d0ae0", "subject": "сервированный стол в ресторане, свеча, вид на горы", "files": ["public/illustrations/scenes/restaurant-640.webp", "public/illustrations/scenes/restaurant-1168.webp"], "master": "design/illustrations/source/restaurant.webp" },
-    { "name": "cafe", "job": "4d819bbf-459e-4a95-b288-2b0b0ba6928e", "subject": "мраморный столик у окна, капучино, круассан", "files": ["public/illustrations/scenes/cafe-640.webp", "public/illustrations/scenes/cafe-1168.webp"], "master": "design/illustrations/source/cafe.webp" },
-    { "name": "bar", "job": "93226467-7478-4e9f-8430-504ebfaeb4f2", "subject": "барная стойка, два коктейля в купе, бутылки без этикеток", "files": ["public/illustrations/scenes/bar-640.webp", "public/illustrations/scenes/bar-1168.webp"], "master": "design/illustrations/source/bar.webp" },
-    { "name": "beauty", "job": "2294b2d5-8dfa-48bf-9d99-aec438048d53", "subject": "место мастера: бархатное кресло, круглое зеркало с подсветкой, кисти, лаки без этикеток", "files": ["public/illustrations/scenes/beauty-640.webp", "public/illustrations/scenes/beauty-1168.webp"], "master": "design/illustrations/source/beauty.webp" },
-    { "name": "wellness", "job": "ecceea9c-32d1-4035-b000-2d2fa124bfd0", "subject": "спа-комната: массажный стол, полотенца, свечи, камни, пар", "files": ["public/illustrations/scenes/wellness-640.webp", "public/illustrations/scenes/wellness-1168.webp"], "master": "design/illustrations/source/wellness.webp" },
-    { "name": "fitness", "job": "b09953b0-bde2-40cd-87a2-82c654f9ba8d", "subject": "студия пилатеса: реформер, коврики, гантели, окна с видом на город и горы", "files": ["public/illustrations/scenes/fitness-640.webp", "public/illustrations/scenes/fitness-1168.webp"], "master": "design/illustrations/source/fitness.webp" }
-  ],
-  "rejected": [],
-  "replaced": []
+ "date": "2026-11-12",
+ "request": "Владелец, 12 ноября 2026: «называем приложение shaqiru <…> шақыру, https://iitaly.net/ вот пример моего сайта, используй такой же шрифт, используй хигсфилд».",
+ "use": "Не используется с 12 ноября 2026.",
+ "model": "Higgsfield gpt_image_2_6, quality high; hero 16:9 2k (2688×1520), сцены 4:3 1k (1168×880), png",
+ "world": "Вечер в Алматы. Тёплый низкий свет свечи и ламп слева, глубокие мягкие тени, холодная синяя подсветка сумерек. 35 мм, уровень глаз чуть выше стола, малая глубина резкости. Палитра: почти чёрный, тёплый янтарь, пыльная роза, сиреневые блики. Без людей, рук, лиц, текста, вывесок, логотипов, этикеток и цифр.",
+ "promptTemplate": "Cinematic editorial photograph, evening in Almaty. [subject]. Light: warm low candle and tungsten light from the left, deep soft shadows, cool blue dusk fill. 35mm lens, eye level slightly above the table, shallow depth of field. Palette: near-black, warm amber, dusty rose and soft lilac highlights. Quiet, premium, restrained, photoreal. No people, no hands, no faces, no text, no letters, no signs, no logos, no numbers.",
+ "processing": "ImageMagick: WebP q80 method 6 — hero 640/1024/1600/2400, сцены 640/1168; мастер WebP q90 в design/illustrations/source/; public/og.jpg 1200×630 из hero.",
+ "items": [],
+ "rejected": [
+  {
+   "name": "hero",
+   "job": "4cd72fe7-1046-4127-ac08-357769bbc205",
+   "subject": "стол на двоих на террасе на крыше, вино, свеча, десерт; за перилами огни города, Кок-Тобе и снежный Заилийский Алатау; правая половина спокойная под карточку",
+   "files": [],
+   "master": null
+  },
+  {
+   "name": "restaurant",
+   "job": "f12ff422-2423-4067-960d-8f93a20d0ae0",
+   "subject": "сервированный стол в ресторане, свеча, вид на горы",
+   "files": [],
+   "master": null
+  },
+  {
+   "name": "cafe",
+   "job": "4d819bbf-459e-4a95-b288-2b0b0ba6928e",
+   "subject": "мраморный столик у окна, капучино, круассан",
+   "files": [],
+   "master": null
+  },
+  {
+   "name": "bar",
+   "job": "93226467-7478-4e9f-8430-504ebfaeb4f2",
+   "subject": "барная стойка, два коктейля в купе, бутылки без этикеток",
+   "files": [],
+   "master": null
+  },
+  {
+   "name": "beauty",
+   "job": "2294b2d5-8dfa-48bf-9d99-aec438048d53",
+   "subject": "место мастера: бархатное кресло, круглое зеркало с подсветкой, кисти, лаки без этикеток",
+   "files": [],
+   "master": null
+  },
+  {
+   "name": "wellness",
+   "job": "ecceea9c-32d1-4035-b000-2d2fa124bfd0",
+   "subject": "спа-комната: массажный стол, полотенца, свечи, камни, пар",
+   "files": [],
+   "master": null
+  },
+  {
+   "name": "fitness",
+   "job": "b09953b0-bde2-40cd-87a2-82c654f9ba8d",
+   "subject": "студия пилатеса: реформер, коврики, гантели, окна с видом на город и горы",
+   "files": [],
+   "master": null
+  }
+ ],
+ "replaced": [],
+ "rejectedReason": "Владелец, 12 ноября 2026: «пока что слишком ии слопно, и иллюстрации слишком слопные, там по сути должны быть реальные картинки заведений». Все семь сцен — один кадр (окно с горами и Кок-Тобе в сиреневых сумерках, свеча слева), заведения неотличимы и выглядят не так, как в жизни. Убраны с сайта; карточки без своего фото теперь без картинки, название набрано крупно. Картинки остаются в аккаунте Higgsfield по job id."
 }

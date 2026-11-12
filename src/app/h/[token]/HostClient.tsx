@@ -3,7 +3,6 @@
 import { useActionState, useEffect, useState } from "react";
 import { addMemberVisit, addPhraseGuest, markArrived, markNoShow, removeEntry } from "./actions";
 import { errProps, Field, FormError, SubmitButton } from "@/components/form";
-import { Orb, toneFor } from "@/components/Orb";
 import { dicts, type Lang } from "@/lib/i18n/dicts";
 import { formatMoney, formatPhone, formatTime } from "@/lib/format";
 import type { BookingStatus, FormState } from "@/lib/types";
@@ -59,10 +58,7 @@ export function BookingCard({ b, token, lang }: { b: HostBooking; token: string;
             </a>
             <span aria-hidden="true">·</span>
             {b.member_name && b.member_slug ? (
-              <span className="inline-flex items-center gap-1.5">
-                <Orb tone={toneFor(b.member_slug)} size={14} still />
-                {t.from(b.member_name)}
-              </span>
+              <span>{t.from(b.member_name)}</span>
             ) : (
               <span>{t.fromCatalog}</span>
             )}
@@ -262,7 +258,6 @@ export function LogEntry({
   lang,
   kind,
   id,
-  slug,
   title,
   meta,
   removable = true,
@@ -271,7 +266,6 @@ export function LogEntry({
   lang: Lang;
   kind: "guest" | "member";
   id: string;
-  slug: string;
   title: string;
   meta: string;
   removable?: boolean;
@@ -279,7 +273,6 @@ export function LogEntry({
   const t = dicts[lang].host;
   return (
     <li className="flex items-center gap-3 py-4">
-      <Orb tone={toneFor(slug)} size={28} still />
       <div className="min-w-0 flex-1">
         <p className="text-[15px] text-ink">{title}</p>
         {meta ? <p className="text-[14px] text-ink-3">{meta}</p> : null}

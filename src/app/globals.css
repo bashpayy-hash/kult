@@ -104,7 +104,7 @@ p { text-wrap: pretty; }
   transition: border-color var(--dur-hover) var(--ease-color), background-color var(--dur-hover) var(--ease-color);
 }
 .field::placeholder { color: var(--color-ink-4); }
-.field:hover { border-color: #3a3a40; }
+.field:hover { border-color: #45413c; }
 .field:focus { outline: none; border-color: var(--color-accent); }
 .field[aria-invalid="true"] { border-color: var(--color-danger); }
 textarea.field { min-height: 96px; resize: vertical; }
@@ -128,7 +128,7 @@ input[type="file"].field::file-selector-button {
   flex: none;
   width: 22px; height: 22px;
   margin-top: 1px;
-  border: 1px solid #44444a;
+  border: 1px solid #55504a;
   border-radius: 7px;
   background: var(--color-raised);
   display: grid; place-content: center;
@@ -155,52 +155,16 @@ input[type="file"].field::file-selector-button {
 .btn:active { transform: scale(0.97); }
 .btn:disabled { opacity: 0.5; pointer-events: none; }
 .btn-primary { background: var(--color-ink); color: var(--color-canvas); }
-.btn-primary:hover { background: #ffffff; }
+.btn-primary:hover { background: #fffaf2; }
 .btn-soft { background: var(--color-raised); color: var(--color-ink); border: 1px solid var(--color-line); }
-.btn-soft:hover { background: #232327; }
+.btn-soft:hover { background: #2a2824; }
 .btn-sm { min-height: 40px; padding: 0 16px; font-size: 14px; }
 .link-quiet {
   color: var(--color-ink-2);
-  text-decoration: underline; text-decoration-color: #4a4a50; text-underline-offset: 4px;
+  text-decoration: underline; text-decoration-color: #55504a; text-underline-offset: 4px;
   transition: color var(--dur-hover) var(--ease-color), text-decoration-color var(--dur-hover) var(--ease-color);
 }
 .link-quiet:hover { color: var(--color-ink); text-decoration-color: var(--color-ink-3); }
-
-/* ── Orbs: the iridescent spheres from the Wallet reference ───────────── */
-.orb {
-  position: relative;
-  flex: none;
-  border-radius: 50%;
-  overflow: hidden;
-  isolation: isolate;
-  background: var(--o4);
-}
-.orb::before {
-  content: "";
-  position: absolute; inset: -25%;
-  background:
-    radial-gradient(circle at 72% 74%, var(--o3) 0, transparent 48%),
-    radial-gradient(circle at 24% 70%, var(--o2) 0, transparent 54%),
-    radial-gradient(circle at 60% 28%, var(--o1) 0, transparent 60%);
-  animation: orb-drift 22s linear infinite;
-}
-.orb::after {
-  content: "";
-  position: absolute; inset: 0;
-  border-radius: 50%;
-  background:
-    radial-gradient(circle at 32% 26%, rgb(255 255 255 / 0.85) 0, rgb(255 255 255 / 0.28) 10%, transparent 26%),
-    radial-gradient(circle at 50% 50%, transparent 52%, rgb(0 0 0 / 0.34) 100%);
-}
-.orb[data-still]::before { animation: none; }
-@keyframes orb-drift { to { transform: rotate(360deg); } }
-
-.orb-iris   { --o1: #b693ff; --o2: #6f7dff; --o3: #ff9ad5; --o4: #7e66ee; }
-.orb-violet { --o1: #e2c6ff; --o2: #8f7cff; --o3: #f2a8e4; --o4: #8a74f2; }
-.orb-coral  { --o1: #ff8a7a; --o2: #c95cff; --o3: #ffb36b; --o4: #f0607e; }
-.orb-aqua   { --o1: #7ef0d1; --o2: #6cc6ff; --o3: #f5a3ff; --o4: #57c9c2; }
-.orb-sage   { --o1: #c6e3a8; --o2: #7fb7c9; --o3: #e9d38a; --o4: #8fae9a; }
-.orb-pearl  { --o1: #ffffff; --o2: #dcd8e6; --o3: #f3eefa; --o4: #c9c5d3; }
 
 }
 
@@ -229,6 +193,27 @@ input[type="file"].field::file-selector-button {
     animation-delay: 0ms !important;
     transition-duration: 1ms !important;
   }
-  .orb::before { animation: none !important; }
   .reveal { animation: none !important; }
+}
+
+/* Chips and picks (12 Nov 2026). A filter chip that is on gets an amber
+   outline, never the milk fill of the main button, so the two never compete.
+   A picked date, time or table is amber-filled: the only filled amber. */
+@layer components {
+  .chip {
+    display: inline-flex; align-items: center; justify-content: center;
+    min-height: 44px; padding: 0 18px;
+    border: 1px solid var(--color-line); border-radius: var(--radius-pill);
+    background: var(--color-raised); color: var(--color-ink-2);
+    font-size: 15px; font-weight: 500; line-height: 1; white-space: nowrap;
+    transition: color var(--dur-hover) var(--ease-color), border-color var(--dur-hover) var(--ease-color), background-color var(--dur-hover) var(--ease-color);
+  }
+  .chip:hover { color: var(--color-ink); border-color: #45413c; }
+  .chip[aria-current="true"], .chip[aria-current="page"], .chip[aria-current="date"] {
+    background: transparent; border-color: var(--color-accent); color: var(--color-ink);
+  }
+  .pick { border: 1px solid var(--color-line); background: var(--color-raised); color: var(--color-ink); }
+  .pick:hover { border-color: #45413c; }
+  .pick[aria-pressed="true"] { background: var(--color-accent); border-color: var(--color-accent); color: var(--color-canvas); }
+  .pick:disabled { background: transparent; border-color: transparent; color: var(--color-ink-4); text-decoration: line-through; }
 }

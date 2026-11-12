@@ -1,62 +1,81 @@
 import Link from "next/link";
 import { publicImageUrl } from "@/lib/storage";
-import { sceneFor } from "@/lib/scenes";
+import { clock, openNow } from "@/lib/booking";
+import { formatMoney } from "@/lib/format";
 import type { Dict, Lang } from "@/lib/i18n/dicts";
-import type { CatalogVenue } from "@/lib/venueData";
+import type { CatalogVenue, FreeSlots } from "@/lib/venueData";
 
-function Picture({ v, sizes, className = "" }: { v: CatalogVenue; sizes: string; className?: string }) {
-  const own = publicImageUrl(v.photo_path);
-  const scene = sceneFor(v.category);
-  return own ? (
-    <img src={own} alt="" loading="lazy" className={`h-full w-full object-cover ${className}`} />
-  ) : (
-    <img src={scene.src} srcSet={scene.srcSet} sizes={sizes} alt="" loading="lazy" className={`h-full w-full object-cover ${className}`} />
-  );
-}
+/**
+ * A catalog card that helps choose (12 Nov 2026, owner: «иллюстрации
+ * слишком слопные, там по сути должны быть реальные картинки заведений»):
+ * the venue's own photo if it has one, otherwise no picture at all — the
+ * name set large. Facts that decide: check, hours, the next free times, each
+ * a link straight into the booking with that time picked.
+ */
+export function VenueCard({ v, t, lang, free, nowMin }: { v: CatalogVenue; t: Dict; lang: Lang; free?: FreeSlots; nowMin: number }) {
+  const C = t.catalog;
+  const photo = publicImageUrl(v.photo_path);
+  const logo = publicImageUrl(v.logo_path);
+  const perk = (lang === "kk" && v.perk_kk) || v.perk;
+  const state = openNow(v, nowMin);
+  const facts = [
+    v.avg_check ? `${C.avgCheck} ${formatMoney(v.avg_check)}` : null,
+    state.open ? C.openUntil(state.at) : C.opensAt(state.at),
+  ].filter(Boolean);
 
-/** «Популярные заведения»: a square picture with the name under it. */
-export function VenueTile({ v }: { v: CatalogVenue }) {
   return (
-    <Link href={`/v/${v.slug}`} className="group flex w-[9.5rem] shrink-0 snap-start flex-col gap-3 md:w-[11rem]">
-      <span className="block aspect-square overflow-hidden rounded-tile-r bg-tile">
-        <Picture v={v} sizes="176px" className="transition-transform duration-500 ease-out group-hover:scale-[1.03]" />
-      </span>
-      <span className="truncate text-center font-display text-[17px] font-semibold tracking-[-0.02em] text-ink">{v.name}</span>
-    </Link>
-  );
-}
-
-/** A venue card: picture, then name and one line of facts. Optional perk badge. */
-export function VenueCard({ v, t, lang, perk = false, wide = false }: { v: CatalogVenue; t: Dict; lang: Lang; perk?: boolean; wide?: boolean }) {
-  const badge = perk ? (lang === "kk" && v.perk_kk) || v.perk : null;
-  return (
-    <Link
-      href={`/v/${v.slug}`}
-      className={`group flex shrink-0 snap-start flex-col overflow-hidden rounded-tile-r bg-tile transition-colors duration-150 hover:bg-raised ${
-        wide ? "w-full" : "w-[17rem] md:w-[20rem]"
-      }`}
-    >
-      <span className="relative block aspect-[4/3] overflow-hidden">
-        <Picture v={v} sizes={wide ? "(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw" : "320px"} className="transition-transform duration-500 ease-out group-hover:scale-[1.03]" />
-        {badge ? (
-          <span className="absolute left-3 top-3 line-clamp-2 max-w-[calc(100%-1.5rem)] rounded-[14px] bg-canvas/85 px-3 py-1.5 text-[13px] font-semibold leading-snug text-ink">
-            {badge}
-          </span>
+    <article className="relative flex h-full flex-col overflow-hidden rounded-tile-r bg-tile">
+      {photo ? (
+        <div className="aspect-[16/10] overflow-hidden bg-raised">
+          <img src={photo} alt="" loading="lazy" className="h-full w-full object-cover" />
+        </div>
+      ) : null}
+      <div className="flex flex-1 flex-col gap-4 p-5 md:p-6">
+        <div className="flex items-start justify-between gap-4">
+          <div className="min-w-0">
+            <p className="label">{[t.categories[v.category], v.address].filter(Boolean).join(" · ")}</p>
+            <h3 className={`mt-2 ${photo ? "text-[24px]" : "text-[30px] md:text-[34px]"}`}>
+              {/* Stretched link: the whole card opens the venue; slot links sit above it. */}
+              <Link href={`/v/${v.slug}`} className="after:absolute after:inset-0 after:content-['']">
+                {v.name}
+              </Link>
+            </h3>
+          </div>
+          {logo ? <img src={logo} alt="" className="h-12 w-12 shrink-0 rounded-[var(--radius-inner)] bg-raised object-contain" /> : null}
+        </div>
+        <p className="text-[15px] text-ink-2">{facts.join(" · ")}</p>
+        {perk ? (
+          <p className="text-[15px] text-ink-2">
+            <span className="text-ink-3">{C.bonus}: </span>
+            {perk}
+          </p>
         ) : null}
-      </span>
-      <span className="flex flex-col gap-1 px-5 py-4">
-        <span className="truncate font-display text-[19px] font-semibold tracking-[-0.025em] text-ink">{v.name}</span>
-        <span className="truncate text-[14px] text-ink-3">{[t.categories[v.category], v.address].filter(Boolean).join(" · ")}</span>
-      </span>
-    </Link>
+        <div className="mt-auto pt-1">
+          {free ? (
+            <>
+              <p className="label">{free.day === "today" ? C.freeToday : C.freeTomorrow}</p>
+              <div className="relative z-10 mt-2 flex flex-wrap gap-2">
+                {free.slots.map((m) => (
+                  <Link key={m} href={`/v/${v.slug}?d=${free.date}&t=${m}#book`} className="chip min-h-11 px-4 tabular-nums">
+                    {clock(m)}
+                  </Link>
+                ))}
+              </div>
+            </>
+          ) : (
+            <p className="text-[14px] text-ink-3">{C.noFree}</p>
+          )}
+        </div>
+      </div>
+    </article>
   );
 }
 
 /** A horizontally scrolling row that bleeds to the screen edge on phones. */
 export function Rail({ children }: { children: React.ReactNode }) {
   return (
-    <div className="-mx-5 overflow-x-auto px-5 pb-2 [scrollbar-width:none] md:-mx-6 md:px-6 min-[900px]:mx-0 min-[900px]:px-0">
-      <div className="flex snap-x gap-3">{children}</div>
+    <div className="-mx-5 overflow-x-auto px-5 pb-1 [scrollbar-width:none] md:-mx-6 md:px-6 min-[900px]:mx-0 min-[900px]:px-0">
+      <div className="flex gap-2">{children}</div>
     </div>
   );
 }

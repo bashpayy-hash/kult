@@ -316,6 +316,37 @@ export async function removeVenuePhoto(fd: FormData): Promise<void> {
   revalidatePath(`/admin/venues/${id}`);
 }
 
+export async function uploadVenueLogo(_prev: FormState, fd: FormData): Promise<FormState> {
+  await requireAdmin();
+  const id = str(fd, "id", 40);
+  const file = fileFrom(fd, "logo");
+  if (!isUuid(id)) return { error: "Нет id." };
+  if (!file) return { error: "Выберите логотип." };
+  try {
+    const key = await uploadImage("venue-photos", `${id}/logo`, file);
+    const [old] = await db()<{ logo_path: string | null }[]>`
+      update venues v set logo_path = ${key} from (select logo_path from venues where id = ${id}) o
+      where v.id = ${id} returning o.logo_path`;
+    await removeImage("venue-photos", old?.logo_path ?? null);
+  } catch (e) {
+    if (e instanceof UploadError) return { error: e.message };
+    return dbError(e);
+  }
+  revalidatePath(`/admin/venues/${id}`);
+  return { ok: true, message: "Логотип обновлён" };
+}
+
+export async function removeVenueLogo(fd: FormData): Promise<void> {
+  await requireAdmin();
+  const id = str(fd, "id", 40);
+  if (!isUuid(id)) return;
+  const [old] = await db()<{ logo_path: string | null }[]>`
+    update venues v set logo_path = null from (select logo_path from venues where id = ${id}) o
+    where v.id = ${id} returning o.logo_path`;
+  await removeImage("venue-photos", old?.logo_path ?? null);
+  revalidatePath(`/admin/venues/${id}`);
+}
+
 /** New hostess link; the old one stops working immediately. */
 export async function regenerateHostToken(fd: FormData): Promise<void> {
   await requireAdmin();

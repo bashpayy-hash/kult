@@ -1,5 +1,5 @@
 import type { ReactNode } from "react";
-import { Orb, toneFor } from "@/components/Orb";
+import { Monogram } from "@/components/Monogram";
 
 export function PageHead({ title, lead, action }: { title: string; lead?: ReactNode; action?: ReactNode }) {
   return (
@@ -62,10 +62,11 @@ export function StatusText({ status, text }: { status: string; text?: string }) 
   return <span className={`text-[13px] font-semibold ${STATUS_TONE[status] ?? "text-ink-3"}`}>{text ?? STATUS_TEXT[status] ?? status}</span>;
 }
 
-export function Person({ name, slug, sub }: { name: string; slug: string; sub?: ReactNode }) {
+// `slug` stays in the signature for callers; the monogram only needs the name.
+export function Person({ name, sub }: { name: string; slug?: string; sub?: ReactNode }) {
   return (
     <span className="inline-flex min-w-0 items-center gap-3">
-      <Orb tone={toneFor(slug)} size={28} still />
+      <Monogram name={name} size={32} />
       <span className="min-w-0">
         <span className="block truncate text-ink">{name}</span>
         {sub ? <span className="block truncate text-[13px] text-ink-3">{sub}</span> : null}

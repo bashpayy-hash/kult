@@ -5,16 +5,17 @@ import { isUuid } from "@/lib/forms";
 import { siteUrl } from "@/lib/env";
 import { formatMoney } from "@/lib/format";
 import { publicImageUrl } from "@/lib/storage";
-import { sceneFor } from "@/lib/scenes";
 import type { Offer, Venue } from "@/lib/types";
 import {
   createOffer,
   deleteOffer,
   deleteVenue,
   regenerateHostToken,
+  removeVenueLogo,
   removeVenuePhoto,
   updateOffer,
   updateVenue,
+  uploadVenueLogo,
   uploadVenuePhoto,
 } from "../../../actions";
 import { ActionForm, ButtonForm, CopyButton, Disclosure, ImageInput } from "../../../_ui";
@@ -54,6 +55,18 @@ export default async function VenuePage({ params }: { params: Promise<{ id: stri
   const base = siteUrl();
   const hostUrl = `${base}/h/${v.host_token}`;
   const photo = publicImageUrl(v.photo_path);
+  const logo = publicImageUrl(v.logo_path);
+  const [offerWithPerk] = await sql`select 1 from offers where venue_id = ${id} and active and guest_perk is not null limit 1`;
+  // What the venue still has to send before it looks real in the catalog
+  // (12 Nov 2026: real photos and a logo instead of generated scenes).
+  const readiness: [string, boolean][] = [
+    ["Своё фото", !!photo],
+    ["Логотип", !!logo],
+    ["Описание на русском и казахском", !!v.description && !!v.description_kk],
+    ["План зала со столами", plan.items.some((i) => i.kind === "table")],
+    ["Бонус гостям (perk)", !!offerWithPerk],
+    ["Показывается в каталоге", v.is_listed],
+  ];
 
   return (
     <>
@@ -62,6 +75,22 @@ export default async function VenuePage({ params }: { params: Promise<{ id: stri
         lead={<>{v.address ? `${v.address} · ` : ""}{v.avg_check ? `чек ${formatMoney(v.avg_check)} · ` : ""}<StatusText status={v.status} /></>}
         action={<Link href={`/admin/links?venue=${v.id}`} className="btn btn-primary btn-sm">Привязать участницу</Link>}
       />
+
+      <Section title="Готовность к каталогу">
+        <ul className="grid gap-2 rounded-tile-r bg-tile p-5 sm:grid-cols-2 md:p-6 lg:grid-cols-3">
+          {readiness.map(([label, ok]) => (
+            <li key={label} className="flex items-center gap-3 text-[15px]">
+              <span aria-hidden="true" className={`grid h-6 w-6 shrink-0 place-items-center rounded-full text-[13px] font-semibold ${ok ? "bg-success text-canvas" : "border border-line text-ink-3"}`}>
+                {ok ? "✓︎" : ""}
+              </span>
+              <span className={ok ? "text-ink-2" : "text-ink"}>
+                {label}
+                <span className="sr-only">{ok ? ": есть" : ": нет"}</span>
+              </span>
+            </li>
+          ))}
+        </ul>
+      </Section>
 
       <Section title="Ссылка для хостес">
         <div className="flex flex-col gap-4 rounded-tile-r bg-tile p-5 md:p-6">
@@ -144,21 +173,37 @@ export default async function VenuePage({ params }: { params: Promise<{ id: stri
         )}
       </Section>
 
-      <Section title="Фото для страницы гостей">
-        <div className="grid gap-5 rounded-tile-r bg-tile p-5 md:grid-cols-[16rem_1fr] md:p-6">
-          <div className="aspect-[4/3] overflow-hidden rounded-[var(--radius-inner)] bg-raised">
-            <img src={photo ?? sceneFor(v.category).src} alt={v.name} className="h-full w-full object-cover" />
+      <Section title="Фото и логотип">
+        <div className="grid gap-3 lg:grid-cols-2">
+          <div className="grid gap-5 rounded-tile-r bg-tile p-5 sm:grid-cols-[12rem_1fr] md:p-6">
+            <div className="grid aspect-[16/10] place-items-center overflow-hidden rounded-[var(--radius-inner)] bg-raised">
+              {photo ? <img src={photo} alt={v.name} className="h-full w-full object-cover" /> : <span className="px-3 text-center text-[13px] text-ink-3">Фото нет: в каталоге карточка без картинки</span>}
+            </div>
+            <div className="flex flex-col gap-4">
+              <ActionForm action={uploadVenuePhoto} submit="Загрузить фото">
+                <input type="hidden" name="id" value={v.id} />
+                <div className="flex flex-col gap-2">
+                  <label htmlFor="venue-photo" className="label">Настоящее фото зала, горизонтальное</label>
+                  <ImageInput id="venue-photo" name="photo" required />
+                </div>
+              </ActionForm>
+              {photo ? <ButtonForm action={removeVenuePhoto} fields={{ id: v.id }} label="Убрать фото" confirmText="Убрать фото?" /> : null}
+            </div>
           </div>
-          <div className="flex flex-col gap-4">
-            <ActionForm action={uploadVenuePhoto} submit="Загрузить">
-              <input type="hidden" name="id" value={v.id} />
-              <div className="flex flex-col gap-2">
-                <label htmlFor="venue-photo" className="label">Фото, горизонтальное 4:3</label>
-                {photo ? null : <p className="text-[13px] text-ink-3">Пока своего фото нет, гости видят картинку категории.</p>}
-                <ImageInput id="venue-photo" name="photo" required />
-              </div>
-            </ActionForm>
-            {photo ? <ButtonForm action={removeVenuePhoto} fields={{ id: v.id }} label="Убрать фото" confirmText="Убрать фото?" /> : null}
+          <div className="grid gap-5 rounded-tile-r bg-tile p-5 sm:grid-cols-[7rem_1fr] md:p-6">
+            <div className="grid aspect-square place-items-center overflow-hidden rounded-[var(--radius-inner)] bg-raised">
+              {logo ? <img src={logo} alt="" className="h-full w-full object-contain" /> : <span className="text-[13px] text-ink-3">Нет</span>}
+            </div>
+            <div className="flex flex-col gap-4">
+              <ActionForm action={uploadVenueLogo} submit="Загрузить логотип">
+                <input type="hidden" name="id" value={v.id} />
+                <div className="flex flex-col gap-2">
+                  <label htmlFor="venue-logo" className="label">Логотип, квадрат, PNG или JPG</label>
+                  <ImageInput id="venue-logo" name="logo" required />
+                </div>
+              </ActionForm>
+              {logo ? <ButtonForm action={removeVenueLogo} fields={{ id: v.id }} label="Убрать логотип" confirmText="Убрать логотип?" /> : null}
+            </div>
           </div>
         </div>
       </Section>

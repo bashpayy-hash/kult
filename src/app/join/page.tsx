@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import { getDict } from "@/lib/i18n";
 import { SiteFooter, SiteHeader } from "@/components/SiteChrome";
-import { OrbRoad } from "@/components/OrbRoad";
 import { MemberApplicationForm, PartnerApplicationForm } from "../_landing/ApplicationForms";
 
 export const metadata: Metadata = { title: "Клуб" };
@@ -21,14 +20,13 @@ export default async function Join() {
           <p className="mt-4 max-w-[40rem] text-[17px] text-ink-2">{L.lead}</p>
         </section>
 
-        <section className="px-edge pb-16 pt-16 md:pb-24 md:pt-20" aria-labelledby="how">
-          <div className="grid gap-12 lg:grid-cols-[0.8fr_1.2fr]">
-            <h2 id="how" className="reveal text-[30px] md:text-[40px]">
+        {/* One concrete example instead of the four orb steps (12 Nov 2026). */}
+        <section className="px-edge pb-8 pt-12 md:pb-12 md:pt-16" aria-labelledby="how">
+          <div className="grid gap-4 lg:grid-cols-[0.8fr_1.2fr] lg:gap-12">
+            <h2 id="how" className="text-[24px] md:text-[28px]">
               {L.howTitle}
             </h2>
-            <div className="max-w-[44rem]">
-              <OrbRoad steps={L.steps} />
-            </div>
+            <p className="max-w-[44rem] text-[17px] text-ink-2 md:text-[18px]">{L.example}</p>
           </div>
         </section>
 

@@ -143,7 +143,7 @@ export default async function LinkPage({ params }: { params: Promise<{ id: strin
                       const src = p.screenshot_path ? shots[p.screenshot_path] : null;
                       return (
                         <li key={p.id} className="flex gap-4 rounded-[var(--radius-inner)] bg-raised p-3">
-                          <a href={src ?? undefined} target="_blank" rel="noopener noreferrer" className="block h-32 w-[4.5rem] shrink-0 overflow-hidden rounded-[10px] bg-line">
+                          <a href={src ?? undefined} target="_blank" rel="noopener noreferrer" className="block h-32 w-[4.5rem] shrink-0 overflow-hidden rounded-[var(--radius-inner)] bg-line">
                             {src ? <img src={src} alt="Скрин сторис" className="h-full w-full object-cover" /> : <span className="grid h-full place-items-center text-[12px] text-ink-3">нет скрина</span>}
                           </a>
                           <div className="flex min-w-0 flex-1 flex-col gap-2">

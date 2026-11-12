@@ -7,12 +7,13 @@ export function SiteHeader({ lang, t, logoHref = "/" }: { lang: Lang; t: Dict; l
   return (
     <header className="px-edge flex h-16 items-center justify-between gap-4 md:h-20">
       <Logo href={logoHref} />
-      <div className="flex items-center gap-5">
-        <nav aria-label="Shaqyru" className="hidden items-center gap-5 font-[family-name:var(--font-ui)] text-[15px] sm:flex">
-          <Link href="/places" className="text-ink-2 transition-colors duration-150 hover:text-ink">
+      <div className="flex items-center gap-1 sm:gap-3">
+        {/* Visible on phones too: with two sections a header beats a tab bar. */}
+        <nav aria-label="Shaqyru" className="flex items-center font-[family-name:var(--font-ui)] text-[15px]">
+          <Link href="/" className="grid h-11 place-items-center px-2.5 text-ink-2 transition-colors duration-150 hover:text-ink">
             {t.nav.places}
           </Link>
-          <Link href="/join" className="text-ink-2 transition-colors duration-150 hover:text-ink">
+          <Link href="/join" className="grid h-11 place-items-center px-2.5 text-ink-2 transition-colors duration-150 hover:text-ink">
             {t.nav.club}
           </Link>
         </nav>
@@ -26,12 +27,12 @@ export function SiteFooter({ t }: { t: Dict }) {
   return (
     <footer className="px-edge mt-24 border-t border-line py-10 text-[14px] text-ink-3 md:mt-32">
       <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-        <Link href="/" className="inline-flex items-center gap-2.5 text-ink-2" aria-label="Shaqyru">
+        <Link href="/" className="inline-flex min-h-11 items-center gap-2.5 text-ink-2" aria-label="Shaqyru">
           <Mark size={18} />
           <span>{t.brandLine}</span>
         </Link>
-        <div className="flex flex-wrap gap-x-6 gap-y-3">
-          <Link href="/places" className="link-quiet">
+        <div className="flex flex-wrap gap-x-6 [&>a]:inline-flex [&>a]:min-h-11 [&>a]:items-center">
+          <Link href="/" className="link-quiet">
             {t.nav.places}
           </Link>
           <Link href="/join" className="link-quiet">
