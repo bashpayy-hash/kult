@@ -19,8 +19,8 @@
 | `/h/{токен}` | Хостес, без логина, с телефона |
 | `/admin` | Админка по паролю |
 
-Стек: Next.js 16 (App Router, Server Actions), Supabase (Postgres +
-Storage), Tailwind 4, Vercel. Шрифты как на iitaly.net: SF Pro / Inter
+Стек: Next.js 16 (App Router, Server Actions), Postgres (Netlify
+Database), Netlify Blobs для файлов, Tailwind 4, хостинг Netlify. Шрифты как на iitaly.net: SF Pro / Inter
 Tight и Onest, цифры — Old Standard TT. Визуальный язык — Design DNA пяти
 обложек годовых отчётов (`design/dna/annual-reports.json`); картинки из
 Higgsfield (`design/illustrations/plates-2026-11-12.json`): у каждой
@@ -30,77 +30,78 @@ Higgsfield (`design/illustrations/plates-2026-11-12.json`): у каждой
 
 ## 1. Развернуть
 
-### 1.1 Supabase
+Живой сайт: **https://shaqyru-7ol3.netlify.app** (Netlify, проект
+`shaqyru-7ol3` в команде владельца).
 
-1. Создайте проект на [supabase.com](https://supabase.com). Регион —
-   **Central EU (Frankfurt)**: ближайший к Алматы и к региону Vercel `fra1`
-   из `vercel.json`.
-2. **Project Settings → Database → Connection string** — понадобятся две
-   строки:
-   - **Transaction pooler** (порт `6543`) — для приложения, `DATABASE_URL`
-     на Vercel;
-   - **Session pooler** (порт `5432`) — для миграций.
-3. **Project Settings → API**: `Project URL` и ключ `service_role`.
-   Ключ секретный: только в переменные окружения сервера, никогда в
-   `NEXT_PUBLIC_…`.
-4. Примените миграции — любой из способов:
-   ```bash
-   npm install
-   ```
-   ```bash
-   DATABASE_URL="<session pooler, 5432>" npm run db:migrate
-   ```
-   или откройте **SQL Editor** и выполните по очереди
-   `supabase/migrations/0001_init.sql` и `0002_storage.sql`.
-5. Проверьте **Storage**: должны появиться бакеты `venue-photos`
-   (public) и `story-proofs` (private). Если их нет, создайте вручную с
-   теми же именами и настройками.
+### 1.1 Netlify
 
-Все таблицы закрыты RLS без политик: через публичный API Supabase их не
-прочитать. Приложение ходит в базу напрямую по `DATABASE_URL`.
+Всё уже настроено, ниже — что и где, чтобы повторить или поправить.
 
-### 1.2 Vercel
+- **База — Netlify Database** (Postgres). Её создаёт сам Netlify, потому
+  что в зависимостях есть `@netlify/database`; строку подключения
+  приложение берёт из `NETLIFY_DB_URL`. Миграции лежат в
+  `netlify/database/migrations/`, и каждый деплой применяет новые сам,
+  до публикации; ошибка в миграции останавливает деплой.
+  Уже применённую миграцию **нельзя менять или удалять** — только
+  добавлять новую со следующим номером.
+- **Файлы — Netlify Blobs** (хранилище `uploads`): фото и логотипы
+  заведений, скрины сторис. Сайт отдаёт их сам: фото по
+  `/uploads/venue-photos/…`, скрины только админке по `/admin/files/…`.
+- **Next.js** собирается адаптером `@netlify/plugin-nextjs` из
+  `netlify.toml`.
+- **Переменные** (Project configuration → Environment variables):
 
-1. **Add New → Project**, импортируйте этот репозиторий. Настройки сборки
-   по умолчанию.
-2. **Environment Variables** (Production и Preview):
+  | Переменная | Значение |
+  |---|---|
+  | `ADMIN_PASSWORD` | пароль админки, длинный |
+  | `SESSION_SECRET` | `openssl rand -hex 32` |
+  | `NEXT_PUBLIC_SITE_URL` | адрес сайта без слеша в конце: `https://shaqyru-7ol3.netlify.app` |
+  | `STORAGE_BACKEND` | `blobs` |
+  | `PILOT_THRESHOLD` | `2` (необязательно) |
+  | `NEXT_PUBLIC_OPERATOR_NAME` | юрлицо оператора данных для `/privacy` (необязательно) |
+  | `NEXT_PUBLIC_CONTACT_EMAIL` | почта для запросов по данным (необязательно) |
 
-   | Переменная | Значение |
-   |---|---|
-   | `DATABASE_URL` | Transaction pooler, порт 6543 |
-   | `SUPABASE_URL` | Project URL |
-   | `SUPABASE_SERVICE_ROLE_KEY` | ключ `service_role` |
-   | `ADMIN_PASSWORD` | пароль админки, длинный |
-   | `SESSION_SECRET` | `openssl rand -hex 32` |
-   | `NEXT_PUBLIC_SITE_URL` | адрес сайта без слеша в конце, например `https://shaqyru.vercel.app` |
-   | `PILOT_THRESHOLD` | `2` (необязательно) |
-   | `NEXT_PUBLIC_OPERATOR_NAME` | юрлицо оператора данных для `/privacy` (необязательно) |
-   | `NEXT_PUBLIC_CONTACT_EMAIL` | почта для запросов по данным (необязательно) |
+  После смены переменной нужен новый деплой: значения подставляются при
+  сборке. Смена `ADMIN_PASSWORD` или `SESSION_SECRET` разлогинивает всех.
+- **Доступ**: основной адрес открыт всем, тестовые деплои — только после
+  входа в Netlify.
+- **Деплой**: загрузка кода через Netlify MCP или, если подключить
+  репозиторий в Netlify (**Project configuration → Build & deploy →
+  Link repository**), — сам на каждый пуш.
 
-3. **Deploy**. Откройте `/admin/login` и войдите с `ADMIN_PASSWORD`.
+**Демо-данные.** Миграция `0005_demo_data.sql` заполнила пустую базу
+выдуманными заведениями (Nomad Bar, Lotus Spa, Sora Bistro, Mono Coffee,
+Atelier Nails, Pilates Loft), двумя участницами, бронями и визитами. Перед
+запуском с настоящими заведениями — новая миграция, которая удаляет эти
+строки по их id (сам файл `0005` не трогать). Демо-ссылка хостес:
+`/h/demo-host-token-nomad-bar-0001`.
 
-Смена `ADMIN_PASSWORD` или `SESSION_SECRET` разлогинивает всех.
+### 1.2 Другой хостинг
+
+Подойдёт любой Postgres 15+ и любой хостинг Next.js: `DATABASE_URL`
+вместо `NETLIFY_DB_URL`, миграции — `npm run db:migrate` (строка
+подключения без пулера, порт 5432). Файлы — Supabase Storage:
+`SUPABASE_URL` и ключ `service_role` (только на сервере, никогда в
+`NEXT_PUBLIC_…`), бакеты `venue-photos` (public) и `story-proofs` (private)
+создаст миграция `0002_storage.sql`. Для Vercel в репозитории есть
+`vercel.json` (регион `fra1`, Франкфурт).
 
 ### 1.3 Локально
 
 ```bash
 cp .env.example .env.local
 ```
-Заполните `.env.local` (можно указать локальный Postgres), затем:
+Заполните `.env.local` (`DATABASE_URL` — локальный Postgres), затем:
 ```bash
 npm run db:migrate
 ```
 ```bash
-npm run db:seed
-```
-```bash
 npm run dev
 ```
-`db:seed` заливает демо-данные (две участницы, два заведения, визиты,
-брони) и **стирает всё остальное** — только для локальной базы. Демо-ссылка
-хостес: `/h/demo-host-token-nomad-bar-0001`.
+`db:migrate` применяет все миграции, включая демо-данные. `npm run db:seed`
+стирает все строки и заливает демо заново — **только для локальной базы**.
 
-Без `SUPABASE_URL` в режиме разработки картинки сохраняются в `.uploads/`.
+Без хранилища в режиме разработки картинки сохраняются в `.uploads/`.
 Для локального `next start` добавьте `STORAGE_LOCAL=1`.
 
 Проверки перед PR:
@@ -201,12 +202,13 @@ npm run typecheck && npm run lint && npm run build
 
 ## Перед запуском
 
-- [ ] Длинные `ADMIN_PASSWORD` и `SESSION_SECRET` на Vercel.
+- [ ] Длинные `ADMIN_PASSWORD` и `SESSION_SECRET` в Netlify.
+- [ ] Миграция, удаляющая демо-заведения и демо-участниц.
 - [ ] `NEXT_PUBLIC_OPERATOR_NAME` и `NEXT_PUBLIC_CONTACT_EMAIL` — текст
       `/privacy` ссылается на них. Сам текст согласия стоит показать
       юристу.
 - [ ] Казахские тексты интерфейса (`src/lib/i18n/kk.ts`) вычитать носителю.
-- [ ] `npm run db:seed` на проде **не запускать**.
+- [ ] `npm run db:seed` на проде **не запускать**: он стирает все строки.
 
 ## Не сделано сознательно
 

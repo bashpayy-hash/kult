@@ -16,18 +16,33 @@ Shaqyru (шақыру — «приглашение») — пилот закры�
 ## 2. Адреса и окружение
 - Репозиторий: `bashpayy-hash/kult`, ветка разработки
   `claude/tender-maxwell-atuvs1`.
-- Живого деплоя ещё нет: Supabase и Vercel заводит владелец по README.
+- **Живой сайт: https://shaqyru-7ol3.netlify.app** — Netlify, проект
+  `shaqyru-7ol3` (id `f6fb0fea-c789-4eae-9e92-dd054cd11444`), команда
+  `bashpayy`. Имя `shaqyru` на Netlify было занято. Основной адрес
+  открыт, тестовые деплои — за входом в Netlify.
+- Деплой из сессии: Netlify MCP `deploy-site` → команда
+  `npx @netlify/mcp … --proxy-path …`. Запускать из чистой копии коммита
+  (`git archive HEAD | tar -x -C <папка>`), чтобы не уехал `.env.local`.
+  В окружении сессии `kult` разрешены `netlify-mcp.netlify.app` и
+  `shaqyru-7ol3.netlify.app`; `api.netlify.com` закрыт.
+- Пароль админки — в переменной `ADMIN_PASSWORD` в Netlify (Project
+  configuration → Environment variables); владельцу передан в чате.
+  Пометка «секрет» и ограничение областей на этом тарифе дают 403 —
+  переменные обычные, scope all.
 - Сборка для проверок: `npm run typecheck && npm run lint && npm run build`.
 - Локальная база: Postgres 16 в контейнере сессии
-  (`/usr/lib/postgresql/16/bin`), миграции `npm run db:migrate`,
-  демо-данные `npm run db:seed`.
+  (`/usr/lib/postgresql/16/bin`, порт 54329), миграции
+  `npm run db:migrate`, сброс демо-данных `npm run db:seed`.
 
 ## 3. Стек
 Next.js 16.4 (App Router, Server Actions, `proxy.ts` вместо middleware),
 React 19, Tailwind 4 (токены в `src/app/tokens.css`), postgres.js по
-`DATABASE_URL`, Supabase Storage через `@supabase/supabase-js`, шрифты
-`@fontsource-variable` (Inter Tight, Onest) + `public/fonts/*-tenge-v1.woff2`,
-Vercel `fra1`. Сеть сессии: окружение `kult` (iitaly.net и CDN Higgsfield
+`DATABASE_URL` или `NETLIFY_DB_URL` (Netlify Database, миграции в
+`netlify/database/migrations/` применяет деплой), файлы в Netlify Blobs
+(`STORAGE_BACKEND=blobs`; Supabase Storage и локальная папка — запасные
+варианты в `src/lib/storage.ts`), адаптер `@netlify/plugin-nextjs`
+в `netlify.toml`, шрифты
+`@fontsource-variable` (Inter Tight, Onest) + `public/fonts/*-tenge-v1.woff2`. Сеть сессии: окружение `kult` (iitaly.net и CDN Higgsfield
 разрешены).
 
 ## 4. Карта страниц
@@ -43,6 +58,9 @@ Vercel `fra1`. Сеть сессии: окружение `kult` (iitaly.net и C
 | `/admin/*` | дашборд, заявки, участницы, заведения, ссылки, CSV |
 
 ## 5. Что сделано
+- 12 ноября, деплой: сайт на Netlify. База — Netlify Database (все пять
+  миграций применены деплоем), загрузки — Netlify Blobs, демо-данные —
+  миграция `0005_demo_data.sql` (заполняет только пустую базу).
 - 12 ноября, седьмая правка (design-dna): DNA пяти обложек с замером цветов
   (`design/dna/`), печатная геометрия без радиусов и теней, палитра Heublein,
   дидона для цифр, главная как разворот отчёта, новые картинки Higgsfield
@@ -68,7 +86,13 @@ Vercel `fra1`. Сеть сессии: окружение `kult` (iitaly.net и C
   категорий заведений).
 - 12 ноября: план и схема БД; всё приложение по брифу; README.
 
-## 6. Что работает (проверено локально, Postgres 16 + `next start`)
+## 6. Что работает
+На живом сайте 12 ноября: все страницы 200, каталог из базы, бронь по
+ссылке участницы (стол назначен, бронь отменена из админки), вход в
+админку с паролем Netlify, загрузка логотипа в Blobs и его удаление,
+хостес видит брони. 390 и 1440 без горизонтального скролла.
+
+Локально (Postgres 16 + `next start`):
 - Заявки: валидация (18+, согласие), сохранение значений после ошибки, ru/kk.
 - Бронь по ссылке; клики пишутся, `curl` и превью ссылок помечены ботами,
   Instagram in-app браузер считается человеком.
@@ -79,8 +103,14 @@ Vercel `fra1`. Сеть сессии: окружение `kult` (iitaly.net и C
 - Метрики `pair_stats` сверены руками на демо-данных.
 
 ## 7. Что не проверено или требует внимания
-- Не проверено на настоящем Supabase и Vercel (нет доступа из сессии):
-  pooler, Storage, подписанные ссылки.
+- Демо-данные живут в базе продакшена. Перед запуском — новая миграция,
+  удаляющая их по id; `0005` не трогать (Netlify проверяет контрольные
+  суммы применённых миграций).
+- CDN Netlify кэширует фото заведений на год (ключи с UUID не
+  повторяются): удалённое фото ещё доступно по старой ссылке, но нигде не
+  показывается. Скрины сторис не кэшируются.
+- Supabase и Vercel как хостинг не проверялись: путь описан в README как
+  запасной.
 - Казахские тексты — вычитать носителю.
 - Файлы дизайна владельца (`DESIGN (47).md`, `tokens (45).json`,
   `variables (45).css`, `theme (44).css`) в сессию не попали — свести с
@@ -91,7 +121,8 @@ Vercel `fra1`. Сеть сессии: окружение `kult` (iitaly.net и C
   («я от {имя}»).
 
 ## 8. Что делать дальше
-1. Владелец разворачивает по README; проверить живой сайт на 390 и 1440.
+1. Подключить репозиторий к проекту Netlify (Link repository), чтобы
+   деплой шёл сам на каждый пуш, или выкладывать через MCP.
 2. Получить у заведений настоящие фото и логотипы (чек-лист в админке).
 3. Из приложения друга не сделаны: события, карта, «Рядом со мной»,
    «Самый быстрый ответ».
