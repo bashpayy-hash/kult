@@ -190,9 +190,15 @@ function readVenue(fd: FormData) {
   const name = str(fd, "name", 120);
   const category = str(fd, "category", 20) as Category;
   const avg = intField(fd, "avg_check", "Средний чек", { min: 0 });
+  const hold = intField(fd, "hold_minutes", "Стол занят на", { min: 30, max: 480 });
+  const slot = Number(str(fd, "slot_minutes", 4));
+  const openTime = str(fd, "open_time", 5) || "12:00";
+  const closeTime = str(fd, "close_time", 5) || "23:00";
   const status = str(fd, "status", 20) as Status;
   if (!name) return { bad: { error: "Укажите название." } };
   if (isErr(avg)) return { bad: avg };
+  if (isErr(hold)) return { bad: hold };
+  if (!/^([01]\d|2[0-3]):[0-5]\d$/.test(openTime) || !/^([01]\d|2[0-3]):[0-5]\d$/.test(closeTime)) return { bad: { error: "Часы работы: формат ЧЧ:ММ." } };
   return {
     name,
     slugInput: slugify(str(fd, "slug", 60)),
@@ -207,6 +213,12 @@ function readVenue(fd: FormData) {
     avg_check: avg,
     status: STATUSES.includes(status) ? status : "active",
     notes: strOrNull(fd, "notes", 2000),
+    is_listed: bool(fd, "is_listed"),
+    featured: bool(fd, "featured"),
+    open_time: openTime,
+    close_time: closeTime,
+    slot_minutes: [15, 30, 60].includes(slot) ? slot : 30,
+    hold_minutes: hold ?? 120,
   };
 }
 
@@ -218,9 +230,11 @@ export async function createVenue(_prev: FormState, fd: FormData): Promise<FormS
   try {
     const slug = await freeSlug("venues", v.slugInput || slugify(v.name));
     [{ id }] = await db()<{ id: string }[]>`
-      insert into venues (slug, name, category, description, description_kk, address, city, instagram, contact_name, phone, avg_check, status, notes, host_token)
+      insert into venues (slug, name, category, description, description_kk, address, city, instagram, contact_name, phone, avg_check, status, notes, host_token,
+                          is_listed, featured, open_time, close_time, slot_minutes, hold_minutes)
       values (${slug}, ${v.name}, ${v.category}, ${v.description}, ${v.description_kk}, ${v.address}, ${v.city}, ${v.instagram},
-              ${v.contact_name}, ${v.phone}, ${v.avg_check}, ${v.status}, ${v.notes}, ${newHostToken()})
+              ${v.contact_name}, ${v.phone}, ${v.avg_check}, ${v.status}, ${v.notes}, ${newHostToken()},
+              ${v.is_listed}, ${v.featured}, ${v.open_time}, ${v.close_time}, ${v.slot_minutes}, ${v.hold_minutes})
       returning id`;
   } catch (e) {
     return dbError(e);
@@ -240,7 +254,9 @@ export async function updateVenue(_prev: FormState, fd: FormData): Promise<FormS
     await db()`
       update venues set slug = ${v.slugInput}, name = ${v.name}, category = ${v.category}, description = ${v.description},
         description_kk = ${v.description_kk}, address = ${v.address}, city = ${v.city}, instagram = ${v.instagram},
-        contact_name = ${v.contact_name}, phone = ${v.phone}, avg_check = ${v.avg_check}, status = ${v.status}, notes = ${v.notes}
+        contact_name = ${v.contact_name}, phone = ${v.phone}, avg_check = ${v.avg_check}, status = ${v.status}, notes = ${v.notes},
+        is_listed = ${v.is_listed}, featured = ${v.featured}, open_time = ${v.open_time}, close_time = ${v.close_time},
+        slot_minutes = ${v.slot_minutes}, hold_minutes = ${v.hold_minutes}
       where id = ${id}`;
   } catch (e) {
     return dbError(e);
@@ -556,4 +572,73 @@ export async function deleteGuestVisit(fd: FormData): Promise<void> {
     if (gv?.booking_id) await tx`update guest_bookings set status = 'new' where id = ${gv.booking_id}`;
   });
   revalidatePath("/admin", "layout");
+}
+
+// ── Floor plan ───────────────────────────────────────────────────────────
+
+type PlanPayload = {
+  halls: { id: string; name: string; name_kk: string | null; width: number; height: number }[];
+  items: { id: string; hall_id: string; kind: string; label: string; shape: string; x: number; y: number; w: number; h: number; seats_min: number; seats_max: number }[];
+};
+
+const num = (x: unknown, lo: number, hi: number) => {
+  const n = Number(x);
+  return Number.isFinite(n) ? Math.min(hi, Math.max(lo, Math.round(n * 100) / 100)) : lo;
+};
+
+/** Replaces a venue's halls and tables with what the editor sends. */
+export async function savePlan(_prev: FormState, fd: FormData): Promise<FormState> {
+  await requireAdmin();
+  const venueId = str(fd, "venue_id", 40);
+  if (!isUuid(venueId)) return { error: "Нет заведения." };
+  let plan: PlanPayload;
+  try {
+    plan = JSON.parse(String(fd.get("plan") || "{}"));
+  } catch {
+    return { error: "План не прочитался. Обновите страницу." };
+  }
+  const halls = Array.isArray(plan.halls) ? plan.halls.slice(0, 10) : [];
+  const hallIds = new Set(halls.map((h) => h.id));
+  if (!halls.length) return { error: "Нужен хотя бы один зал." };
+  if (halls.some((h) => !isUuid(h.id) || !String(h.name || "").trim())) return { error: "У каждого зала должно быть название." };
+  const items = (Array.isArray(plan.items) ? plan.items.slice(0, 300) : []).filter((i) => isUuid(i.id) && hallIds.has(i.hall_id));
+
+  try {
+    await db().begin(async (tx) => {
+      const keepItems = items.map((i) => i.id);
+      const keepHalls = halls.map((h) => h.id);
+      await tx`delete from venue_tables where venue_id = ${venueId} and not (id = any(${keepItems}::uuid[]))`;
+      await tx`delete from venue_halls where venue_id = ${venueId} and not (id = any(${keepHalls}::uuid[]))`;
+      for (const [i, h] of halls.entries()) {
+        const width = num(h.width, 20, 400), height = num(h.height, 20, 400);
+        await tx`
+          insert into venue_halls (id, venue_id, name, name_kk, width, height, sort)
+          values (${h.id}, ${venueId}, ${String(h.name).trim().slice(0, 60)}, ${String(h.name_kk || "").trim().slice(0, 60) || null},
+                  ${Math.round(width)}, ${Math.round(height)}, ${i})
+          on conflict (id) do update set name = excluded.name, name_kk = excluded.name_kk, width = excluded.width,
+            height = excluded.height, sort = excluded.sort
+          where venue_halls.venue_id = ${venueId}`;
+      }
+      for (const it of items) {
+        const hall = halls.find((h) => h.id === it.hall_id)!;
+        const kind = it.kind === "decor" ? "decor" : "table";
+        const shape = it.shape === "round" ? "round" : "rect";
+        const w = num(it.w, 2, hall.width), h = num(it.h, 2, hall.height);
+        const x = num(it.x, 0, hall.width - w), y = num(it.y, 0, hall.height - h);
+        const smin = Math.round(num(it.seats_min, 1, 50)), smax = Math.max(smin, Math.round(num(it.seats_max, 1, 50)));
+        await tx`
+          insert into venue_tables (id, venue_id, hall_id, kind, label, shape, x, y, w, h, seats_min, seats_max)
+          values (${it.id}, ${venueId}, ${it.hall_id}, ${kind}, ${String(it.label || "").trim().slice(0, 24)}, ${shape},
+                  ${x}, ${y}, ${w}, ${h}, ${smin}, ${smax})
+          on conflict (id) do update set hall_id = excluded.hall_id, kind = excluded.kind, label = excluded.label,
+            shape = excluded.shape, x = excluded.x, y = excluded.y, w = excluded.w, h = excluded.h,
+            seats_min = excluded.seats_min, seats_max = excluded.seats_max, active = true
+          where venue_tables.venue_id = ${venueId}`;
+      }
+    });
+  } catch (e) {
+    return dbError(e);
+  }
+  revalidatePath(`/admin/venues/${venueId}`);
+  return { ok: true, message: "План сохранён" };
 }

@@ -41,14 +41,19 @@ export default async function HostPage({ params, searchParams }: Props) {
   const [bookings, links, phraseGuests, memberVisits] = await Promise.all([
     sql<HostBooking[]>`
       select b.id, b.guest_name, b.phone, b.booking_time, b.party_size, b.comment, b.status,
-             m.name as member_name, m.slug as member_slug,
+             m.name as member_name, m.slug as member_slug, vt.label as table_label,
              gv.guests_count, gv.check_amount
       from guest_bookings b
-      join tracking_links tl on tl.id = b.tracking_link_id
-      join members m on m.id = tl.member_id
+      left join tracking_links tl on tl.id = b.tracking_link_id
+      left join members m on m.id = tl.member_id
+      left join venue_tables vt on vt.id = b.table_id
       left join guest_visits gv on gv.booking_id = b.id
-      where tl.venue_id = ${venue.id} and b.booking_date = ${date} and b.status <> 'cancelled'
-      order by b.booking_time, b.created_at`,
+      -- The hostess's «day» runs 06:00 to 06:00: a 01:00 bar booking belongs
+      -- to the evening before.
+      where b.venue_id = ${venue.id} and b.status <> 'cancelled'
+        and b.starts_at >= ${date}::date + time '06:00'
+        and b.starts_at <  ${date}::date + 1 + time '06:00'
+      order by b.starts_at, b.created_at`,
     sql<HostLink[]>`
       select tl.id, m.name as member_name, m.slug as member_slug, o.member_reward
       from tracking_links tl

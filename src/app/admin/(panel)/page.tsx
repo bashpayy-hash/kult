@@ -7,9 +7,16 @@ import { Empty, PageHead, Person, Stat } from "../_parts";
 
 export default async function Dashboard() {
   const threshold = pilotThreshold();
-  const rows = await db()<PairStats[]>`
-    select * from pair_stats
-    order by guests_per_visit desc nulls last, guests desc, member_name`;
+  const [rows, [catalog]] = await Promise.all([
+    db()<PairStats[]>`
+      select * from pair_stats
+      order by guests_per_visit desc nulls last, guests desc, member_name`,
+    // Catalog bookings (no member link) are outside the pilot metric; shown apart.
+    db()<{ bookings: number; guests: number; revenue: number }[]>`
+      select (select count(*) from guest_bookings where source = 'catalog' and status <> 'cancelled')::int as bookings,
+             coalesce(sum(gv.guests_count), 0)::int as guests, coalesce(sum(gv.check_amount), 0)::bigint as revenue
+      from guest_visits gv where gv.tracking_link_id is null`,
+  ]);
 
   const sum = (k: keyof PairStats) => rows.reduce((s, r) => s + Number(r[k] || 0), 0);
   const visits = sum("member_visits"), guests = sum("guests"), views = sum("views");
@@ -40,6 +47,10 @@ export default async function Dashboard() {
           hint={`${formatNumber(views)} просмотров · ${formatNumber(sum("clicks"))} кликов · ${formatNumber(sum("bookings"))} броней`}
         />
       </div>
+
+      <p className="mt-3 px-1 text-[14px] text-ink-3">
+        Из каталога, без ссылок участниц: {catalog.bookings} броней · {catalog.guests} гостей · {formatMoney(catalog.revenue)}. В метрику пилота не входит.
+      </p>
 
       <h2 className="mt-12 text-[24px] md:text-[28px]">Пары участница и заведение</h2>
       {rows.length === 0 ? (

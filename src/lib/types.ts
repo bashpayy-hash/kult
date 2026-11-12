@@ -36,6 +36,12 @@ export type Venue = {
   status: Status;
   notes: string | null;
   application_id: string | null;
+  is_listed: boolean;
+  featured: boolean;
+  open_time: string;
+  close_time: string;
+  slot_minutes: number;
+  hold_minutes: number;
   created_at: Date;
 };
 

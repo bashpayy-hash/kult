@@ -8,6 +8,25 @@ export function almatyToday(offsetDays = 0): string {
   return new Intl.DateTimeFormat("en-CA", { timeZone: TZ, year: "numeric", month: "2-digit", day: "2-digit" }).format(d);
 }
 
+/** Minutes since midnight now, in Almaty. */
+export function almatyNowMinutes(): number {
+  const parts = new Intl.DateTimeFormat("en-GB", { timeZone: TZ, hour: "2-digit", minute: "2-digit", hourCycle: "h23" }).formatToParts(new Date());
+  const h = Number(parts.find((p) => p.type === "hour")?.value ?? 0);
+  const m = Number(parts.find((p) => p.type === "minute")?.value ?? 0);
+  return h * 60 + m;
+}
+
+/**
+ * Earliest bookable service-day minute for `date`: past days → Infinity,
+ * today → now + lead time, later → 0.
+ */
+export function earliestStart(date: string, lead: number): number {
+  const today = almatyToday();
+  if (date < today) return Number.POSITIVE_INFINITY;
+  if (date === today) return almatyNowMinutes() + lead;
+  return 0;
+}
+
 export function shiftDate(iso: string, days: number): string {
   const d = new Date(iso + "T12:00:00Z");
   d.setUTCDate(d.getUTCDate() + days);

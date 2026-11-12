@@ -5,7 +5,9 @@ import { db } from "@/lib/db";
 import { dicts } from "@/lib/i18n/dicts";
 import { isLang, LANG_COOKIE, type Lang } from "@/lib/i18n";
 import { bool, int, isUuid, str, strOrNull, values } from "@/lib/forms";
-import { almatyToday, isIsoDate, normalizePhone, instagramHandle, shiftDate } from "@/lib/format";
+import { almatyToday, earliestStart, isIsoDate, normalizePhone, instagramHandle, shiftDate } from "@/lib/format";
+import { fits, isFree, LEAD_MINUTES, pickTable, slotList, toCalendar, type PlanItem } from "@/lib/booking";
+import { loadPlan, loadTaken } from "@/lib/venueData";
 import { getVisitor } from "@/lib/visitor";
 import { CATEGORIES, type Category, type FormState } from "@/lib/types";
 
@@ -94,25 +96,34 @@ export async function submitPartnerApplication(_prev: FormState, fd: FormData): 
   return { ok: true };
 }
 
-// ── Booking from /<member>/<venue> ───────────────────────────────────────
+// ── Booking: from the catalog (/v/<venue>) or a member link (/<member>/<venue>) ──
 
-const BOOKING_FIELDS = ["guest_name", "phone", "booking_date", "booking_time", "party_size", "comment", "consent"];
+const BOOKING_FIELDS = ["guest_name", "phone", "comment", "consent"];
 const MAX_BOOKINGS_PER_HOUR = 5;
 
+type VenueRow = { id: string; open_time: string; close_time: string; slot_minutes: number; hold_minutes: number };
+
+/**
+ * The browser already greys out busy slots and tables; everything is checked
+ * again here, and the database's exclusion constraint is the last word when
+ * two guests take the same table at the same moment.
+ */
 export async function submitBooking(_prev: FormState, fd: FormData): Promise<FormState> {
   const lang = langOf(fd);
   const t = dicts[lang];
   if (str(fd, "website")) return { ok: true };
 
-  const linkId = str(fd, "link_id", 40);
-  if (!isUuid(linkId)) return { error: t.errors.generic };
+  const venueId = str(fd, "venue_id", 40);
+  const linkId = str(fd, "link_id", 40) || null;
+  if (!isUuid(venueId) || (linkId && !isUuid(linkId))) return { error: t.errors.generic };
 
   const guestName = str(fd, "guest_name", 80);
   const phoneRaw = str(fd, "phone", 40);
   const phone = normalizePhone(phoneRaw);
-  const date = str(fd, "booking_date", 10);
-  const time = str(fd, "booking_time", 5);
+  const date = str(fd, "date", 10);
+  const slot = int(fd, "slot");
   const party = int(fd, "party_size");
+  const tableId = str(fd, "table_id", 40) || null;
   const comment = strOrNull(fd, "comment", 500);
   const consent = bool(fd, "consent");
 
@@ -121,36 +132,70 @@ export async function submitBooking(_prev: FormState, fd: FormData): Promise<For
   if (!guestName) fe.guest_name = t.errors.required;
   if (!phoneRaw) fe.phone = t.errors.required;
   else if (!phone) fe.phone = t.errors.phone;
-  if (!isIsoDate(date) || date < today || date > shiftDate(today, 90)) fe.booking_date = t.errors.date;
-  if (!/^([01]\d|2[0-3]):[0-5]\d$/.test(time)) fe.booking_time = t.errors.time;
-  if (party === null || Number.isNaN(party) || party < 1 || party > 30) fe.party_size = t.errors.party;
   if (!consent) fe.consent = t.errors.consent;
   if (Object.keys(fe).length) return { fieldErrors: fe, error: t.errors.form, values: values(fd, BOOKING_FIELDS) };
+  const keep = values(fd, BOOKING_FIELDS);
+
+  if (!isIsoDate(date) || date < today || date > shiftDate(today, 90)) return { error: t.errors.date, values: keep };
+  if (party === null || Number.isNaN(party) || party < 1 || party > 30) return { error: t.errors.party, values: keep };
+  if (slot === null || Number.isNaN(slot)) return { error: t.errors.slot, values: keep };
+  if (tableId && !isUuid(tableId)) return { error: t.errors.generic, values: keep };
 
   const sql = db();
   const visitor = await getVisitor();
   try {
-    const [link] = await sql<{ id: string }[]>`
-      select tl.id from tracking_links tl
-      join members m on m.id = tl.member_id
-      join venues v on v.id = tl.venue_id
-      where tl.id = ${linkId} and tl.active and m.status = 'active' and v.status = 'active'`;
-    if (!link) return { error: t.invite.inactiveTitle };
+    const [venue] = await sql<VenueRow[]>`
+      select id, open_time::text, close_time::text, slot_minutes, hold_minutes
+      from venues where id = ${venueId} and status = 'active'`;
+    if (!venue) return { error: t.invite.inactiveTitle };
+
+    if (linkId) {
+      const [link] = await sql`
+        select 1 from tracking_links tl join members m on m.id = tl.member_id
+        where tl.id = ${linkId} and tl.venue_id = ${venueId} and tl.active and m.status = 'active'`;
+      if (!link) return { error: t.invite.inactiveTitle };
+    }
+
+    if (!slotList(venue).includes(slot) || slot < earliestStart(date, LEAD_MINUTES)) {
+      return { error: t.errors.slot, values: keep };
+    }
 
     const [{ n }] = await sql<{ n: number }[]>`
       select count(*)::int as n from guest_bookings
-      where tracking_link_id = ${linkId} and visitor_hash = ${visitor.hash}
-        and created_at > now() - interval '1 hour'`;
-    if (n >= MAX_BOOKINGS_PER_HOUR) return { error: t.errors.tooMany, values: values(fd, BOOKING_FIELDS) };
+      where venue_id = ${venueId} and visitor_hash = ${visitor.hash} and created_at > now() - interval '1 hour'`;
+    if (n >= MAX_BOOKINGS_PER_HOUR) return { error: t.errors.tooMany, values: keep };
 
+    // Venues with a floor plan seat every booking at a table.
+    const tables = (await loadPlan(venueId)).items.filter((i) => i.kind === "table");
+    let table: PlanItem | null = null;
+    if (tables.length) {
+      const taken = await loadTaken(venueId, date);
+      if (tableId) {
+        table = tables.find((x) => x.id === tableId) ?? null;
+        if (!table) return { error: t.errors.generic, values: keep };
+        if (!fits(table, party)) return { error: t.errors.tableSize(party), values: keep };
+        if (!isFree(table.id, slot, venue.hold_minutes, taken)) return { error: t.errors.tableBusy, values: keep };
+      } else {
+        table = pickTable(tables, party, slot, venue.hold_minutes, taken);
+        if (!table) return { error: t.errors.noTables(party), values: keep };
+      }
+    }
+
+    const at = toCalendar(date, slot);
     await sql`
       insert into guest_bookings
-        (tracking_link_id, guest_name, phone, booking_date, booking_time, party_size, comment, consent, visitor_hash, lang)
+        (venue_id, tracking_link_id, source, table_id, hold_minutes, guest_name, phone,
+         booking_date, booking_time, party_size, comment, consent, visitor_hash, lang)
       values
-        (${linkId}, ${guestName}, ${phone}, ${date}, ${time}, ${party}, ${comment}, true, ${visitor.hash}, ${lang})`;
+        (${venueId}, ${linkId}, ${linkId ? "link" : "catalog"}, ${table?.id ?? null}, ${venue.hold_minutes}, ${guestName}, ${phone},
+         ${at.date}, ${at.time}, ${party}, ${comment}, true, ${visitor.hash}, ${lang})`;
+    // The calendar date, not the service day: a 00:30 table is «14 ноября, 00:30».
+    return { ok: true, values: { date: at.date, time: at.time, table: table?.label ?? "", party_size: String(party) } };
   } catch (e) {
+    if (typeof e === "object" && e && "code" in e && (e as { code: string }).code === "23P01") {
+      return { error: t.errors.tableBusy, values: keep };
+    }
     console.error("booking failed", e);
-    return { error: t.errors.generic, values: values(fd, BOOKING_FIELDS) };
+    return { error: t.errors.generic, values: keep };
   }
-  return { ok: true, values: { booking_date: date, booking_time: time, party_size: String(party) } };
 }

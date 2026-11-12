@@ -51,16 +51,15 @@ export async function markArrived(_prev: FormState, fd: FormData): Promise<FormS
 
   const sql = db();
   const ok = await sql.begin(async (tx) => {
-    const [b] = await tx<{ id: string; tracking_link_id: string; booking_date: string }[]>`
+    const [b] = await tx<{ id: string; tracking_link_id: string | null; booking_date: string }[]>`
       select b.id, b.tracking_link_id, b.booking_date from guest_bookings b
-      join tracking_links tl on tl.id = b.tracking_link_id
-      where b.id = ${bookingId} and tl.venue_id = ${venue.id}
-      for update of b`;
+      where b.id = ${bookingId} and b.venue_id = ${venue.id}
+      for update`;
     if (!b) return false;
     await tx`update guest_bookings set status = 'arrived' where id = ${b.id}`;
     await tx`
-      insert into guest_visits (tracking_link_id, booking_id, source, visit_date, guests_count, check_amount)
-      values (${b.tracking_link_id}, ${b.id}, 'booking', ${b.booking_date}, ${guests}, ${amount})
+      insert into guest_visits (tracking_link_id, venue_id, booking_id, source, visit_date, guests_count, check_amount)
+      values (${b.tracking_link_id}, ${venue.id}, ${b.id}, 'booking', ${b.booking_date}, ${guests}, ${amount})
       on conflict (booking_id) do update
         set guests_count = excluded.guests_count, check_amount = excluded.check_amount`;
     return true;
@@ -77,8 +76,7 @@ export async function markNoShow(fd: FormData): Promise<void> {
   const sql = db();
   await sql.begin(async (tx) => {
     const [b] = await tx<{ id: string }[]>`
-      select b.id from guest_bookings b join tracking_links tl on tl.id = b.tracking_link_id
-      where b.id = ${bookingId} and tl.venue_id = ${venue.id}`;
+      select b.id from guest_bookings b where b.id = ${bookingId} and b.venue_id = ${venue.id}`;
     if (!b) return;
     await tx`delete from guest_visits where booking_id = ${b.id}`;
     await tx`update guest_bookings set status = 'no_show' where id = ${b.id}`;
@@ -101,8 +99,8 @@ export async function addPhraseGuest(_prev: FormState, fd: FormData): Promise<Fo
   if (Object.keys(fe).length) return { fieldErrors: fe };
 
   const res = await db()`
-    insert into guest_visits (tracking_link_id, source, visit_date, guests_count, check_amount)
-    select tl.id, 'phrase', ${date}, ${g.guests}, ${g.amount}
+    insert into guest_visits (tracking_link_id, venue_id, source, visit_date, guests_count, check_amount)
+    select tl.id, tl.venue_id, 'phrase', ${date}, ${g.guests}, ${g.amount}
     from tracking_links tl where tl.id = ${linkId} and tl.venue_id = ${venue.id}`;
   if (!res.count) return { error: t.errors.generic };
   revalidatePath(`/h/${venue.token}`);

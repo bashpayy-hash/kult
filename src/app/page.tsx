@@ -1,20 +1,37 @@
+import Link from "next/link";
 import { getDict } from "@/lib/i18n";
 import { SiteFooter, SiteHeader } from "@/components/SiteChrome";
-import { OrbRoad } from "@/components/OrbRoad";
-import { MemberApplicationForm, PartnerApplicationForm } from "./_landing/ApplicationForms";
+import { Rail, VenueCard, VenueTile } from "@/components/VenueCard";
+import { listedCategories, listVenues } from "@/lib/venueData";
+import { CATEGORIES, type Category } from "@/lib/types";
 
-export default async function Landing() {
+export const dynamic = "force-dynamic";
+
+/**
+ * «Обзор» — the main screen, after the owner's friend's booking app
+ * (12 Nov 2026): popular places, places worth a visit by category, special
+ * offers. The first screen keeps the iitaly.net composition.
+ */
+export default async function Overview({ searchParams }: { searchParams: Promise<{ c?: string }> }) {
   const { lang, t } = await getDict();
   const L = t.landing;
+  const C = t.catalog;
+  const { c } = await searchParams;
+  const cats = await listedCategories();
+  const category = CATEGORIES.includes(c as Category) && cats.includes(c!) ? (c as Category) : (cats[0] as Category | undefined);
+  const [featured, worth, offers] = await Promise.all([
+    listVenues({ featured: true, limit: 12 }),
+    category ? listVenues({ category, limit: 12 }) : Promise.resolve([]),
+    listVenues({ withPerk: true, limit: 12 }),
+  ]);
+
   return (
     <>
       <SiteHeader lang={lang} t={t} />
       <main>
-        {/* The composition of the owner's iitaly.net (12 Nov 2026): a full-bleed
-            scene with the headline card over its calm right half; on a phone the
-            scene sits on top and the text follows. One block, one action. */}
+        {/* iitaly.net composition: full-bleed scene, headline card on the calm half. */}
         <section className="relative">
-          <div className="relative h-[62vw] max-h-[520px] min-h-[240px] overflow-hidden bg-tile lg:h-[min(calc(100dvh-80px),760px)] lg:max-h-none lg:min-h-[600px]">
+          <div className="relative h-[62vw] max-h-[520px] min-h-[240px] overflow-hidden bg-tile lg:h-[min(calc(100dvh-80px),720px)] lg:max-h-none lg:min-h-[560px]">
             <img
               src="/illustrations/scenes/hero-1600.webp"
               srcSet="/illustrations/scenes/hero-640.webp 640w, /illustrations/scenes/hero-1024.webp 1024w, /illustrations/scenes/hero-1600.webp 1600w, /illustrations/scenes/hero-2400.webp 2400w"
@@ -29,58 +46,93 @@ export default async function Landing() {
               <h1 className="text-[38px] sm:text-[44px] lg:text-[48px]">
                 {L.title} <span className="block text-accent">{L.titleAccent}</span>
               </h1>
-              <p className="mt-5 max-w-[34rem] text-[17px] text-ink-2">{L.lead}</p>
+              <p className="mt-5 max-w-[34rem] text-[17px] text-ink-2">{C.heroLead}</p>
               <div className="mt-8 flex flex-col items-start gap-4 sm:flex-row sm:items-center sm:gap-6">
-                <a href="#join" className="btn btn-primary w-full sm:w-auto">
-                  {L.cta}
+                <a href="#places" className="btn btn-primary w-full sm:w-auto">
+                  {C.heroCta}
                 </a>
-                <a href="#partners" className="link-quiet text-[15px]">
-                  {L.partnerLink}
-                </a>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        <section className="px-edge pb-16 pt-24 md:pb-24 md:pt-32" aria-labelledby="how">
-          <div className="grid gap-12 lg:grid-cols-[0.8fr_1.2fr]">
-            <h2 id="how" className="reveal text-[30px] md:text-[40px]">
-              {L.howTitle}
-            </h2>
-            <div className="max-w-[44rem]">
-              <OrbRoad steps={L.steps} />
-            </div>
-          </div>
-        </section>
-
-        <section id="join" className="px-edge scroll-mt-6 py-12 md:py-20" aria-labelledby="join-title">
-          <div className="rounded-tile-r bg-tile p-6 sm:p-8 md:p-12">
-            <div className="grid gap-8 lg:grid-cols-[0.8fr_1.2fr] lg:gap-12">
-              <div>
-                <h2 id="join-title" className="text-[30px] md:text-[40px]">
+                <Link href="/join" className="link-quiet text-[15px]">
                   {L.member.title}
-                </h2>
-                <p className="mt-4 max-w-[36rem] text-ink-2">{L.member.lead}</p>
-              </div>
-              <div>
-                <MemberApplicationForm lang={lang} />
+                </Link>
               </div>
             </div>
           </div>
         </section>
 
-        <section id="partners" className="px-edge scroll-mt-6 py-12 md:py-20" aria-labelledby="partners-title">
-          <div className="rounded-tile-r bg-tile p-6 sm:p-8 md:p-12">
-            <div className="grid gap-8 lg:grid-cols-[0.8fr_1.2fr] lg:gap-12">
-              <div>
-                <h2 id="partners-title" className="text-[30px] md:text-[40px]">
-                  {L.partner.title}
-                </h2>
-                <p className="mt-4 max-w-[36rem] text-ink-2">{L.partner.lead}</p>
-              </div>
-              <div>
-                <PartnerApplicationForm lang={lang} />
-              </div>
+        {featured.length ? (
+          <section id="places" className="px-edge scroll-mt-4 pt-20 md:pt-28" aria-labelledby="popular">
+            <h2 id="popular" className="mb-6 text-[28px] md:text-[36px]">
+              {C.popular}
+            </h2>
+            <Rail>
+              {featured.map((v) => (
+                <VenueTile key={v.id} v={v} />
+              ))}
+            </Rail>
+          </section>
+        ) : null}
+
+        {cats.length ? (
+          <section id="worth" className="px-edge scroll-mt-4 pt-16 md:pt-20" aria-labelledby="worth-title">
+            <div className="mb-5 flex items-end justify-between gap-4">
+              <h2 id="worth-title" className="max-w-[18ch] text-[28px] md:max-w-none md:text-[36px]">
+                {C.worth}
+              </h2>
+              <Link href={category ? `/places?c=${category}` : "/places"} className="btn btn-soft btn-sm shrink-0">
+                {C.seeAll}
+              </Link>
+            </div>
+            <Rail>
+              {cats.map((x) => (
+                <Link
+                  key={x}
+                  href={`/?c=${x}#worth`}
+                  scroll={false}
+                  aria-current={x === category ? "true" : undefined}
+                  className={`btn shrink-0 ${x === category ? "bg-ink text-canvas" : "btn-soft"}`}
+                >
+                  {C.plural[x as Category]}
+                </Link>
+              ))}
+            </Rail>
+            <div className="mt-4">
+              <Rail>
+                {worth.map((v) => (
+                  <VenueCard key={v.id} v={v} t={t} lang={lang} />
+                ))}
+              </Rail>
+            </div>
+          </section>
+        ) : null}
+
+        {offers.length ? (
+          <section className="px-edge pt-16 md:pt-20" aria-labelledby="offers">
+            <h2 id="offers" className="mb-6 text-[28px] md:text-[36px]">
+              {C.offers}
+            </h2>
+            <Rail>
+              {offers.map((v) => (
+                <VenueCard key={v.id} v={v} t={t} lang={lang} perk />
+              ))}
+            </Rail>
+          </section>
+        ) : null}
+
+        <section className="px-edge pt-16 md:pt-24" aria-labelledby="club">
+          <div className="flex flex-col gap-6 rounded-tile-r bg-tile p-6 sm:p-8 md:flex-row md:items-end md:justify-between md:p-12">
+            <div className="max-w-[36rem]">
+              <h2 id="club" className="text-[28px] md:text-[36px]">
+                {C.clubTitle}
+              </h2>
+              <p className="mt-3 text-ink-2">{C.clubText}</p>
+            </div>
+            <div className="flex flex-col items-start gap-4 sm:flex-row sm:items-center sm:gap-6">
+              <Link href="/join" className="btn btn-primary">
+                {C.clubCta}
+              </Link>
+              <Link href="/join#partners" className="link-quiet text-[15px]">
+                {C.partnerLink}
+              </Link>
             </div>
           </div>
         </section>

@@ -16,8 +16,9 @@ export type HostBooking = {
   party_size: number;
   comment: string | null;
   status: BookingStatus;
-  member_name: string;
-  member_slug: string;
+  member_name: string | null;
+  member_slug: string | null;
+  table_label: string | null;
   guests_count: number | null;
   check_amount: number | null;
 };
@@ -45,7 +46,10 @@ export function BookingCard({ b, token, lang }: { b: HostBooking; token: string;
     <article className="rounded-tile-r bg-tile p-5">
       <div className="flex items-start justify-between gap-4">
         <div className="min-w-0">
-          <p className="font-display text-[28px] font-semibold leading-none tracking-[-0.035em] tabular-nums text-ink">{formatTime(b.booking_time)}</p>
+          <p className="font-display text-[28px] font-semibold leading-none tracking-[-0.035em] tabular-nums text-ink">
+            {formatTime(b.booking_time)}
+            {b.table_label ? <span className="ml-3 text-[17px] font-medium tracking-normal text-accent">{dicts[lang].booking.tableName(b.table_label)}</span> : null}
+          </p>
           <p className="mt-2 text-[17px] text-ink">
             {b.guest_name} · {t.guests(b.party_size)}
           </p>
@@ -54,10 +58,14 @@ export function BookingCard({ b, token, lang }: { b: HostBooking; token: string;
               {formatPhone(b.phone)}
             </a>
             <span aria-hidden="true">·</span>
-            <span className="inline-flex items-center gap-1.5">
-              <Orb tone={toneFor(b.member_slug)} size={14} still />
-              {t.from(b.member_name)}
-            </span>
+            {b.member_name && b.member_slug ? (
+              <span className="inline-flex items-center gap-1.5">
+                <Orb tone={toneFor(b.member_slug)} size={14} still />
+                {t.from(b.member_name)}
+              </span>
+            ) : (
+              <span>{t.fromCatalog}</span>
+            )}
           </p>
           {b.comment ? <p className="mt-2 text-[14px] text-ink-2">{b.comment}</p> : null}
         </div>

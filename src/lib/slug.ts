@@ -8,7 +8,7 @@ const MAP: Record<string, string> = {
 
 export const RESERVED_SLUGS = new Set([
   "admin", "h", "api", "privacy", "_next", "static", "public", "favicon.ico", "robots.txt",
-  "icon", "apple-icon", "login", "uploads",
+  "icon", "apple-icon", "login", "uploads", "v", "join", "places", "og.jpg", "fonts", "illustrations",
 ]);
 
 export function slugify(input: string): string {

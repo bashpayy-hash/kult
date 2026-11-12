@@ -5,12 +5,10 @@ import { db } from "@/lib/db";
 import { getDict } from "@/lib/i18n";
 import { getVisitor } from "@/lib/visitor";
 import { publicImageUrl } from "@/lib/storage";
-import { almatyToday, instagramHandle } from "@/lib/format";
+import { loadPlan } from "@/lib/venueData";
 import { SiteFooter, SiteHeader } from "@/components/SiteChrome";
-import { Orb, toneFor } from "@/components/Orb";
-import { sceneFor } from "@/lib/scenes";
+import { VenueView } from "@/components/VenueView";
 import { loadInvite } from "./data";
-import { BookingForm } from "./BookingForm";
 
 export const dynamic = "force-dynamic";
 
@@ -23,12 +21,13 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const photo = publicImageUrl(d.photo_path);
   return {
     title: d.venue_name,
-    description: d.guest_perk || d.description || undefined,
+    description: d.perk || d.description || undefined,
     robots: { index: false, follow: false },
-    openGraph: { title: `${d.venue_name} · Shaqyru`, description: d.guest_perk || undefined, images: photo ? [photo] : undefined },
+    openGraph: { title: `${d.venue_name} · Shaqyru`, description: d.perk || undefined, images: photo ? [photo] : undefined },
   };
 }
 
+/** A member's personal link: the venue page plus who invited and the entry phrase. */
 export default async function InvitePage({ params }: Props) {
   const { member, venue } = await params;
   const d = await loadInvite(member, venue);
@@ -54,83 +53,19 @@ export default async function InvitePage({ params }: Props) {
     }
   }
 
-  const photo = publicImageUrl(d.photo_path);
-  const perk = (lang === "kk" && d.guest_perk_kk) || d.guest_perk;
-  const description = (lang === "kk" && d.description_kk) || d.description;
-  const phrase = d.code_phrase || t.invite.phraseDefault(d.member_name);
-  const ig = instagramHandle(d.instagram);
-
+  const plan = await loadPlan(d.venue_id);
   return (
     <>
       <SiteHeader lang={lang} t={t} />
       <main className="px-edge pb-8 pt-2">
-        <div className="grid gap-10 md:grid-cols-[1.05fr_0.95fr] md:gap-12 lg:gap-16">
-          <div className="flex flex-col gap-6">
-            <div className="rise relative aspect-[4/3] overflow-hidden rounded-tile-r bg-tile">
-              {photo ? (
-                <img src={photo} alt={d.venue_name} className="h-full w-full object-cover" fetchPriority="high" />
-              ) : (
-                // No photo yet: the category scene from the same Higgsfield set.
-                <img {...sceneFor(d.category)} sizes="(min-width: 768px) 55vw, 100vw" alt="" className="h-full w-full object-cover" fetchPriority="high" />
-              )}
-            </div>
-
-            <div className="rise rise-1">
-              <p className="flex items-center gap-2.5 text-[15px] text-ink-2">
-                <Orb tone={toneFor(d.member_slug)} size={22} still />
-                {t.invite.from(d.member_name)}
-              </p>
-              <h1 className="mt-4 text-[38px] md:text-[48px]">{d.venue_name}</h1>
-              <p className="mt-3 text-[15px] text-ink-3">
-                {[t.categories[d.category], d.address].filter(Boolean).join(" · ")}
-                {ig ? (
-                  <>
-                    {" · "}
-                    <a href={`https://instagram.com/${ig}`} target="_blank" rel="noopener noreferrer" className="link-quiet">
-                      Instagram
-                    </a>
-                  </>
-                ) : null}
-              </p>
-              {description ? <p className="mt-5 max-w-[36rem] text-[16px] text-ink-2">{description}</p> : null}
-            </div>
-
-            {!active ? (
-              <div className="rounded-tile-r bg-tile p-6 md:p-8">
-                <h2 className="text-[26px]">{t.invite.inactiveTitle}</h2>
-                <p className="mt-2 text-ink-2">{t.invite.inactiveText}</p>
-              </div>
-            ) : (
-              <div className="rise rise-2 grid gap-3">
-                {perk ? (
-                  <div className="rounded-tile-r bg-tile p-6 md:p-8">
-                    <p className="label">{t.invite.perkTitle}</p>
-                    <p className="mt-3 font-display text-[24px] font-semibold leading-tight tracking-[-0.03em] text-ink md:text-[28px]">{perk}</p>
-                    {d.terms ? <p className="mt-3 text-[14px] text-ink-3">{d.terms}</p> : null}
-                  </div>
-                ) : null}
-                <div className="rounded-tile-r bg-tile p-6 md:p-8">
-                  <p className="label">{t.invite.phraseTitle}</p>
-                  <p className="mt-3 font-display text-[30px] font-semibold leading-tight tracking-[-0.035em] text-accent md:text-[36px]">«{phrase}»</p>
-                  <p className="mt-3 text-[15px] text-ink-2">{t.invite.phraseHint}</p>
-                </div>
-              </div>
-            )}
-          </div>
-
-          {active ? (
-            <section aria-labelledby="book" className="rise rise-3 md:pt-1">
-              <div className="rounded-tile-r bg-tile p-6 sm:p-8">
-                <h2 id="book" className="text-[28px] md:text-[32px]">
-                  {t.invite.bookingTitle}
-                </h2>
-                <div className="mt-6">
-                  <BookingForm lang={lang} linkId={d.link_id} phrase={phrase} today={almatyToday()} />
-                </div>
-              </div>
-            </section>
-          ) : null}
-        </div>
+        <VenueView
+          d={d}
+          lang={lang}
+          t={t}
+          plan={plan}
+          active={active}
+          invite={{ linkId: d.link_id, memberName: d.member_name, memberSlug: d.member_slug, phrase: d.code_phrase || t.invite.phraseDefault(d.member_name) }}
+        />
       </main>
       <SiteFooter t={t} />
     </>
