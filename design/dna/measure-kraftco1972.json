@@ -1,0 +1,58 @@
+{
+  "source": {
+    "file": "nationaldairykraftcounitedrexalldrugdartannualreports__kraftco1972a.jpg",
+    "width": 1260,
+    "height": 1651
+  },
+  "measurement": {
+    "k": 8,
+    "sampling": {
+      "method": "deterministic_stratified",
+      "max_pixels": 160000,
+      "sampled_pixels": 160000
+    }
+  },
+  "palette": [
+    {
+      "hex": "#090b1c",
+      "coverage": 0.5898,
+      "role": "background"
+    },
+    {
+      "hex": "#191c40",
+      "coverage": 0.1574,
+      "role": "unassigned"
+    },
+    {
+      "hex": "#a02e22",
+      "coverage": 0.0862,
+      "role": "text"
+    },
+    {
+      "hex": "#3f151e",
+      "coverage": 0.0738,
+      "role": "unassigned"
+    },
+    {
+      "hex": "#772019",
+      "coverage": 0.0477,
+      "role": "accent"
+    },
+    {
+      "hex": "#662b35",
+      "coverage": 0.0367,
+      "role": "unassigned"
+    },
+    {
+      "hex": "#e3e5dc",
+      "coverage": 0.0043,
+      "role": "unassigned"
+    },
+    {
+      "hex": "#949699",
+      "coverage": 0.0042,
+      "role": "unassigned"
+    }
+  ],
+  "measured": true
+}

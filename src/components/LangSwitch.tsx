@@ -15,7 +15,7 @@ export function LangSwitch({ lang, label }: { lang: Lang; label: string }) {
         value={other}
         lang={other}
         aria-label={`${label}: ${other === "kk" ? "Қазақша" : "Русский"}`}
-        className="grid h-11 min-w-11 place-items-center rounded-full border border-line px-3 font-[family-name:var(--font-ui)] text-[14px] font-semibold text-ink-2 transition-colors duration-150 hover:border-ink-4 hover:text-ink"
+        className="grid h-11 min-w-11 place-items-center border border-line px-3 font-[family-name:var(--font-ui)] text-[14px] font-semibold text-ink-2 transition-colors duration-150 hover:border-ink-4 hover:text-ink"
       >
         {other === "kk" ? "Қаз" : "Рус"}
       </button>

@@ -1,0 +1,58 @@
+{
+  "source": {
+    "file": "aiga-entry-17245.jpg",
+    "width": 800,
+    "height": 1044
+  },
+  "measurement": {
+    "k": 8,
+    "sampling": {
+      "method": "deterministic_stratified",
+      "max_pixels": 160000,
+      "sampled_pixels": 160000
+    }
+  },
+  "palette": [
+    {
+      "hex": "#b8c1e5",
+      "coverage": 0.4661,
+      "role": "background"
+    },
+    {
+      "hex": "#e85230",
+      "coverage": 0.1828,
+      "role": "accent"
+    },
+    {
+      "hex": "#f0eff1",
+      "coverage": 0.1539,
+      "role": "unassigned"
+    },
+    {
+      "hex": "#9c6240",
+      "coverage": 0.0849,
+      "role": "text"
+    },
+    {
+      "hex": "#a9724f",
+      "coverage": 0.0476,
+      "role": "unassigned"
+    },
+    {
+      "hex": "#fcc1ae",
+      "coverage": 0.0224,
+      "role": "unassigned"
+    },
+    {
+      "hex": "#bab0b2",
+      "coverage": 0.0211,
+      "role": "unassigned"
+    },
+    {
+      "hex": "#e88c71",
+      "coverage": 0.021,
+      "role": "unassigned"
+    }
+  ],
+  "measured": true
+}

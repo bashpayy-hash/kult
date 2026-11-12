@@ -1,0 +1,58 @@
+{
+  "source": {
+    "file": "cocacolacoannualreports__cocacola1983.jpg",
+    "width": 1250,
+    "height": 1632
+  },
+  "measurement": {
+    "k": 8,
+    "sampling": {
+      "method": "deterministic_stratified",
+      "max_pixels": 160000,
+      "sampled_pixels": 160000
+    }
+  },
+  "palette": [
+    {
+      "hex": "#1b1414",
+      "coverage": 0.4199,
+      "role": "background"
+    },
+    {
+      "hex": "#521d16",
+      "coverage": 0.1397,
+      "role": "unassigned"
+    },
+    {
+      "hex": "#8c2a1c",
+      "coverage": 0.1365,
+      "role": "unassigned"
+    },
+    {
+      "hex": "#4e4649",
+      "coverage": 0.0929,
+      "role": "unassigned"
+    },
+    {
+      "hex": "#f7f3e8",
+      "coverage": 0.0911,
+      "role": "text"
+    },
+    {
+      "hex": "#d7c6b4",
+      "coverage": 0.0429,
+      "role": "unassigned"
+    },
+    {
+      "hex": "#91786f",
+      "coverage": 0.0392,
+      "role": "unassigned"
+    },
+    {
+      "hex": "#e47432",
+      "coverage": 0.0379,
+      "role": "accent"
+    }
+  ],
+  "measured": true
+}

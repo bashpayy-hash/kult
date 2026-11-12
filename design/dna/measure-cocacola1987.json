@@ -1,0 +1,58 @@
+{
+  "source": {
+    "file": "1987annualreport.jpg",
+    "width": 1312,
+    "height": 1660
+  },
+  "measurement": {
+    "k": 8,
+    "sampling": {
+      "method": "deterministic_stratified",
+      "max_pixels": 160000,
+      "sampled_pixels": 160000
+    }
+  },
+  "palette": [
+    {
+      "hex": "#473c31",
+      "coverage": 0.3441,
+      "role": "background"
+    },
+    {
+      "hex": "#5c5343",
+      "coverage": 0.263,
+      "role": "unassigned"
+    },
+    {
+      "hex": "#726b5b",
+      "coverage": 0.1294,
+      "role": "unassigned"
+    },
+    {
+      "hex": "#e0b18a",
+      "coverage": 0.0824,
+      "role": "unassigned"
+    },
+    {
+      "hex": "#aa855f",
+      "coverage": 0.0658,
+      "role": "unassigned"
+    },
+    {
+      "hex": "#f1dbbf",
+      "coverage": 0.0442,
+      "role": "text"
+    },
+    {
+      "hex": "#909493",
+      "coverage": 0.0424,
+      "role": "unassigned"
+    },
+    {
+      "hex": "#b7523c",
+      "coverage": 0.0288,
+      "role": "accent"
+    }
+  ],
+  "measured": true
+}

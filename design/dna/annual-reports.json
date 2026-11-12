@@ -1,0 +1,748 @@
+{
+ "meta": {
+  "name": "Shaqyru — Annual Report DNA",
+  "description": "Design identity distilled from five American annual report covers the owner chose (12 Nov 2026), applied to a dark venue catalog for Almaty: printed-page geometry, small marginal type, documentary photography, cut-paper collage, step-and-repeat numerals.",
+  "source_references": [
+   "Heublein Inc., 1970 — https://annualreport.gallery/#kfcheubleinannualreports__heublein1970",
+   "The Coca-Cola Company, 1983 — https://annualreport.gallery/#cocacolacoannualreports__cocacola1983",
+   "Consolidated Cigar Corporation, 1954, Paul Rand — https://annualreport.gallery/#aiga-entry-17245",
+   "The Coca-Cola Company, 1987 — https://annualreport.gallery/#1987annualreport",
+   "Kraftco Corporation, 1972 — https://annualreport.gallery/#nationaldairykraftcounitedrexalldrugdartannualreports__kraftco1972a"
+  ],
+  "created_at": "2026-11-12"
+ },
+ "design_system": {
+  "color": {
+   "palette_type": "analogous warm darks (brown-black, oxblood, gold) with one complementary cool (Kraftco navy, Rand periwinkle)",
+   "primary": {
+    "hex": "#231917",
+    "role": "page ground — Heublein's brown-black (37.6% of that cover)"
+   },
+   "secondary": {
+    "hex": "#8c2a1c",
+    "role": "oxblood red for printed plates and the brand band — Coca-Cola 1983 bottle red"
+   },
+   "accent": {
+    "hex": "#d1b475",
+    "role": "muted gold for the one selected thing: picked date, time, table, active filter (Heublein water highlights)"
+   },
+   "neutral": {
+    "scale": [
+     "#f3ead6",
+     "#e9d7b5",
+     "#c9b48f",
+     "#a8916d",
+     "#6d4c2e",
+     "#3a2a22",
+     "#231917",
+     "#140e0c"
+    ],
+    "usage": "Light end is text on the dark ground (#f3ead6 headings, #e9d7b5 body, #c9b48f labels, #a8916d hints); dark end is ground and rules. Cream #e9d7b5 doubles as the paper of light sections."
+   },
+   "semantic": {
+    "success": "#9fb37a",
+    "warning": "#d1b475",
+    "error": "#e0745a",
+    "info": "#b8c1e5"
+   },
+   "surface": {
+    "background": "#231917",
+    "card": "#231917",
+    "elevated": "#2e221d"
+   },
+   "contrast_strategy": "High contrast cream-on-brown-black for text; colour lives in full-bleed images and printed plates, never behind body text. Mid-tones (#503523, #6d4c2e) only as rules and shadows.",
+   "measurement": {
+    "k": 8,
+    "sampling": {
+     "method": "deterministic_stratified",
+     "max_pixels": 160000,
+     "sampled_pixels": 160000
+    }
+   },
+   "measured_palette": [
+    {
+     "hex": "#231917",
+     "coverage": 0.3763,
+     "role": "background"
+    },
+    {
+     "hex": "#e0c794",
+     "coverage": 0.1233,
+     "role": "unassigned"
+    },
+    {
+     "hex": "#e9d7b5",
+     "coverage": 0.1075,
+     "role": "text"
+    },
+    {
+     "hex": "#503523",
+     "coverage": 0.103,
+     "role": "unassigned"
+    },
+    {
+     "hex": "#6d4c2e",
+     "coverage": 0.1023,
+     "role": "unassigned"
+    },
+    {
+     "hex": "#d1b475",
+     "coverage": 0.072,
+     "role": "accent"
+    },
+    {
+     "hex": "#8d6b3f",
+     "coverage": 0.0649,
+     "role": "unassigned"
+    },
+    {
+     "hex": "#af9059",
+     "coverage": 0.0507,
+     "role": "unassigned"
+    }
+   ],
+   "reference_measurements": {
+    "heublein1970": {
+     "source": {
+      "file": "kfcheubleinannualreports__heublein1970.jpg",
+      "width": 1244,
+      "height": 1548
+     },
+     "measurement": {
+      "k": 8,
+      "sampling": {
+       "method": "deterministic_stratified",
+       "max_pixels": 160000,
+       "sampled_pixels": 160000
+      }
+     },
+     "palette": [
+      {
+       "hex": "#231917",
+       "coverage": 0.3763,
+       "role": "background"
+      },
+      {
+       "hex": "#e0c794",
+       "coverage": 0.1233,
+       "role": "unassigned"
+      },
+      {
+       "hex": "#e9d7b5",
+       "coverage": 0.1075,
+       "role": "text"
+      },
+      {
+       "hex": "#503523",
+       "coverage": 0.103,
+       "role": "unassigned"
+      },
+      {
+       "hex": "#6d4c2e",
+       "coverage": 0.1023,
+       "role": "unassigned"
+      },
+      {
+       "hex": "#d1b475",
+       "coverage": 0.072,
+       "role": "accent"
+      },
+      {
+       "hex": "#8d6b3f",
+       "coverage": 0.0649,
+       "role": "unassigned"
+      },
+      {
+       "hex": "#af9059",
+       "coverage": 0.0507,
+       "role": "unassigned"
+      }
+     ],
+     "measured": true
+    },
+    "cocacola1983": {
+     "source": {
+      "file": "cocacolacoannualreports__cocacola1983.jpg",
+      "width": 1250,
+      "height": 1632
+     },
+     "measurement": {
+      "k": 8,
+      "sampling": {
+       "method": "deterministic_stratified",
+       "max_pixels": 160000,
+       "sampled_pixels": 160000
+      }
+     },
+     "palette": [
+      {
+       "hex": "#1b1414",
+       "coverage": 0.4199,
+       "role": "background"
+      },
+      {
+       "hex": "#521d16",
+       "coverage": 0.1397,
+       "role": "unassigned"
+      },
+      {
+       "hex": "#8c2a1c",
+       "coverage": 0.1365,
+       "role": "unassigned"
+      },
+      {
+       "hex": "#4e4649",
+       "coverage": 0.0929,
+       "role": "unassigned"
+      },
+      {
+       "hex": "#f7f3e8",
+       "coverage": 0.0911,
+       "role": "text"
+      },
+      {
+       "hex": "#d7c6b4",
+       "coverage": 0.0429,
+       "role": "unassigned"
+      },
+      {
+       "hex": "#91786f",
+       "coverage": 0.0392,
+       "role": "unassigned"
+      },
+      {
+       "hex": "#e47432",
+       "coverage": 0.0379,
+       "role": "accent"
+      }
+     ],
+     "measured": true
+    },
+    "rand1954": {
+     "source": {
+      "file": "aiga-entry-17245.jpg",
+      "width": 800,
+      "height": 1044
+     },
+     "measurement": {
+      "k": 8,
+      "sampling": {
+       "method": "deterministic_stratified",
+       "max_pixels": 160000,
+       "sampled_pixels": 160000
+      }
+     },
+     "palette": [
+      {
+       "hex": "#b8c1e5",
+       "coverage": 0.4661,
+       "role": "background"
+      },
+      {
+       "hex": "#e85230",
+       "coverage": 0.1828,
+       "role": "accent"
+      },
+      {
+       "hex": "#f0eff1",
+       "coverage": 0.1539,
+       "role": "unassigned"
+      },
+      {
+       "hex": "#9c6240",
+       "coverage": 0.0849,
+       "role": "text"
+      },
+      {
+       "hex": "#a9724f",
+       "coverage": 0.0476,
+       "role": "unassigned"
+      },
+      {
+       "hex": "#fcc1ae",
+       "coverage": 0.0224,
+       "role": "unassigned"
+      },
+      {
+       "hex": "#bab0b2",
+       "coverage": 0.0211,
+       "role": "unassigned"
+      },
+      {
+       "hex": "#e88c71",
+       "coverage": 0.021,
+       "role": "unassigned"
+      }
+     ],
+     "measured": true
+    },
+    "cocacola1987": {
+     "source": {
+      "file": "1987annualreport.jpg",
+      "width": 1312,
+      "height": 1660
+     },
+     "measurement": {
+      "k": 8,
+      "sampling": {
+       "method": "deterministic_stratified",
+       "max_pixels": 160000,
+       "sampled_pixels": 160000
+      }
+     },
+     "palette": [
+      {
+       "hex": "#473c31",
+       "coverage": 0.3441,
+       "role": "background"
+      },
+      {
+       "hex": "#5c5343",
+       "coverage": 0.263,
+       "role": "unassigned"
+      },
+      {
+       "hex": "#726b5b",
+       "coverage": 0.1294,
+       "role": "unassigned"
+      },
+      {
+       "hex": "#e0b18a",
+       "coverage": 0.0824,
+       "role": "unassigned"
+      },
+      {
+       "hex": "#aa855f",
+       "coverage": 0.0658,
+       "role": "unassigned"
+      },
+      {
+       "hex": "#f1dbbf",
+       "coverage": 0.0442,
+       "role": "text"
+      },
+      {
+       "hex": "#909493",
+       "coverage": 0.0424,
+       "role": "unassigned"
+      },
+      {
+       "hex": "#b7523c",
+       "coverage": 0.0288,
+       "role": "accent"
+      }
+     ],
+     "measured": true
+    },
+    "kraftco1972": {
+     "source": {
+      "file": "nationaldairykraftcounitedrexalldrugdartannualreports__kraftco1972a.jpg",
+      "width": 1260,
+      "height": 1651
+     },
+     "measurement": {
+      "k": 8,
+      "sampling": {
+       "method": "deterministic_stratified",
+       "max_pixels": 160000,
+       "sampled_pixels": 160000
+      }
+     },
+     "palette": [
+      {
+       "hex": "#090b1c",
+       "coverage": 0.5898,
+       "role": "background"
+      },
+      {
+       "hex": "#191c40",
+       "coverage": 0.1574,
+       "role": "unassigned"
+      },
+      {
+       "hex": "#a02e22",
+       "coverage": 0.0862,
+       "role": "text"
+      },
+      {
+       "hex": "#3f151e",
+       "coverage": 0.0738,
+       "role": "unassigned"
+      },
+      {
+       "hex": "#772019",
+       "coverage": 0.0477,
+       "role": "accent"
+      },
+      {
+       "hex": "#662b35",
+       "coverage": 0.0367,
+       "role": "unassigned"
+      },
+      {
+       "hex": "#e3e5dc",
+       "coverage": 0.0043,
+       "role": "unassigned"
+      },
+      {
+       "hex": "#949699",
+       "coverage": 0.0042,
+       "role": "unassigned"
+      }
+     ],
+     "measured": true
+    }
+   }
+  },
+  "typography": {
+   "type_scale": {
+    "display": {
+     "size": "clamp(120px, 22vw, 360px)",
+     "weight": "400",
+     "line_height": "0.8",
+     "tracking": "-0.02em"
+    },
+    "heading_1": {
+     "size": "40px",
+     "weight": "600",
+     "line_height": "1.05",
+     "tracking": "-0.03em"
+    },
+    "heading_2": {
+     "size": "28px",
+     "weight": "600",
+     "line_height": "1.1",
+     "tracking": "-0.02em"
+    },
+    "heading_3": {
+     "size": "20px",
+     "weight": "600",
+     "line_height": "1.2",
+     "tracking": "-0.015em"
+    },
+    "body": {
+     "size": "16px",
+     "weight": "400",
+     "line_height": "1.55",
+     "tracking": "-0.005em"
+    },
+    "body_small": {
+     "size": "14px",
+     "weight": "400",
+     "line_height": "1.45",
+     "tracking": "0"
+    },
+    "caption": {
+     "size": "13px",
+     "weight": "500",
+     "line_height": "1.3",
+     "tracking": "0.01em"
+    },
+    "overline": {
+     "size": "13px",
+     "weight": "500",
+     "line_height": "1.3",
+     "tracking": "0.02em"
+    }
+   },
+   "font_families": {
+    "heading": "\"SF Pro Display\", \"Inter Tight\" (owner's iitaly.net stack) — a neo-grotesque in the role of News Gothic / Helvetica on the covers",
+    "body": "\"SF Pro Text\", \"Inter Tight\"",
+    "mono": "none (tabular figures of the sans instead)"
+   },
+   "font_style_notes": "Covers pair a modern serif for numerals and mastheads (Kraftco's ball-terminal Didone '1972/1923', Coca-Cola's 'Annual Report 1983') with a small neutral grotesque for the company line. Display numerals use a Didone (Old Standard TT, which covers Cyrillic and Kazakh); everything else stays in the owner's Inter Tight. Titles are small and sit at an edge of the image like a caption; scale contrast comes from the numerals, not from huge headlines. Sentence case (owner's rule), tabular figures for times and money."
+  },
+  "spacing": {
+   "base_unit": "8px",
+   "scale": [
+    "4px",
+    "8px",
+    "12px",
+    "16px",
+    "24px",
+    "32px",
+    "48px",
+    "64px",
+    "96px",
+    "128px"
+   ],
+   "content_density": "comfortable",
+   "section_rhythm": "Each section is a 'page': a full-bleed plate or band butts against the next with no gap (pages of a report), text sections inside get 64–96px vertical padding."
+  },
+  "layout": {
+   "grid_system": "12-column print grid with a fixed outer margin (owner's edge: 20 / 24 / max(32px, (100% − 1216px)/2))",
+   "max_content_width": "1216px",
+   "columns": "12 (desktop), 6 (tablet), 4 (phone)",
+   "gutter": "24px desktop, 16px phone",
+   "breakpoints": [
+    "390px",
+    "768px",
+    "1024px",
+    "1440px"
+   ],
+   "alignment_tendency": "asymmetric — image plates full-bleed or half-bleed, type pinned to top-left / bottom-left corners"
+  },
+  "shape": {
+   "border_radius": {
+    "small": "0",
+    "medium": "0",
+    "large": "0",
+    "pill": "0"
+   },
+   "border_usage": "hairline 1px rules only; no outlined boxes except inputs and slot cells",
+   "divider_style": "1px rules in a mid-tone (#3a2a22 on dark, #c9b48f on paper), full column width, like financial tables"
+  },
+  "elevation": {
+   "shadow_style": "none",
+   "levels": {
+    "low": "none",
+    "medium": "none",
+    "high": "none"
+   },
+   "depth_cues": "overlapping printed plates and paper margins; never shadows or blur"
+  },
+  "iconography": {
+   "style": "almost none — words instead of icons; the only marks are the S logotype and typographic signs (·, «»)",
+   "stroke_weight": "1px",
+   "size_scale": "16px / 20px",
+   "preferred_set": "none"
+  },
+  "motion": {
+   "easing": "cubic-bezier(.22,1,.36,1)",
+   "duration_scale": {
+    "micro": "120ms",
+    "normal": "200ms",
+    "macro": "520ms"
+   },
+   "entrance_pattern": "page fade-in only; plates do not slide",
+   "exit_pattern": "none",
+   "philosophy": "minimal functional — print does not move"
+  },
+  "components": {
+   "button_style": "rectangular, 0 radius, 48px; primary = cream fill with brown-black text; secondary = text with a hairline underline",
+   "input_style": "rectangular, 0 radius, 1px #3a2a22 border on #2e221d, cream text; focus = gold border",
+   "card_style": "no card: a venue is a printed plate (4:5 cover image in a cream paper margin with its name set small at the bottom edge) followed by caption lines on the page ground",
+   "navigation_pattern": "masthead line: logotype left, two text links and language right; no pills",
+   "modal_style": "none",
+   "list_style": "ruled tables: hairline between rows, figures right-aligned and tabular",
+   "component_notes": "Filters are a ruled row of text tabs (active = gold underline). Time slots are a timetable of rectangular cells. Stats are big Didone numerals with a small caption, like a report's highlights page."
+  }
+ },
+ "design_style": {
+  "aesthetic": {
+   "mood": [
+    "warm",
+    "nocturnal",
+    "confident",
+    "documentary",
+    "unhurried"
+   ],
+   "visual_metaphor": "the city's annual report: each place a printed cover, the day's numbers in a highlights spread",
+   "era_influence": "American corporate modernism 1954–1987 (Paul Rand, Heublein, Kraftco, Coca-Cola reports)",
+   "genre": "luxury editorial / corporate print",
+   "personality_traits": [
+    "assured",
+    "witty",
+    "precise",
+    "generous with space"
+   ],
+   "adjectives": [
+    "printed",
+    "matte",
+    "grainy",
+    "sparse",
+    "dark-gold"
+   ]
+  },
+  "visual_language": {
+   "complexity": "moderate",
+   "ornamentation": "none — only the image and the type",
+   "whitespace_usage": "large dark fields and empty sky inside images; text blocks narrow",
+   "visual_weight_distribution": "weight in one image per page, type light and peripheral",
+   "focal_strategy": "single hero element per section",
+   "contrast_level": "high",
+   "texture_usage": "film grain and paper grain inside images; offset misregistration in collages; UI itself flat"
+  },
+  "composition": {
+   "hierarchy_method": "scale contrast between one image or numeral and small type",
+   "balance_type": "asymmetric",
+   "flow_direction": "top-down pages; inside a page, image first, caption second",
+   "grouping_strategy": "rules and paper margins, not boxes",
+   "negative_space_role": "the subject of half the covers: dark water, empty sky, flat painted wall"
+  },
+  "imagery": {
+   "photo_treatment": "documentary 35mm, low saturation except one luminous zone, deep blacks, grain, slight softness; no glowing sun discs, no HDR, no 'golden hour everywhere'",
+   "illustration_style": "Paul Rand cut-paper collage: real photographed objects cut out and pasted onto flat gouache shapes, cotton-wool smoke, white paper border; three to four flat colours",
+   "graphic_elements": "step-and-repeat Didone numerals fading navy→red; hairline rules",
+   "pattern_usage": "none in UI; brick or line-screen only inside images",
+   "image_shape": "sharp rectangles: 4:5 covers for venues, full-bleed plates for sections"
+  },
+  "interaction_feel": {
+   "feedback_style": "colour and underline change; no motion",
+   "hover_behavior": "underline thickens / image dims 6%",
+   "transition_personality": "fade-subtle",
+   "loading_style": "plain text line ('Смотрю свободные места…')",
+   "microinteraction_density": "low"
+  },
+  "brand_voice_in_ui": {
+   "tone": "plain, specific, numerical",
+   "formality": "polite informal (вы), no slogans",
+   "cta_style": "direct imperative naming the action and the time ('Забронировать на 20:00')",
+   "empty_state_approach": "one factual sentence",
+   "error_tone": "matter-of-fact, says what to do"
+  }
+ },
+ "visual_effects": {
+  "overview": {
+   "effect_intensity": "subtle-accent",
+   "performance_tier": "lightweight",
+   "fallback_strategy": "static snapshot (effects are static SVG)",
+   "primary_technology": "SVG"
+  },
+  "background_effects": {
+   "type": "none",
+   "description": "Grounds are flat; grain lives inside the images",
+   "technology": "none",
+   "params": {
+    "color_palette": [
+     "#231917"
+    ],
+    "speed": "none",
+    "density": "none",
+    "opacity": "1",
+    "blend_mode": "normal"
+   }
+  },
+  "particle_systems": {
+   "enabled": false,
+   "type": "custom",
+   "description": "none",
+   "technology": "none",
+   "params": {
+    "count": "0",
+    "shape": "none",
+    "size_range": "none",
+    "movement_pattern": "none",
+    "color_behavior": "none",
+    "interaction": "none",
+    "spawn_area": "none"
+   }
+  },
+  "3d_elements": {
+   "enabled": false,
+   "type": "abstract-geometry",
+   "description": "none",
+   "technology": "none",
+   "params": {
+    "renderer": "none",
+    "lighting": "none",
+    "camera": "none",
+    "materials": "none",
+    "geometry": "none",
+    "post_processing": [],
+    "interaction_model": "none"
+   }
+  },
+  "shader_effects": {
+   "enabled": false,
+   "type": "custom-GLSL",
+   "description": "none",
+   "technology": "none",
+   "params": {
+    "uniforms": "none",
+    "vertex_manipulation": "none",
+    "fragment_output": "none",
+    "noise_type": "perlin",
+    "distortion": "none"
+   }
+  },
+  "scroll_effects": {
+   "parallax": {
+    "enabled": false,
+    "layers": "1",
+    "depth_range": "0",
+    "speed_curve": "none"
+   },
+   "scroll_triggered_animations": {
+    "enabled": false,
+    "trigger_points": "none",
+    "animation_type": "fade-up",
+    "scrub_behavior": "none"
+   },
+   "scroll_morphing": {
+    "enabled": false,
+    "description": "none"
+   }
+  },
+  "text_effects": {
+   "type": "step-and-repeat numerals",
+   "description": "Kraftco 1972: a Didone numeral repeated ~28 times, each copy shifted down a few px, colour stepping from navy-blue (#2b3a8f) at the top to red (#c0392b) at the bottom with low opacity, so the figures smear into vertical columns; the last copy is solid.",
+   "technology": "SVG <text> repeated with computed fill and y",
+   "params": {
+    "split_strategy": "by-line",
+    "animation_per_unit": "none (static)",
+    "stagger": "4px per copy",
+    "effect_style": "print overprint"
+   }
+  },
+  "cursor_effects": {
+   "enabled": false,
+   "type": "none",
+   "description": "none",
+   "params": {
+    "shape": "none",
+    "size": "none",
+    "blend_mode": "normal",
+    "trail": "none",
+    "interaction_zone": "none"
+   }
+  },
+  "image_effects": {
+   "type": "none",
+   "description": "Images sit in paper margins; hover dims slightly",
+   "technology": "CSS",
+   "params": {
+    "filter_pipeline": "none",
+    "hover_transform": "none",
+    "reveal_animation": "none",
+    "distortion_type": "barrel"
+   }
+  },
+  "glassmorphism_neumorphism": {
+   "enabled": false,
+   "style": "none",
+   "params": {
+    "blur_radius": "0",
+    "transparency": "1",
+    "border_treatment": "none",
+    "shadow_type": "none",
+    "light_source_angle": "none"
+   }
+  },
+  "canvas_drawings": {
+   "enabled": false,
+   "type": "none",
+   "description": "none",
+   "technology": "none",
+   "params": {
+    "draw_method": "none",
+    "animation_loop": "none",
+    "color_scheme": "none",
+    "responsiveness": "none",
+    "interaction": "none"
+   }
+  },
+  "svg_animations": {
+   "enabled": false,
+   "type": "none",
+   "description": "none",
+   "params": {
+    "animation_method": "none",
+    "path_morphing": "none",
+    "stroke_animation": "none",
+    "filter_effects": "none"
+   }
+  },
+  "composite_notes": "What made the previous build read as generated, measured against these covers: (1) saturation — our hero sky #DC7E05 and category grounds #CE301F/#E39417/#D8521B are far more chromatic than any reference except Rand's single vermilion; (2) web furniture — 28px rounded tiles, pill buttons and chips, shadows, glass card over the photo — none of which exist in print; (3) huge headlines over the image, where the covers set the title small at an edge; (4) the Kraftco idea was approximated with bands and rings instead of its actual step-and-repeat numerals; (5) the collages were over-rendered single illustrations rather than Rand's photo cut-outs on flat paint."
+ }
+}

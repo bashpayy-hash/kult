@@ -144,13 +144,13 @@ function Flow({ lang, venueId, hours, halls, items, today, linkId, phrase, initi
         <div className="mt-2 flex items-center justify-between gap-4 rounded-[var(--radius-inner)] border border-line bg-raised px-4 py-2">
           <span className="text-[15px] text-ink">{b.guests}</span>
           <div className="flex items-center gap-3">
-            <button type="button" aria-label={b.fewer} disabled={party <= 1} onClick={() => setParty((p) => Math.max(1, p - 1))} className="grid h-11 w-11 place-items-center rounded-full bg-line text-[20px] leading-none text-ink disabled:opacity-30">
+            <button type="button" aria-label={b.fewer} disabled={party <= 1} onClick={() => setParty((p) => Math.max(1, p - 1))} className="grid h-11 w-11 place-items-center bg-line text-[20px] leading-none text-ink disabled:opacity-30">
               −
             </button>
             <output aria-live="polite" className="w-6 text-center font-display text-[20px] font-semibold tabular-nums text-ink">
               {party}
             </output>
-            <button type="button" aria-label={b.more} disabled={party >= 30} onClick={() => setParty((p) => Math.min(30, p + 1))} className="grid h-11 w-11 place-items-center rounded-full bg-line text-[20px] leading-none text-ink disabled:opacity-30">
+            <button type="button" aria-label={b.more} disabled={party >= 30} onClick={() => setParty((p) => Math.min(30, p + 1))} className="grid h-11 w-11 place-items-center bg-line text-[20px] leading-none text-ink disabled:opacity-30">
               +
             </button>
           </div>
@@ -178,7 +178,7 @@ function Flow({ lang, venueId, hours, halls, items, today, linkId, phrase, initi
                     disabled={!ok}
                     aria-pressed={on}
                     onClick={() => setSlot(on ? null : m)}
-                    className="pick min-h-11 rounded-full text-[15px] font-medium tabular-nums transition-colors duration-150"
+                    className="pick min-h-11 text-[15px] font-medium tabular-nums transition-colors duration-150"
                   >
                     {clock(m)}
                   </button>
@@ -237,7 +237,7 @@ function Flow({ lang, venueId, hours, halls, items, today, linkId, phrase, initi
                                 disabled={s === "busy"}
                                 aria-pressed={s === "selected"}
                                 onClick={() => setTableId(s === "selected" ? null : x.id)}
-                                className="pick min-h-11 rounded-full px-4 text-[14px] font-medium"
+                                className="pick min-h-11 px-4 text-[14px] font-medium"
                               >
                                 {b.tableName(x.label)} · {b.upTo(x.seats_max)}
                               </button>

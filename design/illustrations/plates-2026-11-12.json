@@ -1,0 +1,113 @@
+{
+ "date": "2026-11-12",
+ "request": "Владелец, 12 ноября 2026: «Все еще ии слопно /design-dna». Картинки пересобраны по Design DNA пяти обложек отчётов (design/dna/annual-reports.json).",
+ "use": "hero — обложка на главной и в og.png; venue plates — обложки заведений без своего фото (src/lib/covers.ts), в кремовых полях с подписью; club — клуб и /join; market — полоса «Бонусы гостям».",
+ "model": "Higgsfield gpt_image_2_6, quality high; hero 4:5 2k, plates 4:5 1k, market 3:2 2k",
+ "world": "Heublein 1970: фото почти целиком тёмное, золото только в бликах воды, без солнечного диска. Рэнд 1954: настоящие сфотографированные предметы, вырезанные и наклеенные на плоскую гуашь, вата вместо дыма, белое поле бумаги (обрезается, поле даёт CSS). Coca-Cola 1987: один документальный снимок, приглушённые цвета, плёнка.",
+ "processing": "Поля плашек обрезаны (-fuzz 14% -trim, -shave 6), WebP q82 480/900. Hero прошёл цветокоррекцию под замер Heublein: -modulate 100,70,100 -gamma 1.1 (verify.mjs: mean ΔE 4.67, max 13.3; расхождение по площади 0.71 — композиция, не цвет). Market WebP 800/1400/2048.",
+ "items": [
+  {
+   "name": "hero",
+   "job": "a7e40c47-eb07-408c-ade5-e88fd0742c6d",
+   "subject": "две девушки силуэтом поднимают бокалы у горного озера, вода — поле золотых бликов, низ кадра почти чёрный",
+   "files": [
+    "public/plates/hero-800.webp",
+    "public/plates/hero-1200.webp",
+    "public/plates/hero-1792.webp",
+    "public/og.png"
+   ],
+   "master": "design/plates/source/hero.webp"
+  },
+  {
+   "name": "restaurant",
+   "job": "ca6681cd-7f3e-41ff-b14d-b5a1ec7edf6c",
+   "bg": "#7f91d7",
+   "subject": "вилка, нож и ложка трубами над кирпичной стеной, дым из ваты",
+   "files": [
+    "public/plates/restaurant-480.webp",
+    "public/plates/restaurant-900.webp"
+   ],
+   "master": "design/plates/source/restaurant.webp"
+  },
+  {
+   "name": "cafe",
+   "job": "e09d9d89-5a48-4879-98e4-2e02919724c1",
+   "bg": "#cd831b",
+   "subject": "фарфоровая чашка, пар из ваты складывается в снежную вершину",
+   "files": [
+    "public/plates/cafe-480.webp",
+    "public/plates/cafe-900.webp"
+   ],
+   "master": "design/plates/source/cafe.webp"
+  },
+  {
+   "name": "bar",
+   "job": "8eb27267-bd66-4186-a211-bb1520a6486e",
+   "bg": "#102041",
+   "subject": "бокал-купе на синей гуаши, оливка на шпажке — луна",
+   "files": [
+    "public/plates/bar-480.webp",
+    "public/plates/bar-900.webp"
+   ],
+   "master": "design/plates/source/bar.webp"
+  },
+  {
+   "name": "beauty",
+   "job": "ff673e69-43cc-41e4-87a3-14a2bd418d5f",
+   "bg": "#879ad9",
+   "subject": "три флакона красного лака колоннами под бумажной аркой",
+   "files": [
+    "public/plates/beauty-480.webp",
+    "public/plates/beauty-900.webp"
+   ],
+   "master": "design/plates/source/beauty.webp"
+  },
+  {
+   "name": "wellness",
+   "job": "c8dc9234-98b2-4f04-9f10-c64b3e4785d8",
+   "bg": "#bd8f37",
+   "subject": "башня из речных камней, пар из ваты",
+   "files": [
+    "public/plates/wellness-480.webp",
+    "public/plates/wellness-900.webp"
+   ],
+   "master": "design/plates/source/wellness.webp"
+  },
+  {
+   "name": "fitness",
+   "job": "3e2fdd0a-d4df-4019-bd2d-8c00a6d9f7c2",
+   "bg": "#871310",
+   "subject": "чугунная гантель памятником на бумажном постаменте, полукруг-солнце",
+   "files": [
+    "public/plates/fitness-480.webp",
+    "public/plates/fitness-900.webp"
+   ],
+   "master": "design/plates/source/fitness.webp"
+  },
+  {
+   "name": "club",
+   "job": "919e47c9-bbcf-4177-93a5-7644b240f9dd",
+   "bg": "#e33409",
+   "subject": "конверт, вместо клапана — снежная вершина, пустая карточка",
+   "files": [
+    "public/plates/club-480.webp",
+    "public/plates/club-900.webp"
+   ],
+   "master": "design/plates/source/club.webp"
+  },
+  {
+   "name": "market",
+   "job": "34fb7a93-7a50-4c16-82e7-086e75393e87",
+   "subject": "рынок в Алматы: выцветшие зонты, ящики яблок и дынь, панельные дома и горы",
+   "files": [
+    "public/plates/market-800.webp",
+    "public/plates/market-1400.webp",
+    "public/plates/market-2048.webp"
+   ],
+   "master": "design/plates/source/market.webp"
+  }
+ ],
+ "notGenerated": "Цифры Kraftco — src/components/NumeralBand.tsx (SVG): живые данные. verify.mjs против замера Kraftco: mean ΔE 2.37; max 32.6 даёт только серо-белый мелкий текст обложки (0,4% площади).",
+ "rejected": [],
+ "replaced": []
+}

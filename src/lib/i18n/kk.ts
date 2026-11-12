@@ -36,6 +36,10 @@ const kk: Dict = {
   },
   nav: { places: "Орындар", club: "Клуб" },
   catalog: {
+    contents: "Мазмұны",
+    placesTitle: "Орындар",
+    freeSpan: (from: string, to: string) => `Бүгін ${from}–${to} аралығында бос.`,
+    heroAlt: "Көл жағасында бокал көтерген екі қыздың сұлбасы, су алтын жылтырақта",
     today: "Бүгін",
     freeSummary: (n: number, total: number) => `${total} орынның ${n}-інде бос уақыт бар.`,
     earliest: (time: string, name: string) => `Ең ерте уақыт: ${time}, ${name}.`,
@@ -44,7 +48,6 @@ const kk: Dict = {
     marketAlt: "Коллаж: Алматыдағы базар, алма, анар, өрік, жолақты қолшатырлар",
     issue: "Алматы · 2026",
     cta: "Орын таңдау",
-    heroAlt: "Күн батқанда террасадағы екі қыз, артында таулар",
     clubLabel: "Клуб",
     title: "Алматыда қайда барған жөн",
     count: (n: number) => `Каталогта ${n} орын. Бос уақыт әр карточкада көрінеді.`,

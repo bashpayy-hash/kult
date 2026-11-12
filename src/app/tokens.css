@@ -4,29 +4,31 @@
  * are the only place gradients appear. Rationale: DESIGN.md.
  */
 @theme {
-  /* 12 Nov 2026, owner: «слишком ии слопно». Warm near-black and milk, one
-     amber accent for «your choice / active» only. The lilac accent and the
-     purple orbs read as generated; they are gone. Every text pair ≥ 4.5:1. */
-  --color-canvas: #0f0e0c;   /* page */
-  --color-tile: #181614;     /* cards */
-  --color-raised: #211f1c;   /* inputs, chips, inner surfaces */
-  --color-line: #302d29;     /* hairlines */
-  --color-ink: #f3eee6;      /* text 1: headings, values — 16.7:1 */
-  --color-ink-2: #cfc8bc;    /* text 2: body — 11.6:1 */
-  --color-ink-3: #aca599;    /* text 3: labels, meta — 7.8:1 */
-  --color-ink-4: #8f887d;    /* text 4: placeholders, hints — 4.7:1 on inputs */
-  --color-accent: #e9b562;   /* amber: selected date, time, table; active filter; focus */
-  --color-success: #8ccb9b;  /* «пришли», pairs at the pilot threshold */
-  --color-danger: #f08f7a;   /* errors, «не пришли» */
+  /* Annual Report DNA (design/dna/annual-reports.json, 12 Nov 2026, owner:
+     «Все еще ии слопно /design-dna»). Measured from the five covers the owner
+     chose: Heublein 1970 ground #231917 (37.6%) and gold #D1B475, Coca-Cola
+     1983 oxblood #8C2A1C, Kraftco 1972 navy #191C40, Rand 1954 periwinkle
+     #B8C1E5. Every text pair ≥ 5:1. */
+  --color-canvas: #231917;   /* page ground: Heublein brown-black */
+  --color-tile: #2b201b;     /* a second paper stock for working panels (admin, hostess, forms); public pages use rules instead */
+  --color-raised: #352822;   /* inputs and timetable cells */
+  --color-line: #4a382e;     /* hairline rules */
+  --color-ink: #f3ead6;      /* 14.4:1 */
+  --color-ink-2: #e9d7b5;    /* 12.2:1 */
+  --color-ink-3: #c9b48f;    /* 8.5:1 */
+  --color-ink-4: #a8916d;    /* 5.1:1 on inputs */
+  --color-accent: #d1b475;   /* gold: the one picked thing */
+  --color-success: #9fb37a;
+  --color-danger: #e0745a;
+  --color-navy: #090b1c;     /* Kraftco ground (59% of the cover) */
+  --color-oxblood: #8c2a1c;  /* Coca-Cola 1983 */
 
-  /* Paper: the cream of the 1950s covers, for light sections that break the
-     dark (12 Nov 2026: «в целом дизайн слишком однообразен»). Text on paper
-     14.1 / 7.2 / 4.7 : 1. No text ever sits on the red or orange grounds. */
-  --color-paper: #f2e0be;
-  --color-paper-ink: #1a1511;
-  --color-paper-ink-2: #4f463b;
-  --color-paper-ink-3: #6b6153;
-  --color-paper-line: #d9c49d;
+  /* Paper: Heublein's cream, for plate margins and light pages. */
+  --color-paper: #e9d7b5;
+  --color-paper-ink: #231917;   /* 12.2:1 */
+  --color-paper-ink-2: #503523; /* 7.9:1 */
+  --color-paper-ink-3: #6d4c2e; /* 5.5:1 */
+  --color-paper-line: #c9b48f;
 
   /* The owner's site iitaly.net (12 Nov 2026: «используй такой же шрифт»):
      SF Pro where the device has it, Inter Tight everywhere else (Windows,
@@ -34,10 +36,13 @@
   --font-display: "SF Pro Display", "Inter Tight Variable", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
   --font-sans: "SF Pro Text", "Inter Tight Variable", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
   --font-ui: "Onest Variable", "Helvetica Neue", Arial, sans-serif;
+  /* Didone for big numerals and mastheads only (Kraftco 1972, Coca-Cola 1983). */
+  --font-numerals: "Old Standard TT", "Bodoni 72", Didot, Georgia, serif;
 
-  --radius-pill: 999px;
-  --radius-tile: 28px;
-  --radius-inner: 16px;
+  /* Print has square corners (DNA shape: 0 everywhere). */
+  --radius-pill: 0px;
+  --radius-tile: 0px;
+  --radius-inner: 0px;
 
   --ease-out: cubic-bezier(0.22, 1, 0.36, 1);   /* anything that moves or appears */
   --ease-color: cubic-bezier(0.4, 0, 0.2, 1);   /* colour and background changes */

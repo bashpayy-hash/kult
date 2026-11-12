@@ -36,6 +36,10 @@ const ru = {
   },
   nav: { places: "Места", club: "Клуб" },
   catalog: {
+    contents: "Содержание",
+    placesTitle: "Места",
+    freeSpan: (from: string, to: string) => `Сегодня свободно с ${from} до ${to}.`,
+    heroAlt: "Две девушки силуэтом поднимают бокалы у озера, вода в золотых бликах",
     today: "Сегодня",
     freeSummary: (n: number, total: number) => `Свободное время есть в ${n} ${pluralRu(n, ["месте", "местах", "местах"])} из ${total}.`,
     earliest: (time: string, name: string) => `Самое раннее: ${time}, ${name}.`,
@@ -44,7 +48,6 @@ const ru = {
     marketAlt: "Коллаж: рынок в Алматы, яблоки, гранаты, курага, полосатые зонты",
     issue: "Алматы · 2026",
     cta: "Выбрать место",
-    heroAlt: "Две девушки на террасе на закате, за ними горы",
     clubLabel: "Клуб",
     title: "Куда пойти в Алматы",
     count: (n: number) => `${n} ${pluralRu(n, ["место", "места", "мест"])} в каталоге. Свободное время видно на каждой карточке.`,

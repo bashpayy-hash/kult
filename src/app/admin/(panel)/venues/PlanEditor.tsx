@@ -145,15 +145,15 @@ export function PlanEditor({ venueId, initialHalls, initialItems }: { venueId: s
           >
             <defs>
               <pattern id="grid" width="5" height="5" patternUnits="userSpaceOnUse">
-                <path d="M5 0 L0 0 0 5" fill="none" stroke="#1d1d21" strokeWidth="0.2" />
+                <path d="M5 0 L0 0 0 5" fill="none" stroke="#3a2c25" strokeWidth="0.2" />
               </pattern>
             </defs>
-            <rect x={0} y={0} width={hall.width} height={hall.height} rx={3} fill="url(#grid)" stroke="#2a2a2e" strokeWidth={0.4} />
+            <rect x={0} y={0} width={hall.width} height={hall.height} rx={3} fill="url(#grid)" stroke="#4a382e" strokeWidth={0.4} />
             {own.map((it) => {
               const on = it.id === sel;
               const decor = it.kind === "decor";
-              const stroke = on ? "#c9bcff" : decor ? "#3a3a40" : "#c4c1bb";
-              const fill = decor ? "#17171a" : on ? "#2d2a3d" : "#26262b";
+              const stroke = on ? "#d1b475" : decor ? "#6d4c2e" : "#e9d7b5";
+              const fill = decor ? "#261b17" : on ? "#3a2c25" : "#33261f";
               return (
                 <g key={it.id} onPointerDown={(e) => onDown(e, it, "move")} className="cursor-move">
                   {it.shape === "round" ? (
@@ -161,11 +161,11 @@ export function PlanEditor({ venueId, initialHalls, initialItems }: { venueId: s
                   ) : (
                     <rect x={it.x} y={it.y} width={it.w} height={it.h} rx={1.6} fill={fill} stroke={stroke} strokeWidth={0.45} strokeDasharray={decor ? "1.2 1" : undefined} />
                   )}
-                  <text x={it.x + it.w / 2} y={it.y + it.h / 2} textAnchor="middle" dominantBaseline="central" fill={decor ? "#918e88" : "#f4f2ee"} fontSize={Math.min(4, Math.max(1.8, Math.min(it.w, it.h) * 0.32))} fontFamily="var(--font-ui)" pointerEvents="none">
+                  <text x={it.x + it.w / 2} y={it.y + it.h / 2} textAnchor="middle" dominantBaseline="central" fill={decor ? "#c9b48f" : "#f3ead6"} fontSize={Math.min(4, Math.max(1.8, Math.min(it.w, it.h) * 0.32))} fontFamily="var(--font-ui)" pointerEvents="none">
                     {decor ? it.label : `${it.label} · ${it.seats_min === it.seats_max ? it.seats_max : `${it.seats_min}–${it.seats_max}`}`}
                   </text>
                   {on ? (
-                    <rect x={it.x + it.w - 1.6} y={it.y + it.h - 1.6} width={3.2} height={3.2} rx={0.6} fill="#c9bcff" className="cursor-nwse-resize" onPointerDown={(e) => onDown(e, it, "size")} />
+                    <rect x={it.x + it.w - 1.6} y={it.y + it.h - 1.6} width={3.2} height={3.2} rx={0.6} fill="#d1b475" className="cursor-nwse-resize" onPointerDown={(e) => onDown(e, it, "size")} />
                   ) : null}
                 </g>
               );

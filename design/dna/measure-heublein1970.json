@@ -1,0 +1,58 @@
+{
+  "source": {
+    "file": "kfcheubleinannualreports__heublein1970.jpg",
+    "width": 1244,
+    "height": 1548
+  },
+  "measurement": {
+    "k": 8,
+    "sampling": {
+      "method": "deterministic_stratified",
+      "max_pixels": 160000,
+      "sampled_pixels": 160000
+    }
+  },
+  "palette": [
+    {
+      "hex": "#231917",
+      "coverage": 0.3763,
+      "role": "background"
+    },
+    {
+      "hex": "#e0c794",
+      "coverage": 0.1233,
+      "role": "unassigned"
+    },
+    {
+      "hex": "#e9d7b5",
+      "coverage": 0.1075,
+      "role": "text"
+    },
+    {
+      "hex": "#503523",
+      "coverage": 0.103,
+      "role": "unassigned"
+    },
+    {
+      "hex": "#6d4c2e",
+      "coverage": 0.1023,
+      "role": "unassigned"
+    },
+    {
+      "hex": "#d1b475",
+      "coverage": 0.072,
+      "role": "accent"
+    },
+    {
+      "hex": "#8d6b3f",
+      "coverage": 0.0649,
+      "role": "unassigned"
+    },
+    {
+      "hex": "#af9059",
+      "coverage": 0.0507,
+      "role": "unassigned"
+    }
+  ],
+  "measured": true
+}

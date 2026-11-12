@@ -1,5 +1,6 @@
 import { BookingWidget } from "@/components/BookingWidget";
 import { Monogram } from "@/components/Monogram";
+import { Plate } from "@/components/Plate";
 import { openNow, type PlanHall, type PlanItem, type VenueHours } from "@/lib/booking";
 import { almatyNowMinutes, almatyToday, formatMoney, instagramHandle } from "@/lib/format";
 import { publicImageUrl } from "@/lib/storage";
@@ -60,15 +61,20 @@ export function VenueView({
   const facts = [state.open ? C.openUntil(state.at) : C.opensAt(state.at), d.avg_check ? `${C.avgCheck} ${formatMoney(d.avg_check)}` : null].filter(Boolean);
 
   return (
-    <div className="grid gap-10 md:grid-cols-[1fr_1fr] md:gap-12 lg:gap-16">
+    <div className="grid gap-10 md:grid-cols-[5fr_7fr] md:gap-12 lg:gap-16">
       <div className="flex min-w-0 flex-col gap-6">
-        <div className="rise aspect-[3/2] overflow-hidden rounded-tile-r" style={{ background: cover.bg }}>
-          {photo ? (
-            <img src={photo} alt={d.venue_name} className="h-full w-full object-cover" fetchPriority="high" />
-          ) : (
-            // Not a photo of the venue: the category's 1950s cover.
-            <img src={cover.src} srcSet={cover.srcSet} sizes="(min-width: 768px) 50vw, 100vw" alt="" className="h-full w-full object-cover" fetchPriority="high" />
-          )}
+        {/* The venue's own photo, else its category's collage plate. */}
+        <div className="rise">
+          <Plate
+            src={photo ?? cover.src}
+            srcSet={photo ? undefined : cover.srcSet}
+            sizes="(min-width: 768px) 40vw, 92vw"
+            bg={cover.bg}
+            alt={photo ? d.venue_name : ""}
+            left={d.venue_name}
+            right={t.categories[d.category]}
+            priority
+          />
         </div>
 
         <div className="rise rise-1">
@@ -100,21 +106,21 @@ export function VenueView({
         </div>
 
         {!active ? (
-          <div className="rounded-tile-r bg-tile p-6 md:p-8">
+          <div className="border-y border-line py-6">
             <h2 className="text-[24px]">{t.invite.inactiveTitle}</h2>
             <p className="mt-2 text-ink-2">{t.invite.inactiveText}</p>
           </div>
         ) : (
           <div className="rise rise-2 grid gap-3">
             {perk ? (
-              <div className="rounded-tile-r border border-line p-6 md:p-7">
+              <div className="border-t border-line pt-5">
                 <p className="label">{invite ? t.invite.perkTitle : b.perkTitle}</p>
                 <p className="mt-2 text-[20px] font-semibold leading-snug tracking-[-0.02em] text-ink md:text-[22px]">{perk}</p>
                 {d.terms ? <p className="mt-2 text-[14px] text-ink-3">{d.terms}</p> : null}
               </div>
             ) : null}
             {invite ? (
-              <div className="rounded-tile-r border border-line p-6 md:p-7">
+              <div className="border-t border-line pt-5">
                 <p className="label">{t.invite.phraseTitle}</p>
                 <p className="mt-2 font-display text-[28px] font-semibold leading-tight tracking-[-0.035em] text-ink md:text-[32px]">«{invite.phrase}»</p>
                 <p className="mt-2 text-[15px] text-ink-2">{t.invite.phraseHint}</p>
@@ -126,7 +132,7 @@ export function VenueView({
 
       {active ? (
         <section id="book" aria-labelledby="book-title" className="rise rise-3 min-w-0 scroll-mt-4 md:pt-1">
-          <div className="rounded-tile-r bg-tile p-5 sm:p-8">
+          <div className="border-t border-line pt-6 md:border-t-0 md:pt-0">
             <h2 id="book-title" className="text-[26px] md:text-[30px]">
               {SERVICE.includes(d.category) ? b.titleService : b.title}
             </h2>

@@ -21,9 +21,10 @@
 
 Стек: Next.js 16 (App Router, Server Actions), Supabase (Postgres +
 Storage), Tailwind 4, Vercel. Шрифты как на iitaly.net: SF Pro / Inter
-Tight и Onest. Иллюстрации — ретро-обложки годовых отчётов 1950–70-х из
-Higgsfield (`design/illustrations/covers-2026-11-12.json`): у каждой
-категории своя обложка, пока заведение не загрузило своё фото.
+Tight и Onest, цифры — Old Standard TT. Визуальный язык — Design DNA пяти
+обложек годовых отчётов (`design/dna/annual-reports.json`); картинки из
+Higgsfield (`design/illustrations/plates-2026-11-12.json`): у каждой
+категории своя обложка-коллаж, пока заведение не загрузило своё фото.
 
 ---
 

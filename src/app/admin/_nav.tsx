@@ -15,7 +15,7 @@ export function AdminNav({ newApps }: { newApps: number }) {
   const path = usePathname();
   return (
     <nav aria-label="Разделы" className="px-edge border-b border-line">
-      <ul className="-mx-1 flex gap-1 overflow-x-auto py-3 [scrollbar-width:none]">
+      <ul className="-mx-1 flex gap-5 overflow-x-auto py-1 [scrollbar-width:none]">
         {ITEMS.map((it) => {
           const active = it.href === "/admin" ? path === "/admin" : path.startsWith(it.href);
           return (
@@ -23,8 +23,8 @@ export function AdminNav({ newApps }: { newApps: number }) {
               <Link
                 href={it.href}
                 aria-current={active ? "page" : undefined}
-                className={`inline-flex min-h-9 items-center gap-2 rounded-full px-4 text-[14px] font-medium transition-colors duration-150 ${
-                  active ? "bg-raised text-ink" : "text-ink-3 hover:text-ink"
+                className={`inline-flex min-h-11 items-center gap-2 border-b-2 px-1 text-[14px] font-medium transition-colors duration-150 ${
+                  active ? "border-accent text-ink" : "border-transparent text-ink-3 hover:text-ink"
                 }`}
               >
                 {it.label}

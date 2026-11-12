@@ -1,37 +1,51 @@
 import type { Category } from "./types";
 
 /**
- * Category covers in the manner of 1950s annual reports (owner, 12 Nov 2026:
- * «вот такие вот рето стилистики мне очень нравятся»): flat cut-paper
- * shapes, one witty metaphor each, one ground colour each. They stand for a
- * category, not for a venue, so they never pretend to be a venue's photo.
- * Manifest: design/illustrations/covers-2026-11-12.json. `bg` is sampled from
- * the image so the box behind it matches while it loads.
+ * Venue plates after the Annual Report DNA (design/dna/annual-reports.json):
+ * cut-paper collages in the manner of Paul Rand's 1954 cover — real
+ * photographed objects pasted on flat gouache. They stand for a category,
+ * never for a particular venue; a venue's own photo always wins.
+ * Manifest: design/illustrations/plates-2026-11-12.json. `bg` is sampled
+ * from each image for the box behind it while it loads.
  */
-const COVERS: Record<Category, { file: string; bg: string }> = {
-  restaurant: { file: "restaurant", bg: "#ce301f" },
-  cafe: { file: "cafe", bg: "#e39417" },
-  bar: { file: "bar", bg: "#1a1511" },
-  beauty: { file: "beauty", bg: "#dd7459" },
-  wellness: { file: "wellness", bg: "#72702e" },
-  fitness: { file: "fitness", bg: "#d8521b" },
-  other: { file: "restaurant", bg: "#ce301f" },
+const PLATES: Record<Category, { file: string; bg: string }> = {
+  restaurant: { file: "restaurant", bg: "#7f91d7" },
+  cafe: { file: "cafe", bg: "#cd831b" },
+  bar: { file: "bar", bg: "#102041" },
+  beauty: { file: "beauty", bg: "#879ad9" },
+  wellness: { file: "wellness", bg: "#bd8f37" },
+  fitness: { file: "fitness", bg: "#871310" },
+  other: { file: "restaurant", bg: "#7f91d7" },
 };
 
 export type Cover = { src: string; srcSet: string; bg: string };
 
-function cover(file: string, bg: string): Cover {
+function plate(file: string, bg: string): Cover {
   return {
-    src: `/covers/${file}-1024.webp`,
-    srcSet: `/covers/${file}-640.webp 640w, /covers/${file}-1024.webp 1024w`,
+    src: `/plates/${file}-900.webp`,
+    srcSet: `/plates/${file}-480.webp 480w, /plates/${file}-900.webp 900w`,
     bg,
   };
 }
 
 export function coverFor(category: Category): Cover {
-  const c = COVERS[category] ?? COVERS.other;
-  return cover(c.file, c.bg);
+  const p = PLATES[category] ?? PLATES.other;
+  return plate(p.file, p.bg);
 }
 
-/** The club: an envelope whose flap is a mountain peak (шақыру — invitation). */
-export const CLUB_COVER = cover("club", "#ce311e");
+/** The club: an envelope whose flap is a snowy peak (шақыру — invitation). */
+export const CLUB_COVER = plate("club", "#e33409");
+
+/** Heublein 1970: two silhouettes, a lake of gold. Portrait. */
+export const HERO = {
+  src: "/plates/hero-1200.webp",
+  srcSet: "/plates/hero-800.webp 800w, /plates/hero-1200.webp 1200w, /plates/hero-1792.webp 1792w",
+  bg: "#231917",
+};
+
+/** Coca-Cola 1987: one documentary photograph of a market. */
+export const MARKET = {
+  src: "/plates/market-1400.webp",
+  srcSet: "/plates/market-800.webp 800w, /plates/market-1400.webp 1400w, /plates/market-2048.webp 2048w",
+  bg: "#473c31",
+};

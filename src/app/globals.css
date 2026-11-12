@@ -79,8 +79,7 @@ p { text-wrap: pretty; }
 }
 
 @utility rounded-tile-r {
-  border-radius: 24px;
-  @media (min-width: 768px) { border-radius: var(--radius-tile); }
+  border-radius: var(--radius-tile);
 }
 
 /* Labels: 13px semibold, sentence case. */
@@ -160,6 +159,8 @@ input[type="file"].field::file-selector-button {
 .btn-primary { background: var(--color-ink); color: var(--color-canvas); }
 .btn-primary:hover { background: #fffaf2; }
 .btn-ink { background: var(--color-paper-ink); color: var(--color-paper); }
+/* A Didone numeral, Kraftco/Coca-Cola: tabular, light, tight. */
+.numerals { font-family: var(--font-numerals); font-weight: 400; letter-spacing: -0.02em; font-variant-numeric: lining-nums tabular-nums; }
 .btn-ink:hover { background: #000; }
 .btn-soft { background: var(--color-raised); color: var(--color-ink); border: 1px solid var(--color-line); }
 .btn-soft:hover { background: #2a2824; }
@@ -210,18 +211,27 @@ input[type="file"].field::file-selector-button {
    outline, never the milk fill of the main button, so the two never compete.
    A picked date, time or table is amber-filled: the only filled amber. */
 @layer components {
+  /* Filters as a ruled row of text tabs (DNA: no pills). */
   .chip {
     display: inline-flex; align-items: center; justify-content: center;
-    min-height: 44px; padding: 0 18px;
-    border: 1px solid var(--color-line); border-radius: var(--radius-pill);
-    background: var(--color-raised); color: var(--color-ink-2);
+    min-height: 44px; padding: 0 2px; margin-right: 18px;
+    border-bottom: 2px solid transparent;
+    color: var(--color-ink-3);
     font-size: 15px; font-weight: 500; line-height: 1; white-space: nowrap;
-    transition: color var(--dur-hover) var(--ease-color), border-color var(--dur-hover) var(--ease-color), background-color var(--dur-hover) var(--ease-color);
+    transition: color var(--dur-hover) var(--ease-color), border-color var(--dur-hover) var(--ease-color);
   }
-  .chip:hover { color: var(--color-ink); border-color: #45413c; }
+  .chip:hover { color: var(--color-ink); }
   .chip[aria-current="true"], .chip[aria-current="page"], .chip[aria-current="date"] {
-    background: transparent; border-color: var(--color-accent); color: var(--color-ink);
+    color: var(--color-ink); border-bottom-color: var(--color-accent);
   }
+  /* A timetable cell: a free time you can tap. */
+  .cell {
+    display: inline-flex; align-items: center; justify-content: center;
+    min-height: 44px; min-width: 64px; padding: 0 12px;
+    border: 1px solid var(--color-line); color: var(--color-ink);
+    transition: border-color var(--dur-hover) var(--ease-color), background-color var(--dur-hover) var(--ease-color);
+  }
+  .cell:hover { border-color: var(--color-accent); }
   .pick { border: 1px solid var(--color-line); background: var(--color-raised); color: var(--color-ink); }
   .pick:hover { border-color: #45413c; }
   .pick[aria-pressed="true"] { background: var(--color-accent); border-color: var(--color-accent); color: var(--color-canvas); }

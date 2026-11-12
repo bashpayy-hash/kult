@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { getDict } from "@/lib/i18n";
 import { SiteFooter, SiteHeader } from "@/components/SiteChrome";
 import { CLUB_COVER } from "@/lib/covers";
+import { Plate } from "@/components/Plate";
 import { MemberApplicationForm, PartnerApplicationForm } from "../_landing/ApplicationForms";
 
 export const metadata: Metadata = { title: "Клуб" };
@@ -27,14 +28,14 @@ export default async function Join() {
               </h2>
               <p className="mt-2 text-[16px] text-paper-ink-2">{L.example}</p>
             </div>
-            <div className="aspect-[3/2] overflow-hidden rounded-tile-r" style={{ background: CLUB_COVER.bg }}>
-              <img src={CLUB_COVER.src} srcSet={CLUB_COVER.srcSet} sizes="(min-width: 768px) 50vw, 100vw" alt="" fetchPriority="high" className="h-full w-full object-cover" />
+            <div className="max-w-[24rem] md:justify-self-end">
+              <Plate src={CLUB_COVER.src} srcSet={CLUB_COVER.srcSet} sizes="(min-width: 768px) 32vw, 90vw" bg={CLUB_COVER.bg} priority />
             </div>
           </div>
         </section>
 
         <section id="join" className="px-edge scroll-mt-6 py-12 md:py-20" aria-labelledby="join-title">
-          <div className="rounded-tile-r bg-tile p-6 sm:p-8 md:p-12">
+          <div className="border-t border-line pt-10">
             <div className="grid gap-8 lg:grid-cols-[0.8fr_1.2fr] lg:gap-12">
               <div>
                 <h2 id="join-title" className="text-[30px] md:text-[40px]">
@@ -50,7 +51,7 @@ export default async function Join() {
         </section>
 
         <section id="partners" className="px-edge scroll-mt-6 py-12 md:py-20" aria-labelledby="partners-title">
-          <div className="rounded-tile-r bg-tile p-6 sm:p-8 md:p-12">
+          <div className="border-t border-line pt-10">
             <div className="grid gap-8 lg:grid-cols-[0.8fr_1.2fr] lg:gap-12">
               <div>
                 <h2 id="partners-title" className="text-[30px] md:text-[40px]">

@@ -1,116 +1,13 @@
 {
  "date": "2026-11-12",
  "request": "Владелец, 12 ноября 2026: «в целом дизайн слишком однообразен» + референсы обложек годовых отчётов: Kentucky Fried Chicken / Heublein 1970 (золотые контровые силуэты у воды), The Coca-Cola Company 1983 (крупный план, красный, чёрный, серебро), Consolidated Cigar 1954, Paul Rand (плоская иллюстрация: сигары как дымящие трубы). «вот такие вот рето стилистики мне очень нравятся, нужны такого типа иллюстрации в хигсфилде». Затем, 12 ноября: «хммм уже лучше» + Coca-Cola 1987 (тёплый фотоколлаж рынка во всю ширину) и Kraftco 1972 (огромные полупрозрачные цифры даты поверх вертикальных полос и концентрических линий: полночный синий, ржавчина, фиолетовый). «есть куда рости».",
- "use": "hero — обложка главной (и public/og.png). Категории — верх карточек и страниц заведений, пока у заведения нет своего фото (src/lib/covers.ts); это иллюстрация категории, а не выдача за фото места. club — бумажная полоса клуба на главной и шапка /join.",
+ "use": "Не используется.",
  "model": "Higgsfield gpt_image_2_6, quality high; hero 16:9 2k (2688×1520), обложки 3:2 1k (1024×688), png",
  "world": "Обложки американских годовых отчётов 1950–70-х. Обложки категорий: плоские вырезанные из бумаги формы с неровным краем, один фон и 3 цвета + кремовая бумага, зерно бумаги и лёгкое несовмещение офсета, одна остроумная метафора, много воздуха. Главная — золотая контровая фотография 1970-х дуплексом чёрный + золото.",
  "flatTemplate": "Mid-century modernist corporate annual report cover illustration, American graphic design of the 1950s. Flat cut-paper shapes with slightly irregular hand-cut edges, on a solid [ground] background, with [three colours] only. Visible paper grain and subtle offset-print texture with slight colour misregistration. One witty visual metaphor: [metaphor]. Simple geometric forms, generous negative space, asymmetric composition with the subject large and slightly off-centre. No text, no letters, no numbers, no logos, no people, no gradients, no 3D, no photorealism.",
  "photoTemplate": "A golden, high-contrast backlit photograph from an early-1970s corporate annual report cover, printed as a warm duotone of deep black and rich gold. [scene], placed in the left third; the right half calm with room for text. Strong film grain, halation, slightly soft vintage lens, offset-print look. Silhouettes only, no faces or details visible. No text, no letters, no numbers, no logos.",
  "processing": "ImageMagick: WebP q80–82 method 6 — hero 640/1024/1600/2400, обложки 640/1024; мастера WebP q90 в design/covers/source/. Цвет фона снят с углов картинки (bg в src/lib/covers.ts).",
- "items": [
-  {
-   "name": "hero",
-   "job": "7ab44756-4f6d-4225-8359-341cb94e6404",
-   "subject": "две девушки силуэтом у перил террасы с бокалами на фоне огромного солнца, бассейн на крыше, горы над городом; правая половина — спокойное золотое небо под заголовок",
-   "files": [
-    "public/covers/hero-640.webp",
-    "public/covers/hero-1024.webp",
-    "public/covers/hero-1600.webp",
-    "public/covers/hero-2400.webp",
-    "public/og.png"
-   ],
-   "master": "design/covers/source/hero.webp"
-  },
-  {
-   "name": "restaurant",
-   "job": "e34ce46d-334f-4ba1-99ac-0ea3a8102044",
-   "bg": "#ce301f",
-   "subject": "вилка и нож встают башнями над городом, тарелка — солнце",
-   "files": [
-    "public/covers/restaurant-640.webp",
-    "public/covers/restaurant-1024.webp"
-   ],
-   "master": "design/covers/source/restaurant.webp"
-  },
-  {
-   "name": "cafe",
-   "job": "c1522f43-988f-4739-80b2-bb5c3b7016b1",
-   "bg": "#e39417",
-   "subject": "пар над чашкой складывается в снежные пики",
-   "files": [
-    "public/covers/cafe-640.webp",
-    "public/covers/cafe-1024.webp"
-   ],
-   "master": "design/covers/source/cafe.webp"
-  },
-  {
-   "name": "bar",
-   "job": "679cf40e-f6a2-4501-9b39-790546611b92",
-   "bg": "#1a1511",
-   "subject": "оливка в бокале — полная луна, золотые звёзды",
-   "files": [
-    "public/covers/bar-640.webp",
-    "public/covers/bar-1024.webp"
-   ],
-   "master": "design/covers/source/bar.webp"
-  },
-  {
-   "name": "beauty",
-   "job": "af44958b-9c08-44f9-9039-7b7246d130fe",
-   "bg": "#dd7459",
-   "subject": "три флакона лака — колонны маленького храма",
-   "files": [
-    "public/covers/beauty-640.webp",
-    "public/covers/beauty-1024.webp"
-   ],
-   "master": "design/covers/source/beauty.webp"
-  },
-  {
-   "name": "wellness",
-   "job": "19c28417-dae6-4761-aed1-80dde68b75db",
-   "bg": "#72702e",
-   "subject": "башня из гладких камней, сверху три завитка пара",
-   "files": [
-    "public/covers/wellness-640.webp",
-    "public/covers/wellness-1024.webp"
-   ],
-   "master": "design/covers/source/wellness.webp"
-  },
-  {
-   "name": "fitness",
-   "job": "c31e4399-9c3b-4126-a6c7-0fe1f26442d2",
-   "bg": "#d8521b",
-   "subject": "гантель стоит памятником, дуги движения — восходящее солнце",
-   "files": [
-    "public/covers/fitness-640.webp",
-    "public/covers/fitness-1024.webp"
-   ],
-   "master": "design/covers/source/fitness.webp"
-  },
-  {
-   "name": "club",
-   "job": "25c39f33-5a2d-41b6-9f58-31c9d4ca781e",
-   "bg": "#ce311e",
-   "subject": "конверт, клапан которого — снежная вершина, карточка выходит из него как солнце (шақыру — приглашение)",
-   "files": [
-    "public/covers/club-640.webp",
-    "public/covers/club-1024.webp"
-   ],
-   "master": "design/covers/source/club.webp"
-  },
-  {
-   "name": "market",
-   "job": "a0fd34c0-1c7e-4c48-9208-04923e77b653",
-   "subject": "фотоколлаж базара в духе Coca-Cola 1987: апорт, гранаты, курага, дыни, зелень, полосатые навесы, толпа со спины, горы над рядами",
-   "files": [
-    "public/covers/market-800.webp",
-    "public/covers/market-1400.webp",
-    "public/covers/market-2200.webp"
-   ],
-   "master": "design/covers/source/market.webp",
-   "use": "полоса «Бонусы гостям» на главной"
-  }
- ],
+ "items": [],
  "rejected": [
   {
    "name": "hero-v1",
@@ -128,6 +25,79 @@
    "why": "В кадре медресе с голубым куполом — это Самарканд, не Алматы."
   }
  ],
- "replaced": [],
- "notGenerated": "Kraftco 1972 (огромные цифры даты) не генерируется: это src/components/NumeralBand.tsx в SVG — цифры живые (сегодняшняя дата, показатель пилота), а модели искажают цифры."
+ "replaced": [
+  {
+   "name": "hero",
+   "job": "7ab44756-4f6d-4225-8359-341cb94e6404",
+   "subject": "две девушки силуэтом у перил террасы с бокалами на фоне огромного солнца, бассейн на крыше, горы над городом; правая половина — спокойное золотое небо под заголовок",
+   "files": [],
+   "master": null
+  },
+  {
+   "name": "restaurant",
+   "job": "e34ce46d-334f-4ba1-99ac-0ea3a8102044",
+   "bg": "#ce301f",
+   "subject": "вилка и нож встают башнями над городом, тарелка — солнце",
+   "files": [],
+   "master": null
+  },
+  {
+   "name": "cafe",
+   "job": "c1522f43-988f-4739-80b2-bb5c3b7016b1",
+   "bg": "#e39417",
+   "subject": "пар над чашкой складывается в снежные пики",
+   "files": [],
+   "master": null
+  },
+  {
+   "name": "bar",
+   "job": "679cf40e-f6a2-4501-9b39-790546611b92",
+   "bg": "#1a1511",
+   "subject": "оливка в бокале — полная луна, золотые звёзды",
+   "files": [],
+   "master": null
+  },
+  {
+   "name": "beauty",
+   "job": "af44958b-9c08-44f9-9039-7b7246d130fe",
+   "bg": "#dd7459",
+   "subject": "три флакона лака — колонны маленького храма",
+   "files": [],
+   "master": null
+  },
+  {
+   "name": "wellness",
+   "job": "19c28417-dae6-4761-aed1-80dde68b75db",
+   "bg": "#72702e",
+   "subject": "башня из гладких камней, сверху три завитка пара",
+   "files": [],
+   "master": null
+  },
+  {
+   "name": "fitness",
+   "job": "c31e4399-9c3b-4126-a6c7-0fe1f26442d2",
+   "bg": "#d8521b",
+   "subject": "гантель стоит памятником, дуги движения — восходящее солнце",
+   "files": [],
+   "master": null
+  },
+  {
+   "name": "club",
+   "job": "25c39f33-5a2d-41b6-9f58-31c9d4ca781e",
+   "bg": "#ce311e",
+   "subject": "конверт, клапан которого — снежная вершина, карточка выходит из него как солнце (шақыру — приглашение)",
+   "files": [],
+   "master": null
+  },
+  {
+   "name": "market",
+   "job": "a0fd34c0-1c7e-4c48-9208-04923e77b653",
+   "subject": "фотоколлаж базара в духе Coca-Cola 1987: апорт, гранаты, курага, дыни, зелень, полосатые навесы, толпа со спины, горы над рядами",
+   "files": [],
+   "master": null,
+   "use": "полоса «Бонусы гостям» на главной"
+  }
+ ],
+ "notGenerated": "Kraftco 1972 (огромные цифры даты) не генерируется: это src/components/NumeralBand.tsx в SVG — цифры живые (сегодняшняя дата, показатель пилота), а модели искажают цифры.",
+ "replacedReason": "Владелец, 12 ноября 2026: «Все еще ии слопно /design-dna». Замер настоящих обложек (design/dna/annual-reports.json) показал: этот набор пересыщен (небо #DC7E05, фоны #CE301F/#E39417/#D8521B против приглушённых референсов) и нарисован как гладкая иллюстрация, а не коллаж из фото на гуаши. Заменён набором plates-2026-11-12."
 }

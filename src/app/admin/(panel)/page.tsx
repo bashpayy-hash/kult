@@ -29,13 +29,13 @@ export default async function Dashboard() {
   return (
     <>
       {/* The pilot's own annual report: its one number, Kraftco-1972 size. */}
-      <NumeralBand numerals={[gpv == null ? "—" : formatNumber(gpv, 1), formatNumber(threshold, 0)]} className="rounded-tile-r">
-        <p className="text-[14px] font-semibold text-paper/70">Пилот · гостей на один визит участницы</p>
-        <h1 className="mt-2 text-[44px] text-paper md:text-[56px]">{gpv == null ? "Пока нет визитов" : formatNumber(gpv, 2)}</h1>
-        <p className="mt-3 text-[16px] text-paper/85">
+      <NumeralBand numerals={[formatNumber(threshold, 0), gpv == null ? "—" : formatNumber(gpv, 1)]}>
+        <p className="text-[13px] font-medium text-ink-3">Пилот · гостей на один визит участницы. Сверху порог, снизу факт</p>
+        <h1 className="numerals mt-2 text-[64px] leading-none text-ink md:text-[88px]">{gpv == null ? "Пока нет визитов" : formatNumber(gpv, 2)}</h1>
+        <p className="mt-3 text-[16px] text-ink-2">
           Порог успеха {formatNumber(threshold, 2)}. На пороге {passed.length} {passed.length === 1 ? "пара" : "пары"} из {withVisits.length}.
         </p>
-        <a href="/admin/export" className="btn btn-sm mt-6 bg-paper text-paper-ink hover:bg-white" download>
+        <a href="/admin/export" className="btn btn-primary btn-sm mt-6" download>
           Скачать CSV
         </a>
       </NumeralBand>
