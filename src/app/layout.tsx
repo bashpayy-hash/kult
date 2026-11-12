@@ -1,7 +1,5 @@
 import type { Metadata, Viewport } from "next";
 import "@fontsource-variable/inter-tight/wght.css";
-import "@fontsource-variable/onest/wght.css";
-import "@fontsource/old-standard-tt/400.css";
 import "./globals.css";
 import { getLang } from "@/lib/i18n";
 import { siteUrl } from "@/lib/env";

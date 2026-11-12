@@ -7,30 +7,34 @@ import type { Category } from "./types";
  * never for a particular venue; a venue's own photo always wins.
  * Manifest: design/illustrations/plates-2026-11-12.json. `bg` is sampled
  * from each image for the box behind it while it loads.
+ * `focus` is the object-position used when a 4:5 plate is cut square on
+ * phones: centred, except the bar, whose glass stands on the bottom edge
+ * (checked on all six, 12 Nov 2026).
  */
-const PLATES: Record<Category, { file: string; bg: string }> = {
+const PLATES: Record<Category, { file: string; bg: string; focus?: string }> = {
   restaurant: { file: "restaurant", bg: "#7f91d7" },
   cafe: { file: "cafe", bg: "#cd831b" },
-  bar: { file: "bar", bg: "#102041" },
+  bar: { file: "bar", bg: "#102041", focus: "50% 100%" },
   beauty: { file: "beauty", bg: "#879ad9" },
   wellness: { file: "wellness", bg: "#bd8f37" },
   fitness: { file: "fitness", bg: "#871310" },
   other: { file: "restaurant", bg: "#7f91d7" },
 };
 
-export type Cover = { src: string; srcSet: string; bg: string };
+export type Cover = { src: string; srcSet: string; bg: string; focus?: string };
 
-function plate(file: string, bg: string): Cover {
+function plate(file: string, bg: string, focus?: string): Cover {
   return {
     src: `/plates/${file}-900.webp`,
     srcSet: `/plates/${file}-480.webp 480w, /plates/${file}-900.webp 900w`,
     bg,
+    focus,
   };
 }
 
 export function coverFor(category: Category): Cover {
   const p = PLATES[category] ?? PLATES.other;
-  return plate(p.file, p.bg);
+  return plate(p.file, p.bg, p.focus);
 }
 
 /** The club: an envelope whose flap is a snowy peak (шақыру — invitation). */

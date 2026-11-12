@@ -2,7 +2,6 @@ import Link from "next/link";
 import { getDict } from "@/lib/i18n";
 import { SiteFooter, SiteHeader } from "@/components/SiteChrome";
 import { Rail, VenueCard } from "@/components/VenueCard";
-import { NumeralBand } from "@/components/NumeralBand";
 import { Plate } from "@/components/Plate";
 import { listedCategories, listVenues, nextFreeSlots } from "@/lib/venueData";
 import { almatyNowMinutes, almatyToday, formatDay } from "@/lib/format";
@@ -14,9 +13,18 @@ export const dynamic = "force-dynamic";
 
 /**
  * The main page as an annual report (design/dna/annual-reports.json):
- * a cover and its contents page, a Kraftco highlights band, the catalog as
- * printed plates, a Coca-Cola market photograph with the perks, the club.
- * Sections butt against each other like pages; nothing is rounded or shadowed.
+ * a cover and its contents page, the catalog as printed plates, a Coca-Cola
+ * market photograph with the perks, the club. Sections butt against each
+ * other like pages; nothing is rounded or shadowed.
+ *
+ * Funnel (12 Nov 2026, owner: «продумай воронку ui чтобы все было
+ * органично»): every block either moves a guest one step closer to a table
+ * or stays out of the way. The cover's contents page used to list
+ * categories with counts — a second copy of the filter tabs above the grid —
+ * and a Kraftco band under it told the earliest free time without a way to
+ * take it. Now the contents page *is* tonight: each place with its nearest
+ * free time, and a tap opens the booking with that day and time. The
+ * categories live only in the tabs; the Kraftco band stays in the admin.
  */
 export default async function Overview({ searchParams }: { searchParams: Promise<{ c?: string }> }) {
   const { lang, t } = await getDict();
@@ -30,74 +38,56 @@ export default async function Overview({ searchParams }: { searchParams: Promise
   const nowMin = almatyNowMinutes();
   const today = almatyToday();
 
-  // Today's window: the earliest free time and the latest one, across places.
-  const todays = all.flatMap((v) => {
-    const f = free.get(v.id);
-    return f && f.day === "today" ? [{ v, first: f.slots[0] }] : [];
-  });
-  const first = todays.slice().sort((a, b) => a.first - b.first)[0];
-  const lastSlot = Math.max(
-    ...all.map((v) => {
-      const open = Number(v.open_time.slice(0, 2)) * 60 + Number(v.open_time.slice(3, 5));
-      let close = Number(v.close_time.slice(0, 2)) * 60 + Number(v.close_time.slice(3, 5));
-      if (close <= open) close += 1440;
-      return close - 60;
-    }),
-  );
+  // The cover's contents: each place at its nearest free time, today first.
+  const nearest = all
+    .flatMap((v) => {
+      const f = free.get(v.id);
+      return f ? [{ v, f, at: f.slots[0] }] : [];
+    })
+    .sort((a, b) => (a.f.day === b.f.day ? a.at - b.at : a.f.day === "today" ? -1 : 1));
   const perks = all.filter((v) => v.perk);
-  const numerals: [string, string] = first ? [clock(first.first), clock(lastSlot)] : [today.slice(8, 10), today.slice(5, 7)];
 
   return (
     <>
       <SiteHeader lang={lang} t={t} />
       <main>
-        {/* Cover and contents: Heublein 1970 photograph, title set small on it. */}
+        {/* Cover and contents: Heublein 1970 photograph; the contents page lists
+            tonight. On phones the photograph is cut to 16:10 so the title and
+            the first times are on the first screen. */}
         <section className="px-edge grid gap-8 border-t border-line pb-16 pt-6 md:grid-cols-[5fr_7fr] md:gap-12 md:pb-24 md:pt-10 lg:gap-20">
           <div className="relative overflow-hidden" style={{ background: HERO.bg }}>
-            <img src={HERO.src} srcSet={HERO.srcSet} sizes="(min-width: 768px) 42vw, 92vw" alt={C.heroAlt} fetchPriority="high" className="aspect-[4/5] h-full w-full object-cover" />
+            <img src={HERO.src} srcSet={HERO.srcSet} sizes="(min-width: 768px) 42vw, 92vw" alt={C.heroAlt} fetchPriority="high" className="aspect-[16/10] w-full object-cover object-[50%_40%] md:aspect-[4/5] md:h-full" />
             <p className="absolute inset-x-4 bottom-4 flex items-baseline justify-between text-[13px] tracking-[0.02em] text-ink-2">
-              <span>Shaqyru, {lang === "kk" ? "Алматы" : "Алматы"}</span>
-              <span className="numerals text-[18px] text-accent">{today.slice(0, 4)}</span>
+              <span>Shaqyru, Алматы</span>
+              <span className="numerals text-[20px] text-accent">{today.slice(0, 4)}</span>
             </p>
           </div>
           <div className="flex flex-col md:pt-2">
-            <h1 className="text-[40px] md:text-[52px]">{C.title}</h1>
+            <p className="label first-letter:uppercase">{formatDay(today, lang, true)}</p>
+            <h1 className="mt-3 text-[40px] md:text-[52px]">{C.title}</h1>
             <p className="mt-4 max-w-[34rem] text-[17px] text-ink-2">{C.count(total)}</p>
-            <h2 className="mt-10 text-[13px] font-medium tracking-[0.02em] text-ink-3">{C.contents}</h2>
-            <ul className="mt-2 border-t border-line">
-              {cats.map((x) => (
-                <li key={x.category} className="border-b border-line">
-                  <Link href={`/?c=${x.category}#places`} className="flex min-h-12 items-baseline justify-between gap-4 py-3 text-[17px] text-ink transition-colors duration-150 hover:text-accent">
-                    <span>{C.plural[x.category as Category]}</span>
-                    <span className="numerals text-[22px] text-ink-3">{x.n}</span>
-                  </Link>
-                </li>
-              ))}
-              {perks.length ? (
-                <li className="border-b border-line">
-                  <a href="#perks" className="flex min-h-12 items-baseline justify-between gap-4 py-3 text-[17px] text-ink transition-colors duration-150 hover:text-accent">
-                    <span>{C.perksTitle}</span>
-                    <span className="numerals text-[22px] text-ink-3">{perks.length}</span>
-                  </a>
-                </li>
-              ) : null}
-              <li className="border-b border-line">
-                <Link href="/join" className="flex min-h-12 items-baseline justify-between gap-4 py-3 text-[17px] text-ink transition-colors duration-150 hover:text-accent">
-                  <span>{C.clubTitle}</span>
-                </Link>
-              </li>
-            </ul>
+            {nearest.length ? (
+              <>
+                <h2 className="label mt-10">{C.nearestTitle}</h2>
+                <ul className="mt-2 border-t border-line">
+                  {nearest.map(({ v, f, at }) => (
+                    <li key={v.id} className="border-b border-line">
+                      <Link href={`/v/${v.slug}?d=${f.date}&t=${at}#book`} className="group flex min-h-14 items-center justify-between gap-4 py-2.5">
+                        <span className="min-w-0">
+                          <span className="block truncate text-[17px] font-medium text-ink transition-colors duration-150 group-hover:text-accent">{v.name}</span>
+                          <span className="block text-[13px] text-ink-3">
+                            {t.categories[v.category]} · {(f.day === "today" ? t.booking.today : t.booking.tomorrow).toLowerCase()}
+                          </span>
+                        </span>
+                        <span className="numerals shrink-0 text-[30px] leading-none text-ink transition-colors duration-150 group-hover:text-accent">{clock(at)}</span>
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              </>
+            ) : null}
           </div>
         </section>
-
-        {/* Kraftco 1972: today's window, from the first free time to the last. */}
-        <NumeralBand numerals={numerals}>
-          <p className="text-[13px] font-medium tracking-[0.02em] text-ink-3">{C.today}</p>
-          <h2 className="mt-2 text-[34px] text-ink first-letter:uppercase md:text-[44px]">{formatDay(today, lang, true)}</h2>
-          <p className="mt-4 text-[17px] text-ink-2">
-            {first ? `${C.freeSpan(clock(first.first), clock(lastSlot))} ${C.earliest(clock(first.first), first.v.name)}` : C.freeSummary(0, total)}
-          </p>
-        </NumeralBand>
 
         <section id="places" className="px-edge scroll-mt-4 pb-6 pt-16 md:pt-24" aria-labelledby="places-title">
           <div className="flex flex-col gap-4 border-b border-line md:flex-row md:items-end md:justify-between">

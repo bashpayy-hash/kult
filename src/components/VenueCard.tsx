@@ -8,10 +8,13 @@ import type { Dict, Lang } from "@/lib/i18n/dicts";
 import type { CatalogVenue, FreeSlots } from "@/lib/venueData";
 
 /**
- * A catalog entry, Annual Report DNA: a printed 4:5 plate (the venue's own
- * photo, else its category's collage) with the name set small on its paper
- * margin, then plain caption lines and a timetable of the next free times.
- * No card, no rounded box: the page ground carries it.
+ * A catalog entry, Annual Report DNA: a printed plate (the venue's own photo,
+ * else its category's collage), then category, name, plain caption lines and
+ * the next free times. No card, no rounded box: the page ground carries it.
+ * Reading order follows the decision (12 Nov 2026, «продумай воронку ui»):
+ * what kind of place → which one → where and how much → what you get → when.
+ * The times are the step forward, so they sit last, three equal cells on one
+ * line at every width, each opening the booking with that day and time.
  */
 export function VenueCard({ v, t, lang, free, nowMin }: { v: CatalogVenue; t: Dict; lang: Lang; free?: FreeSlots; nowMin: number }) {
   const C = t.catalog;
@@ -29,12 +32,13 @@ export function VenueCard({ v, t, lang, free, nowMin }: { v: CatalogVenue; t: Di
           srcSet={photo ? undefined : cover.srcSet}
           sizes="(min-width: 1024px) 30vw, (min-width: 640px) 45vw, 92vw"
           bg={cover.bg}
-          left={v.name}
-          right={t.categories[v.category]}
+          aspect="aspect-square sm:aspect-[4/5]"
+          focus={photo ? undefined : cover.focus}
         />
       </Link>
       <div className="flex flex-1 flex-col gap-2 pt-4">
-        <h3 className="text-[22px]">
+        <p className="label">{t.categories[v.category]}</p>
+        <h3 className="-mt-1 text-[22px]">
           <Link href={`/v/${v.slug}`} className="hover:underline hover:decoration-1 hover:underline-offset-4">
             {v.name}
           </Link>
@@ -48,14 +52,16 @@ export function VenueCard({ v, t, lang, free, nowMin }: { v: CatalogVenue; t: Di
         ) : null}
         <div className="mt-auto border-t border-line pt-3">
           {free ? (
-            <div className="flex flex-wrap items-center gap-x-3 gap-y-2">
-              <span className="text-[13px] font-medium text-ink-3">{free.day === "today" ? C.freeToday : C.freeTomorrow}</span>
-              {free.slots.map((m) => (
-                <Link key={m} href={`/v/${v.slug}?d=${free.date}&t=${m}#book`} className="cell numerals text-[19px]">
-                  {clock(m)}
-                </Link>
-              ))}
-            </div>
+            <>
+              <p className="label mb-2">{free.day === "today" ? C.freeToday : C.freeTomorrow}</p>
+              <div className="grid grid-cols-3 gap-2">
+                {free.slots.map((m) => (
+                  <Link key={m} href={`/v/${v.slug}?d=${free.date}&t=${m}#book`} className="cell num min-w-0 text-[17px]">
+                    {clock(m)}
+                  </Link>
+                ))}
+              </div>
+            </>
           ) : (
             <p className="text-[14px] text-ink-3">{C.noFree}</p>
           )}

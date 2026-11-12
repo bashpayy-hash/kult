@@ -20,8 +20,8 @@
 | `/admin` | Админка по паролю |
 
 Стек: Next.js 16 (App Router, Server Actions), Postgres (Netlify
-Database), Netlify Blobs для файлов, Tailwind 4, хостинг Netlify. Шрифты как на iitaly.net: SF Pro / Inter
-Tight и Onest, цифры — Old Standard TT. Визуальный язык — Design DNA пяти
+Database), Netlify Blobs для файлов, Tailwind 4, хостинг Netlify. Шрифт —
+один, Inter Tight (как на iitaly.net), в разных начертаниях. Визуальный язык — Design DNA пяти
 обложек годовых отчётов (`design/dna/annual-reports.json`); картинки из
 Higgsfield (`design/illustrations/plates-2026-11-12.json`): у каждой
 категории своя обложка-коллаж, пока заведение не загрузило своё фото.

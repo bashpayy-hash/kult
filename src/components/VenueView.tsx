@@ -1,4 +1,5 @@
 import { BookingWidget } from "@/components/BookingWidget";
+import { BookBar } from "@/components/BookBar";
 import { Monogram } from "@/components/Monogram";
 import { Plate } from "@/components/Plate";
 import { openNow, type PlanHall, type PlanItem, type VenueHours } from "@/lib/booking";
@@ -71,8 +72,8 @@ export function VenueView({
             sizes="(min-width: 768px) 40vw, 92vw"
             bg={cover.bg}
             alt={photo ? d.venue_name : ""}
-            left={d.venue_name}
-            right={t.categories[d.category]}
+            aspect="aspect-square sm:aspect-[4/5]"
+          focus={photo ? undefined : cover.focus}
             priority
           />
         </div>
@@ -122,7 +123,7 @@ export function VenueView({
             {invite ? (
               <div className="border-t border-line pt-5">
                 <p className="label">{t.invite.phraseTitle}</p>
-                <p className="mt-2 font-display text-[28px] font-semibold leading-tight tracking-[-0.035em] text-ink md:text-[32px]">«{invite.phrase}»</p>
+                <p className="mt-2 text-[28px] font-semibold leading-tight tracking-[-0.035em] text-ink md:text-[32px]">«{invite.phrase}»</p>
                 <p className="mt-2 text-[15px] text-ink-2">{t.invite.phraseHint}</p>
               </div>
             ) : null}
@@ -153,6 +154,9 @@ export function VenueView({
           </div>
         </section>
       ) : null}
+      {/* Outside the animated section: a transform animation (.rise) makes its
+          element the containing block of position:fixed children. */}
+      {active ? <BookBar label={SERVICE.includes(d.category) ? b.titleService : b.title} /> : null}
     </div>
   );
 }

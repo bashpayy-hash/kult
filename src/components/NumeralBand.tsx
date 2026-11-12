@@ -2,12 +2,15 @@ import type { ReactNode } from "react";
 
 /**
  * Kraftco 1972, done the way the cover does it (DNA visual_effects.text_effects):
- * a Didone numeral repeated many times, each copy a few units lower, its
+ * a numeral repeated many times, each copy a few units lower, its
  * colour stepping from navy-blue to red, so the figures smear into vertical
  * columns between the top figure and the bottom one. Drawn in SVG because
  * the figures are live data and image models garble digits. Text never
  * sits on the figures: it has the plain navy half to itself (≥ 13:1).
+ * The figures are the site's one typeface in its black cut (800), not a
+ * Didone: owner, 12 Nov 2026, «используй один шрифт но его разные вариации».
  */
+const FIGURE = { fontFamily: "var(--font-sans)", fontWeight: 800, letterSpacing: "-0.04em" } as const;
 const STEPS = 42;
 const mix = (a: number[], b: number[], t: number) => a.map((x, i) => Math.round(x + (b[i] - x) * t));
 // Measured on the Kraftco cover (design/dna/measure-kraftco1972.json):
@@ -36,14 +39,14 @@ export function NumeralBand({ numerals, children, className = "" }: { numerals: 
           {copies.map((c, i) => (
             // Filled copies, each outlined in the ground colour: overprinted
             // they build solid columns striped with fine lines, as on the cover.
-            <text key={i} x="450" y={c.y} textAnchor="middle" fontFamily="var(--font-numerals)" fontSize="300" fill={c.fill} stroke="#090b1c" strokeOpacity="0.55" strokeWidth="1.6">
+            <text key={i} x="450" y={c.y} textAnchor="middle" style={FIGURE} fontSize="300" fill={c.fill} stroke="#090b1c" strokeOpacity="0.55" strokeWidth="1.6">
               {c.text}
             </text>
           ))}
-          <text x="450" y={y0} textAnchor="middle" fontFamily="var(--font-numerals)" fontSize="300" fill="rgb(38 49 138)">
+          <text x="450" y={y0} textAnchor="middle" style={FIGURE} fontSize="300" fill="rgb(38 49 138)">
             {top}
           </text>
-          <text x="450" y={y1} textAnchor="middle" fontFamily="var(--font-numerals)" fontSize="300" fill="rgb(160 46 34)">
+          <text x="450" y={y1} textAnchor="middle" style={FIGURE} fontSize="300" fill="rgb(160 46 34)">
             {bottom}
           </text>
         </svg>

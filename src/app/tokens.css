@@ -30,14 +30,21 @@
   --color-paper-ink-3: #6d4c2e; /* 5.5:1 */
   --color-paper-line: #c9b48f;
 
-  /* The owner's site iitaly.net (12 Nov 2026: «используй такой же шрифт»):
-     SF Pro where the device has it, Inter Tight everywhere else (Windows,
-     Android), Onest for navigation and labels. Same stack, same order. */
-  --font-display: "SF Pro Display", "Inter Tight Variable", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
-  --font-sans: "SF Pro Text", "Inter Tight Variable", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
-  --font-ui: "Onest Variable", "Helvetica Neue", Arial, sans-serif;
-  /* Didone for big numerals and mastheads only (Kraftco 1972, Coca-Cola 1983). */
-  --font-numerals: "Old Standard TT", "Bodoni 72", Didot, Georgia, serif;
+  /* One typeface, Inter Tight (the font of the owner's iitaly.net), in all
+     its variations — owner, 12 Nov 2026: «не используй вот эти странные
+     шрифты, используй один шрифт но его разные вариации». It replaced SF Pro
+     (Apple only, so the site looked different per device), Onest (labels)
+     and the Didone Old Standard TT (numerals). The variations, used by role:
+       display  600, tracking −0.035em, leading 1.06   h1–h3 (base layer)
+       text     400, −0.011em                          body
+       label    500/600, 13px, 0                       eyebrows, legends
+       figures  300 (.numerals) or 500 (.num), tabular  times, dates, counts
+       black    800                                    Kraftco numerals (SVG)
+     The aliases stay so components keep naming a role, not a font. */
+  --font-sans: "Inter Tight Variable", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --font-display: var(--font-sans);
+  --font-ui: var(--font-sans);
+  --font-numerals: var(--font-sans);
 
   /* Print has square corners (DNA shape: 0 everywhere). */
   --radius-pill: 0px;

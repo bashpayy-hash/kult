@@ -41,8 +41,9 @@ React 19, Tailwind 4 (токены в `src/app/tokens.css`), postgres.js по
 `netlify/database/migrations/` применяет деплой), файлы в Netlify Blobs
 (`STORAGE_BACKEND=blobs`; Supabase Storage и локальная папка — запасные
 варианты в `src/lib/storage.ts`), адаптер `@netlify/plugin-nextjs`
-в `netlify.toml`, шрифты
-`@fontsource-variable` (Inter Tight, Onest) + `public/fonts/*-tenge-v1.woff2`. Сеть сессии: окружение `kult` (iitaly.net и CDN Higgsfield
+в `netlify.toml`, шрифт —
+одна гарнитура `@fontsource-variable/inter-tight` в разных начертаниях +
+`public/fonts/inter-tight-tenge-v1.woff2` (₸). Сеть сессии: окружение `kult` (iitaly.net и CDN Higgsfield
 разрешены).
 
 ## 4. Карта страниц
@@ -58,6 +59,11 @@ React 19, Tailwind 4 (токены в `src/app/tokens.css`), postgres.js по
 | `/admin/*` | дашборд, заявки, участницы, заведения, ссылки, CSV |
 
 ## 5. Что сделано
+- 12 ноября, восьмая правка: один шрифт (Inter Tight в разных
+  начертаниях вместо SF Pro, Onest и дидоны) и путь гостя: на обложке
+  главной ближайшее свободное время каждого места вместо списка
+  категорий, полоса Kraftco ушла с главной, карточки короче на телефоне,
+  нижняя кнопка брони на странице заведения.
 - 12 ноября, деплой: сайт на Netlify. База — Netlify Database (все пять
   миграций применены деплоем), загрузки — Netlify Blobs, демо-данные —
   миграция `0005_demo_data.sql` (заполняет только пустую базу).

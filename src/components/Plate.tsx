@@ -1,9 +1,11 @@
-import type { ReactNode } from "react";
-
 /**
- * A printed plate: the picture inside a cream paper margin with a caption
- * line set small along its bottom edge — the way the covers set «Consolidated
- * Cigar Corporation · Annual Report 1954». Square corners, no shadow.
+ * A printed plate: the picture inside a cream paper margin, square corners,
+ * no shadow — a print mounted in a frame. It used to carry a caption line
+ * with the venue's name; the name is set right under it as a heading, so
+ * the caption only repeated it and was dropped (12 Nov 2026, «продумай
+ * воронку ui чтобы все было органично»).
+ * `aspect` is a class: catalog plates are square on phones (two places per
+ * screen instead of one) and 4:5 from 640px.
  */
 export function Plate({
   src,
@@ -11,9 +13,8 @@ export function Plate({
   sizes,
   bg,
   alt = "",
-  left,
-  right,
-  ratio = "4/5",
+  aspect = "aspect-[4/5]",
+  focus,
   priority = false,
 }: {
   src: string;
@@ -21,14 +22,14 @@ export function Plate({
   sizes?: string;
   bg: string;
   alt?: string;
-  left?: ReactNode;
-  right?: ReactNode;
-  ratio?: string;
+  aspect?: string;
+  /** object-position for crops, e.g. "50% 100%" keeps the bottom edge. */
+  focus?: string;
   priority?: boolean;
 }) {
   return (
-    <figure className="bg-paper p-2 text-paper-ink sm:p-2.5">
-      <div className="overflow-hidden" style={{ aspectRatio: ratio, background: bg }}>
+    <figure className="bg-paper p-2 sm:p-2.5">
+      <div className={`overflow-hidden ${aspect}`} style={{ background: bg }}>
         <img
           src={src}
           srcSet={srcSet}
@@ -37,14 +38,9 @@ export function Plate({
           loading={priority ? "eager" : "lazy"}
           fetchPriority={priority ? "high" : undefined}
           className="h-full w-full object-cover"
+          style={focus ? { objectPosition: focus } : undefined}
         />
       </div>
-      {left || right ? (
-        <figcaption className="flex items-baseline justify-between gap-3 px-0.5 pb-0.5 pt-2.5 text-[14px] leading-tight">
-          <span className="min-w-0 truncate font-semibold">{left}</span>
-          {right ? <span className="shrink-0 text-paper-ink-3">{right}</span> : null}
-        </figcaption>
-      ) : null}
     </figure>
   );
 }

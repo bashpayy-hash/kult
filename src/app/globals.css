@@ -1,22 +1,14 @@
 @import "tailwindcss";
 @import "./tokens.css";
 
-/* ₸ is missing from Inter Tight and Onest; these one-glyph files from
-   iitaly.net add it (declared after the main faces, so they win for U+20B8). */
+/* ₸ is missing from Inter Tight; this one-glyph file from iitaly.net adds it
+   (declared after the main faces, so it wins for U+20B8). */
 @font-face {
   font-family: "Inter Tight Variable";
   font-style: normal;
   font-weight: 100 900;
   font-display: swap;
   src: url("/fonts/inter-tight-tenge-v1.woff2") format("woff2");
-  unicode-range: U+20B8;
-}
-@font-face {
-  font-family: "Onest Variable";
-  font-style: normal;
-  font-weight: 100 900;
-  font-display: swap;
-  src: url("/fonts/onest-tenge-v1.woff2") format("woff2");
   unicode-range: U+20B8;
 }
 
@@ -82,9 +74,8 @@ p { text-wrap: pretty; }
   border-radius: var(--radius-tile);
 }
 
-/* Labels: 13px semibold, sentence case. */
+/* Labels: 13px, the label weight of the one typeface, sentence case. */
 @utility label {
-  font-family: var(--font-ui);
   letter-spacing: 0;
   font-size: 13px;
   font-weight: 600;
@@ -159,8 +150,11 @@ input[type="file"].field::file-selector-button {
 .btn-primary { background: var(--color-ink); color: var(--color-canvas); }
 .btn-primary:hover { background: #fffaf2; }
 .btn-ink { background: var(--color-paper-ink); color: var(--color-paper); }
-/* A Didone numeral, Kraftco/Coca-Cola: tabular, light, tight. */
-.numerals { font-family: var(--font-numerals); font-weight: 400; letter-spacing: -0.02em; font-variant-numeric: lining-nums tabular-nums; }
+/* Figures in the one typeface. .numerals: the light cut for big editorial
+   figures (times in the cover's list, the year); .num: the medium cut for
+   times and counts inside controls. Both tabular, so columns line up. */
+.numerals { font-weight: 300; letter-spacing: -0.04em; font-variant-numeric: lining-nums tabular-nums; }
+.num { font-weight: 500; letter-spacing: -0.01em; font-variant-numeric: lining-nums tabular-nums; }
 .btn-ink:hover { background: #000; }
 .btn-soft { background: var(--color-raised); color: var(--color-ink); border: 1px solid var(--color-line); }
 .btn-soft:hover { background: #2a2824; }
