@@ -33,7 +33,7 @@ export function NumeralBand({ numerals, children, className = "" }: { numerals: 
     return { y: upper ? y0 + (mid - y0) * (t * 2) : mid + (y1 - mid) * ((t - 0.5) * 2), text: upper ? top : bottom, fill: `rgb(${r} ${g} ${b})` };
   });
   return (
-    <section className={`relative overflow-hidden bg-[#090b1c] ${className}`}>
+    <section className={`relative overflow-hidden bg-navy ${className}`}>
       <div className="relative h-[300px] md:absolute md:inset-y-0 md:right-0 md:h-auto md:w-[55%]">
         <svg aria-hidden="true" className="absolute inset-0 h-full w-full" viewBox="0 0 900 900" preserveAspectRatio="xMidYMid meet">
           {copies.map((c, i) => (
