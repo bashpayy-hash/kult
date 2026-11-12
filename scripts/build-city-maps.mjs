@@ -36,7 +36,7 @@ const INK = { park: "#cdbd8f", water: "#9fb0e0", river: "#7f91d7", major: "#6d4c
 function query({ south, west, north, east }) {
   const m = 0.01; // lines run off the edge instead of stopping at it
   const bb = `${south - m},${west - m},${north + m},${east + m}`;
-  return `[out:json][timeout:120];
+  return `[out:json][timeout:170];
 (
   way["highway"~"^(motorway|trunk|primary|secondary)$"](${bb});
   way["waterway"~"^(river|canal)$"](${bb});
@@ -50,13 +50,14 @@ out geom tags;`;
 
 async function fetchCity(key) {
   let last;
-  for (const url of OVERPASS) {
+  // Each mirror twice: a busy Overpass answers 429/504 and is fine a minute later.
+  for (const url of [...OVERPASS, ...OVERPASS]) {
     try {
       const res = await fetch(url, {
         method: "POST",
         headers: { "content-type": "application/x-www-form-urlencoded", "user-agent": "shaqyru-map-build/1.0" },
         body: new URLSearchParams({ data: query(CITIES[key]) }),
-        signal: AbortSignal.timeout(90_000),
+        signal: AbortSignal.timeout(180_000),
       });
       if (!res.ok) throw new Error(`${url}: HTTP ${res.status}`);
       const text = await res.text();
