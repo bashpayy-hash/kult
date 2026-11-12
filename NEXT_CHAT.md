@@ -16,15 +16,16 @@
 ## 2. Адреса и окружение
 - Репозиторий: `bashpayy-hash/kult`, ветка разработки
   `claude/tender-maxwell-atuvs1`.
-- **Живой сайт: https://shaqyru-7ol3.netlify.app** — Netlify, проект
-  `shaqyru-7ol3` (id `f6fb0fea-c789-4eae-9e92-dd054cd11444`), команда
-  `bashpayy`. Имя `shaqyru` на Netlify было занято. Основной адрес
+- **Живой сайт: https://bolek-almaty.netlify.app** — Netlify, проект
+  `bolek-almaty` (id `f6fb0fea-c789-4eae-9e92-dd054cd11444`), команда
+  `bashpayy`. До 12 ноября адрес был `shaqyru-7ol3.netlify.app` (старый
+  больше не открывается); имя `bolek` на Netlify занято. Основной адрес
   открыт, тестовые деплои — за входом в Netlify.
 - Деплой из сессии: Netlify MCP `deploy-site` → команда
   `npx @netlify/mcp … --proxy-path …`. Запускать из чистой копии коммита
   (`git archive HEAD | tar -x -C <папка>`), чтобы не уехал `.env.local`.
   В окружении сессии `kult` разрешены `netlify-mcp.netlify.app` и
-  `shaqyru-7ol3.netlify.app`; `api.netlify.com` закрыт.
+  `bolek-almaty.netlify.app`; `api.netlify.com` закрыт.
 - Пароль админки — в переменной `ADMIN_PASSWORD` в Netlify (Project
   configuration → Environment variables); владельцу передан в чате.
   Пометка «секрет» и ограничение областей на этом тарифе дают 403 —

@@ -31,8 +31,8 @@ Higgsfield (`design/illustrations/plates-2026-11-12.json`): у каждой
 
 ## 1. Развернуть
 
-Живой сайт: **https://shaqyru-7ol3.netlify.app** (Netlify, проект
-`shaqyru-7ol3` в команде владельца).
+Живой сайт: **https://bolek-almaty.netlify.app** (Netlify, проект
+`bolek-almaty` в команде владельца; до 12 ноября — `bolek-almaty`).
 
 ### 1.1 Netlify
 
@@ -56,7 +56,7 @@ Higgsfield (`design/illustrations/plates-2026-11-12.json`): у каждой
   |---|---|
   | `ADMIN_PASSWORD` | пароль админки, длинный |
   | `SESSION_SECRET` | `openssl rand -hex 32` |
-  | `NEXT_PUBLIC_SITE_URL` | адрес сайта без слеша в конце: `https://shaqyru-7ol3.netlify.app` |
+  | `NEXT_PUBLIC_SITE_URL` | адрес сайта без слеша в конце: `https://bolek-almaty.netlify.app` |
   | `STORAGE_BACKEND` | `blobs` |
   | `PILOT_THRESHOLD` | `2` (необязательно) |
   | `NEXT_PUBLIC_OPERATOR_NAME` | юрлицо оператора данных для `/privacy` (необязательно) |
