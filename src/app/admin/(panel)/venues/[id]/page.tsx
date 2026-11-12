@@ -1,0 +1,135 @@
+import Link from "next/link";
+import { notFound } from "next/navigation";
+import { db } from "@/lib/db";
+import { isUuid } from "@/lib/forms";
+import { siteUrl } from "@/lib/env";
+import { formatMoney } from "@/lib/format";
+import { publicImageUrl } from "@/lib/storage";
+import type { Offer, Venue } from "@/lib/types";
+import {
+  createOffer,
+  deleteOffer,
+  deleteVenue,
+  regenerateHostToken,
+  removeVenuePhoto,
+  updateOffer,
+  updateVenue,
+  uploadVenuePhoto,
+} from "../../../actions";
+import { ActionForm, ButtonForm, CopyButton, Disclosure, ImageInput } from "../../../_ui";
+import { Empty, PageHead, Person, Section, StatusText } from "../../../_parts";
+import { VenueFields } from "../VenueFields";
+import { OfferFields } from "../OfferFields";
+
+export default async function VenuePage({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params;
+  if (!isUuid(id)) notFound();
+  const sql = db();
+  const [v] = await sql<Venue[]>`select * from venues where id = ${id}`;
+  if (!v) notFound();
+  const [offers, links] = await Promise.all([
+    sql<Offer[]>`select * from offers where venue_id = ${id} order by active desc, created_at`,
+    sql<{ id: string; member_name: string; member_slug: string; active: boolean; guests: number; visits: number }[]>`
+      select tl.id, m.name as member_name, m.slug as member_slug, tl.active, ps.guests, ps.member_visits as visits
+      from tracking_links tl join members m on m.id = tl.member_id join pair_stats ps on ps.tracking_link_id = tl.id
+      where tl.venue_id = ${id} order by m.name`,
+  ]);
+  const base = siteUrl();
+  const hostUrl = `${base}/h/${v.host_token}`;
+  const photo = publicImageUrl(v.photo_path);
+
+  return (
+    <>
+      <PageHead
+        title={v.name}
+        lead={<>{v.address ? `${v.address} · ` : ""}{v.avg_check ? `чек ${formatMoney(v.avg_check)} · ` : ""}<StatusText status={v.status} /></>}
+        action={<Link href={`/admin/links?venue=${v.id}`} className="btn btn-primary btn-sm">Привязать участницу</Link>}
+      />
+
+      <Section title="Ссылка для хостес">
+        <div className="flex flex-col gap-4 rounded-tile-r bg-tile p-5 md:p-6">
+          <p className="text-[14px] text-ink-3">
+            Отправьте хостес эту ссылку, лучше в личные сообщения: по ней без логина видны брони и можно отмечать гостей.
+            Если ссылка утекла, выпустите новую — старая сразу перестанет работать.
+          </p>
+          <p className="break-all rounded-[var(--radius-inner)] bg-raised px-4 py-3 font-mono text-[14px] text-ink">{hostUrl}</p>
+          <div className="flex flex-wrap items-center gap-3">
+            <CopyButton text={hostUrl} label="Скопировать ссылку" />
+            <a href={hostUrl} target="_blank" rel="noopener noreferrer" className="link-quiet text-[14px]">Открыть</a>
+            <ButtonForm action={regenerateHostToken} fields={{ id: v.id }} label="Выпустить новую" confirmText="Старая ссылка хостес перестанет работать. Продолжить?" />
+          </div>
+        </div>
+      </Section>
+
+      <Section title="Offers и perks">
+        <div className="flex flex-col gap-3">
+          {offers.length === 0 ? <Empty>Offers пока нет. Без offer ссылка работает, но гости не увидят бонус.</Empty> : null}
+          {offers.map((o) => (
+            <Disclosure key={o.id} title={`${o.title}${o.active ? "" : " · выключен"}`}>
+              <ActionForm action={updateOffer} submit="Сохранить" secondary={<ButtonForm action={deleteOffer} fields={{ id: o.id }} label="Удалить" confirmText="Удалить offer? Ссылки останутся без бонуса." />}>
+                <input type="hidden" name="id" value={o.id} />
+                <OfferFields o={o} idp={`o-${o.id.slice(0, 8)}`} />
+              </ActionForm>
+            </Disclosure>
+          ))}
+          <Disclosure title="Добавить offer">
+            <ActionForm action={createOffer} submit="Добавить">
+              <input type="hidden" name="venue_id" value={v.id} />
+              <OfferFields idp="o-new" />
+            </ActionForm>
+          </Disclosure>
+        </div>
+      </Section>
+
+      <Section title="Участницы">
+        {links.length === 0 ? (
+          <Empty>Ни одна участница ещё не привязана.</Empty>
+        ) : (
+          <ul className="grid gap-3 md:grid-cols-2">
+            {links.map((l) => (
+              <li key={l.id}>
+                <Link href={`/admin/links/${l.id}`} className="flex items-center justify-between gap-3 rounded-tile-r bg-tile p-5 transition-colors duration-150 hover:bg-raised">
+                  <Person name={l.member_name} slug={l.member_slug} sub={`${l.active ? "Активна" : "Выключена"} · визитов ${l.visits} · гостей ${l.guests}`} />
+                </Link>
+              </li>
+            ))}
+          </ul>
+        )}
+      </Section>
+
+      <Section title="Фото для страницы гостей">
+        <div className="grid gap-5 rounded-tile-r bg-tile p-5 md:grid-cols-[16rem_1fr] md:p-6">
+          <div className="aspect-[4/3] overflow-hidden rounded-[var(--radius-inner)] bg-raised">
+            {photo ? <img src={photo} alt={v.name} className="h-full w-full object-cover" /> : <p className="grid h-full place-items-center text-[14px] text-ink-3">Фото нет</p>}
+          </div>
+          <div className="flex flex-col gap-4">
+            <ActionForm action={uploadVenuePhoto} submit="Загрузить">
+              <input type="hidden" name="id" value={v.id} />
+              <div className="flex flex-col gap-2">
+                <label htmlFor="venue-photo" className="label">Фото, горизонтальное 4:3</label>
+                <ImageInput id="venue-photo" name="photo" required />
+              </div>
+            </ActionForm>
+            {photo ? <ButtonForm action={removeVenuePhoto} fields={{ id: v.id }} label="Убрать фото" confirmText="Убрать фото?" /> : null}
+          </div>
+        </div>
+      </Section>
+
+      <Section title="Карточка">
+        <div className="rounded-tile-r bg-tile p-5 md:p-8">
+          <ActionForm action={updateVenue} submit="Сохранить">
+            <input type="hidden" name="id" value={v.id} />
+            <VenueFields v={v} />
+          </ActionForm>
+        </div>
+      </Section>
+
+      <Section title="Удаление">
+        <div className="flex flex-col gap-3 rounded-tile-r bg-tile p-5 md:flex-row md:items-center md:justify-between md:p-6">
+          <p className="text-[14px] text-ink-3">Если у заведения уже есть ссылки, карточка уйдёт в архив: данные пилота сохранятся.</p>
+          <ButtonForm action={deleteVenue} fields={{ id: v.id }} label="Удалить заведение" className="btn btn-soft btn-sm text-danger" confirmText="Удалить заведение?" />
+        </div>
+      </Section>
+    </>
+  );
+}

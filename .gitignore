@@ -7,5 +7,5 @@ out/
 next-env.d.ts
 .vercel
 audit-out/
-public/uploads/
+.uploads/
 .DS_Store

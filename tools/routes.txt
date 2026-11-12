@@ -1,0 +1,5 @@
+/
+/privacy
+/aruzhan/nomad-bar
+/h/demo-host-token-nomad-bar-0001
+/admin/login
