@@ -1,0 +1,81 @@
+{
+ "date": "2026-11-12",
+ "request": "Владелец: «продумывай маскота, такого типа саптл маскота ... накинь 10 вариантов разных, чтобы под общую стилистику, под референс».",
+ "status": "варианты на выбор, на сайте не используются",
+ "model": "Higgsfield gpt_image_2_6, quality high, 1k, 1:1",
+ "reference": "e09d9d89-5a48-4879-98e4-2e02919724c1 (обложка «Кафе»: техника коллажа, бумага, цвет печати)",
+ "promptTemplate": "Mascot concept for a members' club for going out in Almaty. Style: Paul Rand 1954 annual-report cover — a real photographed {subject}, cut out with scissors and pasted onto a flat hand-painted gouache ground of {ground}; slightly faded 1950s print colour, visible paper grain and gouache brush texture; soft daylight from the upper left, one soft contact shadow on its own small paper ground. The character is small in the frame with generous empty space, calm and quietly charming — subtle, not a cartoon, no big eyes, no outlines. Match the collage technique, paper and print colour of the reference image; do not copy its subject. No text, no letters, no numbers, no logos, no flags, no people, no frame, no glow, nothing floating.",
+ "items": [
+  {
+   "file": "design/mascot/source/01-fox.webp",
+   "name": "Қарсақ — степная лиса",
+   "job": "7556f8d0-eb14-4486-9f01-4dc66cec6bb1",
+   "ground": "#cd831b",
+   "pose": "сидит, хвост вокруг лап, голова склонена — слушает"
+  },
+  {
+   "file": "design/mascot/source/02-snow-leopard.webp",
+   "name": "Барыс — снежный барс",
+   "job": "232ada09-539b-4cc2-b255-43490ae88689",
+   "ground": "#879ad9",
+   "pose": "котёнок на сложенной льняной салфетке, хвост кольцом"
+  },
+  {
+   "file": "design/mascot/source/03-marmot.webp",
+   "name": "Суыр — сурок-дозорный",
+   "job": "3e0d43c8-beda-4f7c-832b-1afc8fe9c444",
+   "ground": "#bd8f37",
+   "pose": "стоит столбиком, лапы на груди, смотрит вдаль"
+  },
+  {
+   "file": "design/mascot/source/04-saiga.webp",
+   "name": "Ақбөкен — сайгак",
+   "job": "87fa9161-6b8f-4537-b018-77cb304be438",
+   "ground": "#102041",
+   "pose": "в профиль на клочке сухой степи"
+  },
+  {
+   "file": "design/mascot/source/05-tomagha.webp",
+   "name": "Томаға — колпачок беркута",
+   "job": "a2a79c33-cbf9-4c91-afb6-461ac731c77d",
+   "ground": "#8c2a1c",
+   "pose": "кожаный колпачок с пером на подставке — персонаж без лица"
+  },
+  {
+   "file": "design/mascot/source/06-apple.webp",
+   "name": "Апорт — алматинское яблоко",
+   "job": "bd470de6-b7e3-4011-a478-89a320d0c3ad",
+   "ground": "#879ad9",
+   "pose": "яблоко с листом и ватным облачком-шапкой"
+  },
+  {
+   "file": "design/mascot/source/07-tulip.webp",
+   "name": "Қызғалдақ — тюльпан Грейга",
+   "job": "96209172-f03b-4584-a107-1f741475779c",
+   "ground": "#cd831b",
+   "pose": "бумажный тюльпан склонил голову — здоровается"
+  },
+  {
+   "file": "design/mascot/source/08-kese.webp",
+   "name": "Кесе — пиала с паром",
+   "job": "26cc2e6a-4a34-4285-bc34-6f52bff542e0",
+   "ground": "#8c2a1c",
+   "pose": "пиала, пар из ваты спиралью — гостеприимство"
+  },
+  {
+   "file": "design/mascot/source/09-shanyrak.webp",
+   "name": "Шаңырақ — купол юрты",
+   "job": "ecbddb44-fc3d-4231-adf2-844e1a915b6c",
+   "ground": "#102041",
+   "pose": "деревянный шаңырақ на ребре — «под одной крышей»"
+  },
+  {
+   "file": "design/mascot/source/10-camel.webp",
+   "name": "Түйе — войлочный верблюд",
+   "job": "4140acc1-4318-4f1a-bc33-06f57d4be158",
+   "ground": "#bd8f37",
+   "pose": "войлочная игрушка, шаг вперёд"
+  }
+ ],
+ "sheet": "design/mascot/mascots-2026-11-12.jpg"
+}

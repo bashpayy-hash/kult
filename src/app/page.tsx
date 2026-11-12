@@ -9,6 +9,8 @@ import { clock } from "@/lib/booking";
 import { CLUB_COVER, HERO, MARKET } from "@/lib/covers";
 import { CATEGORIES, type Category } from "@/lib/types";
 import { CityMap, type MapCity } from "@/components/CityMap";
+import { HeroCover } from "@/components/HeroCover";
+import { Tick } from "@/components/Tick";
 import plans from "@/lib/cityPlans.generated.json";
 import { CITIES, cityKey, placeOnCountry, placeOnPlan, planAspect, planHeightKm, planWidthKm } from "@/lib/cities";
 
@@ -92,23 +94,31 @@ export default async function Overview({ searchParams }: { searchParams: Promise
             tonight. On phones the photograph is cut to 16:10 so the title and
             the first times are on the first screen. */}
         <section className="px-edge grid gap-8 border-t border-line pb-16 pt-6 md:grid-cols-[5fr_7fr] md:gap-12 md:pb-24 md:pt-10 lg:gap-20">
-          <div className="relative overflow-hidden" style={{ background: HERO.bg }}>
-            <img src={HERO.src} srcSet={HERO.srcSet} sizes="(min-width: 768px) 42vw, 92vw" alt={C.heroAlt} fetchPriority="high" className="aspect-[16/10] w-full object-cover object-[50%_40%] md:aspect-[4/5] md:h-full" />
+          <div className="enter relative overflow-hidden" style={{ background: HERO.bg, ["--i" as string]: 2 }}>
+            <HeroCover
+              src={HERO.src}
+              srcSet={HERO.srcSet}
+              loop={HERO.loop}
+              sizes="(min-width: 768px) 42vw, 92vw"
+              alt={C.heroAlt}
+              className="aspect-[16/10] w-full object-cover object-[50%_40%] md:aspect-[4/5] md:h-full"
+              videoClassName="object-cover object-[50%_40%]"
+            />
             <p className="absolute inset-x-4 bottom-4 flex items-baseline justify-between text-[13px] tracking-[0.02em] text-ink-2">
-              <span>Shaqyru, Алматы</span>
+              <span>Бөлек, Алматы</span>
               <span className="numerals text-[20px] text-accent">{today.slice(0, 4)}</span>
             </p>
           </div>
           <div className="flex flex-col md:pt-2">
-            <p className="label first-letter:uppercase">{formatDay(today, lang, true)}</p>
-            <h1 className="mt-3 text-[40px] md:text-[52px]">{C.title}</h1>
-            <p className="mt-4 max-w-[34rem] text-[17px] text-ink-2">{C.count(total)}</p>
+            <p className="enter label first-letter:uppercase" style={{ ["--i" as string]: 0 }}>{formatDay(today, lang, true)}</p>
+            <h1 className="enter mt-3 text-[40px] md:text-[52px]" style={{ ["--i" as string]: 1 }}>{C.title}</h1>
+            <p className="enter mt-4 max-w-[34rem] text-[17px] text-ink-2" style={{ ["--i" as string]: 3 }}>{C.count(total)}</p>
             {nearest.length ? (
               <>
-                <h2 className="label mt-10">{C.nearestTitle}</h2>
+                <h2 className="enter label mt-10" style={{ ["--i" as string]: 4 }}>{C.nearestTitle}</h2>
                 <ul className="mt-2 border-t border-line">
-                  {nearest.map(({ v, f, at }) => (
-                    <li key={v.id} className="border-b border-line">
+                  {nearest.map(({ v, f, at }, k) => (
+                    <li key={v.id} className="enter border-b border-line" style={{ ["--i" as string]: 5 + k }}>
                       <Link href={`/v/${v.slug}?d=${f.date}&t=${at}#book`} className="group flex min-h-14 items-center justify-between gap-4 py-2.5">
                         <span className="min-w-0">
                           <span className="block truncate text-[17px] font-medium text-ink transition-colors duration-150 group-hover:text-accent">{v.name}</span>
@@ -116,7 +126,8 @@ export default async function Overview({ searchParams }: { searchParams: Promise
                             {t.categories[v.category]} · {(f.day === "today" ? t.booking.today : t.booking.tomorrow).toLowerCase()}
                           </span>
                         </span>
-                        <span className="numerals shrink-0 text-[30px] leading-none text-ink transition-colors duration-150 group-hover:text-accent">{clock(at)}</span>
+                        {/* The board ticks in after its row: row delay + 200 ms. */}
+                        <Tick text={clock(at)} delay={Math.min(5 + k, 8) * 35 + 200} className="numerals shrink-0 text-[30px] leading-none text-ink transition-colors duration-150 group-hover:text-accent" />
                       </Link>
                     </li>
                   ))}
@@ -127,7 +138,7 @@ export default async function Overview({ searchParams }: { searchParams: Promise
         </section>
 
         <section id="places" className="px-edge scroll-mt-4 pb-6 pt-16 md:pt-24" aria-labelledby="places-title">
-          <div className="flex flex-col gap-4 border-b border-line md:flex-row md:items-end md:justify-between">
+          <div className="reveal flex flex-col gap-4 border-b border-line md:flex-row md:items-end md:justify-between">
             <h2 id="places-title" className="text-[28px] md:text-[36px]">
               {C.placesTitle}
             </h2>
@@ -147,8 +158,8 @@ export default async function Overview({ searchParams }: { searchParams: Promise
             <p className="mt-10 text-ink-3">{C.empty}</p>
           ) : (
             <ul className="mt-8 grid gap-x-6 gap-y-14 sm:grid-cols-2 lg:grid-cols-3">
-              {list.map((v) => (
-                <li key={v.id}>
+              {list.map((v, k) => (
+                <li key={v.id} className="reveal" style={{ ["--c" as string]: k % 3 }}>
                   <VenueCard v={v} t={t} lang={lang} free={free.get(v.id)} nowMin={nowMin} />
                 </li>
               ))}
@@ -156,7 +167,7 @@ export default async function Overview({ searchParams }: { searchParams: Promise
           )}
         </section>
 
-        {/* Where Shaqyru is: a survey plate per city and Kazakhstan with both. */}
+        {/* Where бөлек is: a survey plate per city and Kazakhstan with both. */}
         <section id="map" className="px-edge scroll-mt-4 pt-16 md:pt-24" aria-labelledby="map-title">
           <CityMap
             title={C.mapTitle}
@@ -169,10 +180,10 @@ export default async function Overview({ searchParams }: { searchParams: Promise
         {perks.length ? (
           <section id="perks" className="mt-16 scroll-mt-4 border-t border-line md:mt-24" aria-labelledby="perks-title">
             <div className="grid md:grid-cols-[7fr_5fr]">
-              <div className="relative" style={{ background: MARKET.bg }}>
+              <div className="reveal relative" style={{ background: MARKET.bg }}>
                 <img src={MARKET.src} srcSet={MARKET.srcSet} sizes="(min-width: 768px) 58vw, 100vw" alt={C.marketAlt} loading="lazy" className="aspect-[3/2] h-full w-full object-cover" />
               </div>
-              <div className="px-edge py-10 md:!px-10 md:py-14 lg:!px-14">
+              <div className="reveal px-edge py-10 md:!px-10 md:py-14 lg:!px-14" style={{ ["--c" as string]: 1 }}>
                 <h2 id="perks-title" className="text-[28px] md:text-[36px]">
                   {C.perksTitle}
                 </h2>
@@ -195,10 +206,10 @@ export default async function Overview({ searchParams }: { searchParams: Promise
         {/* The club on paper. */}
         <section className="bg-paper text-paper-ink" aria-labelledby="club">
           <div className="px-edge grid items-center gap-8 py-14 md:grid-cols-[4fr_8fr] md:gap-16 md:py-20">
-            <div className="max-w-[20rem]">
+            <div className="reveal max-w-[20rem]">
               <Plate src={CLUB_COVER.src} srcSet={CLUB_COVER.srcSet} sizes="(min-width: 768px) 28vw, 80vw" bg={CLUB_COVER.bg} />
             </div>
-            <div className="max-w-[34rem]">
+            <div className="reveal max-w-[34rem]" style={{ ["--c" as string]: 1 }}>
               <p className="text-[13px] font-medium tracking-[0.02em] text-paper-ink-3">{C.clubLabel}</p>
               <h2 id="club" className="mt-2 text-[32px] text-paper-ink md:text-[44px]">
                 {C.clubTitle}

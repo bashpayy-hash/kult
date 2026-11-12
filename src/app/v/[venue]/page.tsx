@@ -33,12 +33,12 @@ const load = cache(async (slug: string): Promise<VenueViewData | null> => {
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const d = await load((await params).venue);
-  if (!d) return { title: "Shaqyru" };
+  if (!d) return { title: "Бөлек" };
   const photo = publicImageUrl(d.photo_path);
   return {
     title: d.venue_name,
     description: d.description || undefined,
-    openGraph: { title: `${d.venue_name} · Shaqyru`, images: photo ? [photo] : ["/og.png"] },
+    openGraph: { title: `${d.venue_name} · Бөлек`, images: photo ? [photo] : ["/og.png"] },
   };
 }
 

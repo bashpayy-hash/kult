@@ -6,7 +6,7 @@ import { logout } from "../login/actions";
 import { AdminNav } from "../_nav";
 
 export const dynamic = "force-dynamic";
-export const metadata: Metadata = { title: { default: "Админка", template: "%s · Админка Shaqyru" }, robots: { index: false, follow: false } };
+export const metadata: Metadata = { title: { default: "Админка", template: "%s · Админка Бөлек" }, robots: { index: false, follow: false } };
 
 export default async function PanelLayout({ children }: { children: React.ReactNode }) {
   await requireAdmin();

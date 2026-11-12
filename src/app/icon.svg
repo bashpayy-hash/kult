@@ -1,8 +1,8 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
-  <!-- Flat since 12 Nov 2026: warm near-black tile, milk S from two ribbons. -->
-  <rect width="512" height="512" rx="116" fill="#0f0e0c"/>
-  <g fill="#f3eee6">
-    <path transform="translate(-6 -9)" d="M362 112 L362 176 L262 176 Q226 176 226 204 Q226 226 256 238 L302 256 L210 256 L190 248 Q150 232 150 196 Q150 112 250 112 Z"/>
-    <path transform="translate(6 9)" d="M150 400 L150 336 L250 336 Q286 336 286 308 Q286 286 256 274 L210 256 L302 256 L322 264 Q362 280 362 316 Q362 400 262 400 Z"/>
+  <!-- бөлек, 12 Nov 2026: a paper disc cut in two (the bar of «ө») on the Heublein ground. -->
+  <rect width="512" height="512" fill="#231917"/>
+  <g fill="#e9d7b5" transform="translate(96 96) scale(1.25)">
+    <path d="M8 113 A120 120 0 0 1 248 113 Z"/>
+    <path d="M8 143 A120 120 0 0 0 248 143 Z"/>
   </g>
 </svg>

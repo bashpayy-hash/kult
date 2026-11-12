@@ -17,13 +17,13 @@ type Props = { params: Promise<{ member: string; venue: string }> };
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { member, venue } = await params;
   const d = await loadInvite(member, venue);
-  if (!d) return { title: "Shaqyru", robots: { index: false, follow: false } };
+  if (!d) return { title: "Бөлек", robots: { index: false, follow: false } };
   const photo = publicImageUrl(d.photo_path);
   return {
     title: d.venue_name,
     description: d.perk || d.description || undefined,
     robots: { index: false, follow: false },
-    openGraph: { title: `${d.venue_name} · Shaqyru`, description: d.perk || undefined, images: photo ? [photo] : undefined },
+    openGraph: { title: `${d.venue_name} · Бөлек`, description: d.perk || undefined, images: photo ? [photo] : undefined },
   };
 }
 

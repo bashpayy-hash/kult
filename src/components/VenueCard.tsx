@@ -26,7 +26,7 @@ export function VenueCard({ v, t, lang, free, nowMin }: { v: CatalogVenue; t: Di
 
   return (
     <article className="relative flex h-full flex-col">
-      <Link href={`/v/${v.slug}`} className="block transition-opacity duration-200 hover:opacity-90" aria-label={v.name}>
+      <Link href={`/v/${v.slug}`} className="group block" aria-label={v.name}>
         <Plate
           src={photo ?? cover.src}
           srcSet={photo ? undefined : cover.srcSet}

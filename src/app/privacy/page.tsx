@@ -6,7 +6,7 @@ export const metadata: Metadata = { title: "Обработка персонал�
 
 // The operator's legal name and contact come from env, so the text can go live
 // before the legal entity is final. README: «Перед запуском».
-const operator = process.env.NEXT_PUBLIC_OPERATOR_NAME || "Shaqyru";
+const operator = process.env.NEXT_PUBLIC_OPERATOR_NAME || "Бөлек";
 const contact = process.env.NEXT_PUBLIC_CONTACT_EMAIL || "";
 
 const content = {

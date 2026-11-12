@@ -13,10 +13,16 @@
    "files": [
     "public/plates/hero-800.webp",
     "public/plates/hero-1200.webp",
-    "public/plates/hero-1792.webp",
-    "public/og.png"
+    "public/plates/hero-loop.mp4",
+    "public/plates/hero-loop.webm"
    ],
-   "master": "design/plates/source/hero.webp"
+   "master": "design/plates/source/hero.webp",
+   "loop": {
+    "job": "7b03c5cf-1b8d-4f87-b2b6-09f9b14b6eb3",
+    "model": "flux_3_video, 5 s, 1080p, 3:4, start = end = hero job",
+    "processing": "ffmpeg eq=saturation=0.7:gamma=1.1 (как грейд обложки), 960 px, 5 s вперёд + 5 s назад (стык PSNR 29.5 dB — без разворота видно шов), H.264 crf 30 (482 KB) и VP9 crf 40 (537 KB); стоп-кадр обложки = кадр 0 петли",
+    "master": "design/plates/source/hero-loop-frame0.webp"
+   }
   },
   {
    "name": "restaurant",

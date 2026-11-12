@@ -15,20 +15,20 @@ export default async function Join() {
     <>
       <SiteHeader lang={lang} t={t} />
       <main>
-        {/* Paper cover: the envelope whose flap is a mountain (шақыру). */}
+        {/* Paper cover: the envelope whose flap is a mountain (an invitation). */}
         <section className="bg-paper text-paper-ink" aria-labelledby="join-h1">
           <div className="px-edge grid items-center gap-8 py-10 md:grid-cols-2 md:gap-12 md:py-16">
             <div className="max-w-[34rem]">
-              <h1 id="join-h1" className="text-[40px] text-paper-ink md:text-[56px]">
+              <h1 id="join-h1" className="enter text-[40px] text-paper-ink md:text-[56px]">
                 {t.catalog.joinTitle}
               </h1>
-              <p className="mt-4 text-[17px] text-paper-ink-2 md:text-[18px]">{L.lead}</p>
-              <h2 id="how" className="mt-8 text-[20px] text-paper-ink">
+              <p className="enter mt-4 text-[17px] text-paper-ink-2 md:text-[18px]" style={{ ["--i" as string]: 2 }}>{L.lead}</p>
+              <h2 id="how" className="enter mt-8 text-[20px] text-paper-ink" style={{ ["--i" as string]: 3 }}>
                 {L.howTitle}
               </h2>
-              <p className="mt-2 text-[16px] text-paper-ink-2">{L.example}</p>
+              <p className="enter mt-2 text-[16px] text-paper-ink-2" style={{ ["--i" as string]: 4 }}>{L.example}</p>
             </div>
-            <div className="max-w-[24rem] md:justify-self-end">
+            <div className="enter max-w-[24rem] md:justify-self-end" style={{ ["--i" as string]: 1 }}>
               <Plate src={CLUB_COVER.src} srcSet={CLUB_COVER.srcSet} sizes="(min-width: 768px) 32vw, 90vw" bg={CLUB_COVER.bg} priority />
             </div>
           </div>

@@ -39,7 +39,7 @@ type Strings = { soonText: string; soonCta: string; credit: string; km: string; 
 const GRID = "rgba(109, 76, 46, 0.2)"; // paper-ink-3 at 20%: the survey grid on the paper
 
 /**
- * Where Shaqyru is (12 Nov 2026, owner: «добавить карту Алматы и Астаны по
+ * Where бөлек is (12 Nov 2026, owner: «добавить карту Алматы и Астаны по
  * местам ... покажет скейл проекта»). Left: the chosen city as a printed
  * survey plate — a one-kilometre grid on paper, the street plan from
  * OpenStreetMap over it when the build could draw one, the places as
@@ -60,7 +60,7 @@ export function CityMap({ title, cities, s }: { title: string; cities: MapCity[]
 
   return (
     <>
-      <div className="flex flex-col gap-4 border-b border-line md:flex-row md:items-end md:justify-between">
+      <div className="reveal flex flex-col gap-4 border-b border-line md:flex-row md:items-end md:justify-between">
         <h2 id="map-title" className="text-[28px] md:text-[36px]">
           {title}
         </h2>
@@ -78,7 +78,7 @@ export function CityMap({ title, cities, s }: { title: string; cities: MapCity[]
         <figure className="min-w-0">
           <div className="bg-paper p-2 sm:p-2.5">
             <div
-              className="relative w-full overflow-hidden"
+              className="plate-view relative w-full overflow-hidden"
               style={{
                 aspectRatio: String(city.aspect),
                 // The street plan (if the build drew one) over the 1 km grid.
@@ -99,8 +99,8 @@ export function CityMap({ title, cities, s }: { title: string; cities: MapCity[]
                   onFocus={() => setActive(v.n)}
                   onBlur={() => setActive(null)}
                   // A 44px target around a 24px square, centred on the point.
-                  className="group absolute grid h-11 w-11 -translate-x-1/2 -translate-y-1/2 place-items-center outline-none"
-                  style={{ left: `${v.left}%`, top: `${v.top}%`, zIndex: active === v.n ? 2 : 1 }}
+                  className="pin group absolute grid h-11 w-11 -translate-x-1/2 -translate-y-1/2 place-items-center outline-none"
+                  style={{ left: `${v.left}%`, top: `${v.top}%`, zIndex: active === v.n ? 2 : 1, ["--n" as string]: v.n - 1 }}
                 >
                   <span
                     className={`num grid h-6 min-w-6 place-items-center px-1 text-[12px] leading-none text-paper transition-transform duration-150 group-focus-visible:outline group-focus-visible:outline-2 group-focus-visible:outline-offset-2 group-focus-visible:outline-[var(--color-paper-ink)] ${active === v.n ? "scale-125 bg-navy" : "bg-oxblood"}`}
@@ -153,7 +153,10 @@ export function CityMap({ title, cities, s }: { title: string; cities: MapCity[]
                   className="absolute flex items-center gap-1 outline-none [&:focus-visible>span:first-child]:outline [&:focus-visible>span:first-child]:outline-2 [&:focus-visible>span:first-child]:outline-offset-2 [&:focus-visible>span:first-child]:outline-[var(--color-paper-ink)]"
                   style={{ left: `${c.onCountry.left}%`, top: `${c.onCountry.top}%`, transform: `translate(-50%, ${below ? "-6px" : "calc(-100% + 6px)"})`, flexDirection: below ? "column" : "column-reverse" }}
                 >
-                  <span className={`block h-3 w-3 ${on ? "bg-oxblood" : "border-2 border-oxblood bg-paper"}`} />
+                  <span className="relative block h-3 w-3">
+                    {on ? <span aria-hidden="true" className="pulse-ring absolute inset-0 border-2 border-oxblood" /> : null}
+                    <span className={`absolute inset-0 ${on ? "bg-oxblood" : "border-2 border-oxblood bg-paper"}`} />
+                  </span>
                   <span className={`whitespace-nowrap px-1.5 py-0.5 text-[12px] font-semibold ${on ? "bg-oxblood text-paper" : "bg-paper text-paper-ink"}`}>
                     {c.name} · {c.note}
                   </span>

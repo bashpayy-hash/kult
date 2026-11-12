@@ -37,7 +37,7 @@ export function Plate({
           alt={alt}
           loading={priority ? "eager" : "lazy"}
           fetchPriority={priority ? "high" : undefined}
-          className="h-full w-full object-cover"
+          className="plate-img h-full w-full object-cover"
           style={focus ? { objectPosition: focus } : undefined}
         />
       </div>

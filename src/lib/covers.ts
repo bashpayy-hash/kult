@@ -37,13 +37,19 @@ export function coverFor(category: Category): Cover {
   return plate(p.file, p.bg, p.focus);
 }
 
-/** The club: an envelope whose flap is a snowy peak (шақыру — invitation). */
+/** The club: an envelope whose flap is a snowy peak (an invitation). */
 export const CLUB_COVER = plate("club", "#e33409");
 
-/** Heublein 1970: two silhouettes, a lake of gold. Portrait. */
+/**
+ * Heublein 1970: two silhouettes, a lake of gold. Portrait (3:4).
+ * Since 12 Nov 2026 the still is the first frame of the living loop
+ * (`loop`, 10 s there and back, Higgsfield FLUX 3 Video from this picture),
+ * graded the same way, so the loop starts on exactly what is on screen.
+ */
 export const HERO = {
   src: "/plates/hero-1200.webp",
-  srcSet: "/plates/hero-800.webp 800w, /plates/hero-1200.webp 1200w, /plates/hero-1792.webp 1792w",
+  srcSet: "/plates/hero-800.webp 800w, /plates/hero-1200.webp 1200w",
+  loop: "/plates/hero-loop.mp4",
   bg: "#231917",
 };
 

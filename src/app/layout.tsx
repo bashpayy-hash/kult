@@ -6,9 +6,9 @@ import { siteUrl } from "@/lib/env";
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl()),
-  title: { default: "Shaqyru — закрытое комьюнити Алматы", template: "%s · Shaqyru" },
+  title: { default: "Бөлек — закрытое комьюнити Алматы", template: "%s · Бөлек" },
   description: "Закрытое lifestyle-комьюнити Алматы: лучшие места города по совету тех, кому доверяют.",
-  openGraph: { images: ["/og.png"], siteName: "Shaqyru" },
+  openGraph: { images: ["/og.png"], siteName: "Бөлек" },
 };
 
 export const viewport: Viewport = {

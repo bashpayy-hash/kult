@@ -193,7 +193,15 @@ input[type="file"].field::file-selector-button {
 
 }
 
-/* ── Motion: one entrance, scroll reveal without timers ───────────────── */
+/* ── Motion (DESIGN_PRINCIPLES §6; 12 Nov 2026, owner: «сайту не хватает
+   анимации, живости ... выглядит как на тильде ... нужно современно»).
+   Calm and premium: transform and opacity only, ease-out
+   cubic-bezier(.22,1,.36,1), entrances 520 ms, neighbours 35 ms apart and a
+   cascade never longer than 300 ms; scroll reveals run on the scroll
+   (animation-timeline: view()), not on timers. What makes it feel alive is
+   the print metaphor, not effects: the cover breathes (a video loop of its
+   own photograph), times tick in like a departure board, plates are laid
+   down as you reach them, the mark parts like its name says. ──────────── */
 @keyframes rise { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: none; } }
 .rise { animation: rise var(--dur-enter) var(--ease-out) both; }
 .rise-1 { animation-delay: 40ms; }
@@ -201,24 +209,74 @@ input[type="file"].field::file-selector-button {
 .rise-3 { animation-delay: 120ms; }
 .rise-4 { animation-delay: 160ms; }
 
+/* The one entrance on page load, in reading order (heading → object → text
+   → navigation): set --i on each step; the cascade caps at 8 steps (280 ms). */
+.enter {
+  animation: rise var(--dur-enter) var(--ease-out) both;
+  animation-delay: calc(min(var(--i, 0), 8) * 35ms);
+}
+
+/* Departure-board figures: each digit slides up out of its own slot, one
+   after another (.tick wraps the time; each digit is a span with --d). */
+@keyframes tick-in { from { transform: translateY(105%); } to { transform: none; } }
+.tick { display: inline-flex; overflow: hidden; vertical-align: bottom; }
+.tick > span {
+  display: inline-block;
+  animation: tick-in var(--dur-enter) var(--ease-out) both;
+  animation-delay: calc(var(--t0, 0ms) + var(--d, 0) * 30ms);
+}
+
+/* A plate is laid down as it comes into view; --c (column) staggers a row
+   along the scroll instead of in time. */
 @supports (animation-timeline: view()) {
   .reveal {
     animation: rise linear both;
     animation-timeline: view();
-    animation-range: entry 0% entry 40%;
+    animation-range: entry calc(var(--c, 0) * 6%) entry calc(40% + var(--c, 0) * 6%);
   }
 }
+
+/* The print shifts under its mat on hover; the mat stays put. */
+.plate-img { transition: transform var(--dur-card) var(--ease-out); }
+.group:hover .plate-img { transform: scale(1.035); }
+
+/* The mark: the two halves of «ө» start closed and part to the gap once per
+   page load, and part a little further under the pointer — бөлек, apart. */
+@keyframes part-up { from { transform: translateY(15px); } }
+@keyframes part-down { from { transform: translateY(-15px); } }
+.logo-mark path { transition: transform var(--dur-card) var(--ease-out); }
+.logo-mark path:first-child { animation: part-up 620ms var(--ease-out) 120ms backwards; }
+.logo-mark path:last-child { animation: part-down 620ms var(--ease-out) 120ms backwards; }
+.logo:hover .logo-mark path:first-child { transform: translateY(-10px); }
+.logo:hover .logo-mark path:last-child { transform: translateY(10px); }
+
+/* Map: the places drop onto the plate as it scrolls in (the plate names
+   its view timeline --plate; --n staggers along the scroll), and the city
+   you look at keeps a slow ring on the country inset. */
+@keyframes pin { from { opacity: 0; transform: scale(0.6); } to { opacity: 1; transform: none; } }
+@supports (animation-timeline: view()) {
+  .plate-view { view-timeline-name: --plate; }
+  .pin > span {
+    animation: pin linear both;
+    animation-timeline: --plate;
+    animation-range: entry calc(35% + min(var(--n, 0), 8) * 4%) entry calc(65% + min(var(--n, 0), 8) * 4%);
+  }
+}
+@keyframes pulse-ring { from { opacity: 0.55; transform: scale(1); } to { opacity: 0; transform: scale(3.2); } }
+.pulse-ring { animation: pulse-ring 2.4s var(--ease-out) infinite; }
 
 @keyframes sheet-in { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
 .sheet-in { animation: sheet-in var(--dur-card) var(--ease-out) both; }
 
+/* Less motion: the page is still and complete. Durations collapse, the
+   structure stays; scroll reveals, loops and the cover video are off. */
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
     animation-duration: 1ms !important;
     animation-delay: 0ms !important;
     transition-duration: 1ms !important;
   }
-  .reveal { animation: none !important; }
+  .reveal, .pulse-ring, .pin > span { animation: none !important; }
 }
 
 /* Chips and picks (12 Nov 2026). A filter chip that is on gets an amber
