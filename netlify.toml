@@ -1,10 +1,16 @@
-# Netlify: Next.js is detected and built by the OpenNext adapter (not pinned:
-# Netlify keeps it current). The database is Netlify Database — installing
-# @netlify/database is what provisions it, and every deploy applies
-# netlify/database/migrations/ before it goes live.
+# Netlify: Next.js runs on the OpenNext adapter (@netlify/plugin-nextjs). It is
+# declared here because a project created through the API does not get it
+# from framework detection; it is not pinned in package.json, so Netlify
+# installs the current version on every build.
+# The database is Netlify Database — installing @netlify/database is what
+# provisions it, and every deploy applies netlify/database/migrations/ before
+# it goes live.
 [build]
   command = "npm run build"
   publish = ".next"
 
 [build.environment]
   NODE_VERSION = "22"
+
+[[plugins]]
+  package = "@netlify/plugin-nextjs"
