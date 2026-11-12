@@ -1,0 +1,32 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash",
+      "Edit",
+      "Write",
+      "Read",
+      "Glob",
+      "Grep",
+      "WebSearch",
+      "WebFetch",
+      "Skill",
+      "mcp__github",
+      "mcp__Claude_Code_Remote",
+      "mcp__Netlify",
+      "mcp__Higsfield"
+    ]
+  },
+  "hooks": {
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash \"$CLAUDE_PROJECT_DIR/.claude/install-skills.sh\"",
+            "timeout": 30
+          }
+        ]
+      }
+    ]
+  }
+}
