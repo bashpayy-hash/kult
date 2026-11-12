@@ -1,5 +1,8 @@
-// Applies supabase/migrations/*.sql in order, once each (tracked in
-// public._migrations). With --seed, also loads supabase/seed.sql (demo data).
+// Applies netlify/database/migrations/*.sql in order, once each (tracked in
+// public._migrations). On Netlify the deploy applies the same files itself;
+// this script is for a local Postgres or any other host.
+// With --seed, wipes all rows and loads the demo data again
+// (0005_demo_data.sql) — local databases only.
 // Usage: DATABASE_URL=... node scripts/migrate.mjs [--seed]
 // Use the *direct* or *session* connection string (port 5432) for migrations.
 import { readdir, readFile } from "node:fs/promises";
@@ -12,7 +15,8 @@ if (!url) {
   process.exit(1);
 }
 const sql = postgres(url, { prepare: false, max: 1, onnotice: () => {} });
-const dir = path.join(process.cwd(), "supabase", "migrations");
+const dir = path.join(process.cwd(), "netlify", "database", "migrations");
+const DEMO = "0005_demo_data.sql";
 
 try {
   await sql`create table if not exists _migrations (name text primary key, applied_at timestamptz not null default now())`;
@@ -29,8 +33,15 @@ try {
     console.log("applied", f);
   }
   if (process.argv.includes("--seed")) {
-    await sql.unsafe(await readFile(path.join(process.cwd(), "supabase", "seed.sql"), "utf8"));
-    console.log("seeded demo data");
+    await sql.begin(async (tx) => {
+      await tx.unsafe(`
+        delete from guest_visits; delete from guest_bookings; delete from link_clicks;
+        delete from content_proofs; delete from member_visits; delete from tracking_links;
+        delete from offers; delete from venue_tables; delete from venue_halls;
+        delete from venues; delete from members; delete from applications;`);
+      await tx.unsafe(await readFile(path.join(dir, DEMO), "utf8"));
+    });
+    console.log("demo data reloaded");
   }
   console.log("database is up to date");
 } catch (e) {
