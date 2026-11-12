@@ -6,6 +6,9 @@ import { listedCategories, listVenues, nextFreeSlots } from "@/lib/venueData";
 import { almatyNowMinutes } from "@/lib/format";
 import { CATEGORIES, type Category } from "@/lib/types";
 import { CLUB_COVER } from "@/lib/covers";
+import { NumeralBand } from "@/components/NumeralBand";
+import { almatyToday, formatDay } from "@/lib/format";
+import { clock } from "@/lib/booking";
 
 export const dynamic = "force-dynamic";
 
@@ -18,10 +21,19 @@ export default async function Overview({ searchParams }: { searchParams: Promise
   const C = t.catalog;
   const { c } = await searchParams;
   const category = CATEGORIES.includes(c as Category) ? (c as Category) : null;
-  const [cats, list] = await Promise.all([listedCategories(), listVenues({ category })]);
-  const free = await nextFreeSlots(list);
+  const [cats, all] = await Promise.all([listedCategories(), listVenues()]);
+  const list = category ? all.filter((v) => v.category === category) : all;
+  const free = await nextFreeSlots(all);
   const total = cats.reduce((s, x) => s + x.n, 0);
   const nowMin = almatyNowMinutes();
+  const today = almatyToday();
+  // «Сегодня»: how many places still have a time today, and the earliest one.
+  const todays = all.flatMap((v) => {
+    const f = free.get(v.id);
+    return f && f.day === "today" ? [{ v, at: f.slots[0] }] : [];
+  });
+  const earliest = todays.sort((a, b) => a.at - b.at)[0];
+  const perks = all.filter((v) => v.perk);
 
   return (
     <>
@@ -54,7 +66,17 @@ export default async function Overview({ searchParams }: { searchParams: Promise
           </div>
         </section>
 
-        <section id="places" className="px-edge scroll-mt-4 pt-14 md:pt-20" aria-label={C.title}>
+        {/* Kraftco 1972: today's date in enormous translucent numerals. */}
+        <NumeralBand numerals={[today.slice(8, 10), today.slice(5, 7)]} className="mt-16 md:mt-24">
+          <p className="text-[14px] font-semibold text-paper/70">{C.today}</p>
+          <h2 className="mt-2 text-[34px] text-paper first-letter:uppercase md:text-[44px] lg:text-[56px]">{formatDay(today, lang, true)}</h2>
+          <p className="mt-4 text-[17px] text-paper/85">
+            {C.freeSummary(todays.length, total)}
+            {earliest ? ` ${C.earliest(clock(earliest.at), earliest.v.name)}` : ""}
+          </p>
+        </NumeralBand>
+
+        <section id="places" className="px-edge scroll-mt-4 pt-12 md:pt-16" aria-label={C.title}>
           {cats.length > 1 ? (
             <nav aria-label={C.allChip}>
               <Rail>
@@ -80,8 +102,43 @@ export default async function Overview({ searchParams }: { searchParams: Promise
           )}
         </section>
 
+        {/* Coca-Cola 1987: a warm full-bleed market collage; the perks list
+            sits on a paper card (on phones, below the picture). */}
+        {perks.length ? (
+          <section className="relative mt-20 md:mt-28" aria-labelledby="perks">
+            <div className="relative aspect-[4/3] overflow-hidden bg-[#b5462a] sm:aspect-[21/9]">
+              <img
+                src="/covers/market-1400.webp"
+                srcSet="/covers/market-800.webp 800w, /covers/market-1400.webp 1400w, /covers/market-2200.webp 2200w"
+                sizes="100vw"
+                alt={C.marketAlt}
+                loading="lazy"
+                className="absolute inset-0 h-full w-full object-cover object-[30%_50%]"
+              />
+            </div>
+            <div className="bg-paper text-paper-ink lg:absolute lg:right-[max(32px,calc((100%-1216px)/2))] lg:top-1/2 lg:w-[26rem] lg:-translate-y-1/2 lg:rounded-tile lg:shadow-[0_24px_60px_rgb(0_0_0/0.35)]">
+              <div className="px-edge py-8 lg:px-8 lg:py-8">
+                <h2 id="perks" className="text-[28px] text-paper-ink md:text-[32px]">
+                  {C.perksTitle}
+                </h2>
+                <p className="mt-2 text-[15px] text-paper-ink-2">{C.perksLead}</p>
+                <ul className="mt-5 divide-y divide-paper-line border-y border-paper-line">
+                  {perks.map((v) => (
+                    <li key={v.id}>
+                      <Link href={`/v/${v.slug}`} className="flex min-h-11 flex-col gap-0.5 py-3 transition-opacity duration-150 hover:opacity-75">
+                        <span className="text-[16px] font-semibold text-paper-ink">{v.name}</span>
+                        <span className="text-[15px] text-paper-ink-2">{(lang === "kk" && v.perk_kk) || v.perk}</span>
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </div>
+          </section>
+        ) : null}
+
         {/* Paper band: the cream of the covers breaks the dark page. */}
-        <section className="mt-20 bg-paper text-paper-ink md:mt-28" aria-labelledby="club">
+        <section className="mt-16 bg-paper text-paper-ink md:mt-28" aria-labelledby="club">
           <div className="px-edge grid items-center gap-8 py-12 md:grid-cols-2 md:gap-12 md:py-16">
             <div className="aspect-[3/2] overflow-hidden rounded-tile-r" style={{ background: CLUB_COVER.bg }}>
               <img src={CLUB_COVER.src} srcSet={CLUB_COVER.srcSet} sizes="(min-width: 768px) 50vw, 100vw" alt="" loading="lazy" className="h-full w-full object-cover" />

@@ -3,7 +3,8 @@ import { db } from "@/lib/db";
 import { pilotThreshold } from "@/lib/env";
 import { formatMoney, formatNumber } from "@/lib/format";
 import type { PairStats } from "@/lib/types";
-import { Empty, PageHead, Person, Stat } from "../_parts";
+import { Empty, Person, Stat } from "../_parts";
+import { NumeralBand } from "@/components/NumeralBand";
 
 export default async function Dashboard() {
   const threshold = pilotThreshold();
@@ -27,19 +28,21 @@ export default async function Dashboard() {
 
   return (
     <>
-      <PageHead
-        title="Пилот"
-        lead={`Сколько платящих гостей приводит один визит участницы. Порог успеха: ${formatNumber(threshold, 2)} гостя на визит.`}
-        action={
-          <a href="/admin/export" className="btn btn-primary btn-sm" download>
-            Скачать CSV
-          </a>
-        }
-      />
+      {/* The pilot's own annual report: its one number, Kraftco-1972 size. */}
+      <NumeralBand numerals={[gpv == null ? "—" : formatNumber(gpv, 1), formatNumber(threshold, 0)]} className="rounded-tile-r">
+        <p className="text-[14px] font-semibold text-paper/70">Пилот · гостей на один визит участницы</p>
+        <h1 className="mt-2 text-[44px] text-paper md:text-[56px]">{gpv == null ? "Пока нет визитов" : formatNumber(gpv, 2)}</h1>
+        <p className="mt-3 text-[16px] text-paper/85">
+          Порог успеха {formatNumber(threshold, 2)}. На пороге {passed.length} {passed.length === 1 ? "пара" : "пары"} из {withVisits.length}.
+        </p>
+        <a href="/admin/export" className="btn btn-sm mt-6 bg-paper text-paper-ink hover:bg-white" download>
+          Скачать CSV
+        </a>
+      </NumeralBand>
 
       <div className="mt-8 grid grid-cols-2 gap-3 lg:grid-cols-4">
-        <Stat label="Гостей на визит" value={formatNumber(gpv, 2)} good={gpv != null && gpv >= threshold} hint={`${guests} гостей · ${visits} визитов`} />
-        <Stat label="Пары на пороге" value={`${passed.length} из ${withVisits.length}`} hint="Пары с визитами участницы" good={passed.length > 0} />
+        <Stat label="Гости" value={formatNumber(guests)} hint="Пришли по ссылкам и фразе" />
+        <Stat label="Визиты участниц" value={formatNumber(visits)} hint={`Пар на пороге: ${passed.length} из ${withVisits.length}`} />
         <Stat label="Выручка" value={formatMoney(sum("revenue"))} hint="Сумма чеков гостей" />
         <Stat
           label="Гости из просмотров"

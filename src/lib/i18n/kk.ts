@@ -36,6 +36,12 @@ const kk: Dict = {
   },
   nav: { places: "Орындар", club: "Клуб" },
   catalog: {
+    today: "Бүгін",
+    freeSummary: (n: number, total: number) => `${total} орынның ${n}-інде бос уақыт бар.`,
+    earliest: (time: string, name: string) => `Ең ерте уақыт: ${time}, ${name}.`,
+    perksTitle: "Қонақтарға бонустар",
+    perksLead: "Орындардың Shaqyru қонақтарына сыйы.",
+    marketAlt: "Коллаж: Алматыдағы базар, алма, анар, өрік, жолақты қолшатырлар",
     issue: "Алматы · 2026",
     cta: "Орын таңдау",
     heroAlt: "Күн батқанда террасадағы екі қыз, артында таулар",

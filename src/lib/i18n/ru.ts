@@ -36,6 +36,12 @@ const ru = {
   },
   nav: { places: "Места", club: "Клуб" },
   catalog: {
+    today: "Сегодня",
+    freeSummary: (n: number, total: number) => `Свободное время есть в ${n} ${pluralRu(n, ["месте", "местах", "местах"])} из ${total}.`,
+    earliest: (time: string, name: string) => `Самое раннее: ${time}, ${name}.`,
+    perksTitle: "Бонусы гостям",
+    perksLead: "То, что места дарят гостям по Shaqyru.",
+    marketAlt: "Коллаж: рынок в Алматы, яблоки, гранаты, курага, полосатые зонты",
     issue: "Алматы · 2026",
     cta: "Выбрать место",
     heroAlt: "Две девушки на террасе на закате, за ними горы",
