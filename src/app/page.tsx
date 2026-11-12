@@ -8,6 +8,9 @@ import { almatyNowMinutes, almatyToday, formatDay } from "@/lib/format";
 import { clock } from "@/lib/booking";
 import { CLUB_COVER, HERO, MARKET } from "@/lib/covers";
 import { CATEGORIES, type Category } from "@/lib/types";
+import { CityMap, type MapCity } from "@/components/CityMap";
+import plans from "@/lib/cityPlans.generated.json";
+import { CITIES, cityKey, placeOnCountry, placeOnPlan, planAspect, planHeightKm, planWidthKm } from "@/lib/cities";
 
 export const dynamic = "force-dynamic";
 
@@ -46,6 +49,40 @@ export default async function Overview({ searchParams }: { searchParams: Promise
     })
     .sort((a, b) => (a.f.day === b.f.day ? a.at - b.at : a.f.day === "today" ? -1 : 1));
   const perks = all.filter((v) => v.perk);
+
+  // The map: per city, the places that have a point inside its plan,
+  // numbered in catalog order (the list beside the plan uses the same).
+  const mapCities: MapCity[] = CITIES.map((city) => {
+    const placed = all.flatMap((v) => {
+      if (cityKey(v.city) !== city.key || v.lat == null || v.lng == null) return [];
+      const at = placeOnPlan(city, v.lat, v.lng);
+      return at ? [{ v, at }] : [];
+    });
+    return {
+      key: city.key,
+      name: city.name[lang],
+      note: placed.length ? C.mapCount(placed.length) : C.mapSoon,
+      soonTitle: C.mapSoonTitle(city.name[lang]),
+      aspect: planAspect(city),
+      plan: plans[city.key] === true,
+      kmX: 100 / planWidthKm(city),
+      kmY: 100 / planHeightKm(city),
+      onCountry: placeOnCountry(city.centre.lat, city.centre.lng),
+      edge: city.key === "almaty" ? C.mapMountains : undefined,
+      venues: placed.map(({ v, at }, i) => {
+        const f = free.get(v.id);
+        return {
+          n: i + 1,
+          name: v.name,
+          category: t.categories[v.category],
+          href: `/v/${v.slug}`,
+          slot: f ? { label: clock(f.slots[0]), day: (f.day === "today" ? t.booking.today : t.booking.tomorrow).toLowerCase(), href: `/v/${v.slug}?d=${f.date}&t=${f.slots[0]}#book` } : undefined,
+          left: at.left,
+          top: at.top,
+        };
+      }),
+    };
+  });
 
   return (
     <>
@@ -117,6 +154,15 @@ export default async function Overview({ searchParams }: { searchParams: Promise
               ))}
             </ul>
           )}
+        </section>
+
+        {/* Where Shaqyru is: a survey plate per city and Kazakhstan with both. */}
+        <section id="map" className="px-edge scroll-mt-4 pt-16 md:pt-24" aria-labelledby="map-title">
+          <CityMap
+            title={C.mapTitle}
+            cities={mapCities}
+            s={{ soonText: C.mapSoonText, soonCta: C.mapSoonCta, credit: C.mapCredit, km: C.mapKm, countryAlt: C.mapCountryAlt, countryCredit: C.mapCountryCredit }}
+          />
         </section>
 
         {/* Coca-Cola 1987: one market photograph; the perks as a ruled list. */}

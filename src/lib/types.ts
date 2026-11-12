@@ -27,6 +27,8 @@ export type Venue = {
   description_kk: string | null;
   address: string | null;
   city: string;
+  lat: number | null;
+  lng: number | null;
   instagram: string | null;
   contact_name: string | null;
   phone: string | null;

@@ -1,8 +1,10 @@
 import { dicts } from "@/lib/i18n/dicts";
+import { CITIES } from "@/lib/cities";
 import { CATEGORIES, type Venue } from "@/lib/types";
 import { Checkbox, Input, Select, STATUS_OPTIONS, TextArea } from "../../_parts";
 
 const CAT_OPTIONS = CATEGORIES.map((c) => ({ value: c, label: dicts.ru.categories[c] }));
+const CITY_OPTIONS = CITIES.map((c) => ({ value: c.name.ru, label: c.name.ru }));
 
 export function VenueFields({ v }: { v?: Venue }) {
   return (
@@ -13,8 +15,21 @@ export function VenueFields({ v }: { v?: Venue }) {
       </div>
       <div className="grid gap-5 md:grid-cols-3">
         <Input label="Адрес" name="address" defaultValue={v?.address} className="md:col-span-2" />
-        <Input label="Город" name="city" defaultValue={v?.city ?? "Алматы"} />
+        <Select
+          label="Город"
+          name="city"
+          // A city typed in before the list existed stays selectable.
+          options={v?.city && !CITY_OPTIONS.some((o) => o.value === v.city) ? [...CITY_OPTIONS, { value: v.city, label: v.city }] : CITY_OPTIONS}
+          defaultValue={v?.city ?? "Алматы"}
+        />
       </div>
+      <Input
+        label="Точка на карте"
+        name="coords"
+        defaultValue={v?.lat != null && v?.lng != null ? `${v.lat}, ${v.lng}` : undefined}
+        placeholder="43.2389, 76.9455"
+        hint="В 2ГИС или Google Картах: правый клик по зданию → скопировать координаты. Без точки место не появится на карте."
+      />
       <div className="grid gap-5 md:grid-cols-2">
         <TextArea label="Описание для гостей (рус)" name="description" defaultValue={v?.description} />
         <TextArea label="Описание для гостей (қаз)" name="description_kk" defaultValue={v?.description_kk} />

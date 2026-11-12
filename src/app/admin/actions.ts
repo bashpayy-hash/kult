@@ -8,6 +8,7 @@ import { requireAdmin } from "@/lib/auth";
 import { bool, int, isUuid, str, strOrNull } from "@/lib/forms";
 import { instagramHandle, isIsoDate, normalizePhone } from "@/lib/format";
 import { isValidSlug, slugify } from "@/lib/slug";
+import { cityByKey, cityKey, placeOnPlan } from "@/lib/cities";
 import { fileFrom, removeImage, uploadImage, UploadError } from "@/lib/storage";
 import { CATEGORIES, type Category, type FormState, type Status } from "@/lib/types";
 
@@ -186,6 +187,24 @@ export async function deleteMember(fd: FormData): Promise<void> {
 
 // ── Venues ───────────────────────────────────────────────────────────────
 
+/**
+ * «43.2389, 76.9455» as copied from 2GIS or Google Maps (a space or a
+ * semicolon between them also works). Empty means no point. The point must
+ * lie on the city's map (src/lib/cities.ts), or the venue would not show.
+ */
+function readPoint(text: string, cityText: string): { lat: number; lng: number } | null | string {
+  const t = text.trim();
+  if (!t) return null;
+  const m = t.match(/^(-?\d{1,2}(?:[.,]\d+)?)\s*[,;\s]\s*(-?\d{1,3}(?:[.,]\d+)?)$/);
+  if (!m) return "Точка на карте: две цифры через запятую, например 43.2389, 76.9455.";
+  const lat = Number(m[1].replace(",", ".")), lng = Number(m[2].replace(",", "."));
+  const key = cityKey(cityText);
+  const city = key ? cityByKey(key) : null;
+  if (city && !placeOnPlan(city, lat, lng)) return `Точка вне карты города ${city.name.ru}: проверьте координаты или город.`;
+  if (!city && (lat < 40 || lat > 56 || lng < 46 || lng > 88)) return "Точка не в Казахстане: проверьте координаты.";
+  return { lat, lng };
+}
+
 function readVenue(fd: FormData) {
   const name = str(fd, "name", 120);
   const category = str(fd, "category", 20) as Category;
@@ -199,6 +218,9 @@ function readVenue(fd: FormData) {
   if (isErr(avg)) return { bad: avg };
   if (isErr(hold)) return { bad: hold };
   if (!/^([01]\d|2[0-3]):[0-5]\d$/.test(openTime) || !/^([01]\d|2[0-3]):[0-5]\d$/.test(closeTime)) return { bad: { error: "Часы работы: формат ЧЧ:ММ." } };
+  const city = str(fd, "city", 80) || "Алматы";
+  const point = readPoint(str(fd, "coords", 80), city);
+  if (typeof point === "string") return { bad: { error: point, fieldErrors: { coords: point } } };
   return {
     name,
     slugInput: slugify(str(fd, "slug", 60)),
@@ -206,7 +228,9 @@ function readVenue(fd: FormData) {
     description: strOrNull(fd, "description", 1500),
     description_kk: strOrNull(fd, "description_kk", 1500),
     address: strOrNull(fd, "address", 200),
-    city: str(fd, "city", 80) || "Алматы",
+    city,
+    lat: point?.lat ?? null,
+    lng: point?.lng ?? null,
     instagram: instagramHandle(str(fd, "instagram", 120)),
     contact_name: strOrNull(fd, "contact_name", 120),
     phone: str(fd, "phone", 40) ? normalizePhone(str(fd, "phone", 40)) || str(fd, "phone", 40) : null,
@@ -230,9 +254,9 @@ export async function createVenue(_prev: FormState, fd: FormData): Promise<FormS
   try {
     const slug = await freeSlug("venues", v.slugInput || slugify(v.name));
     [{ id }] = await db()<{ id: string }[]>`
-      insert into venues (slug, name, category, description, description_kk, address, city, instagram, contact_name, phone, avg_check, status, notes, host_token,
+      insert into venues (slug, name, category, description, description_kk, address, city, lat, lng, instagram, contact_name, phone, avg_check, status, notes, host_token,
                           is_listed, featured, open_time, close_time, slot_minutes, hold_minutes)
-      values (${slug}, ${v.name}, ${v.category}, ${v.description}, ${v.description_kk}, ${v.address}, ${v.city}, ${v.instagram},
+      values (${slug}, ${v.name}, ${v.category}, ${v.description}, ${v.description_kk}, ${v.address}, ${v.city}, ${v.lat}, ${v.lng}, ${v.instagram},
               ${v.contact_name}, ${v.phone}, ${v.avg_check}, ${v.status}, ${v.notes}, ${newHostToken()},
               ${v.is_listed}, ${v.featured}, ${v.open_time}, ${v.close_time}, ${v.slot_minutes}, ${v.hold_minutes})
       returning id`;
@@ -253,7 +277,7 @@ export async function updateVenue(_prev: FormState, fd: FormData): Promise<FormS
   try {
     await db()`
       update venues set slug = ${v.slugInput}, name = ${v.name}, category = ${v.category}, description = ${v.description},
-        description_kk = ${v.description_kk}, address = ${v.address}, city = ${v.city}, instagram = ${v.instagram},
+        description_kk = ${v.description_kk}, address = ${v.address}, city = ${v.city}, lat = ${v.lat}, lng = ${v.lng}, instagram = ${v.instagram},
         contact_name = ${v.contact_name}, phone = ${v.phone}, avg_check = ${v.avg_check}, status = ${v.status}, notes = ${v.notes},
         is_listed = ${v.is_listed}, featured = ${v.featured}, open_time = ${v.open_time}, close_time = ${v.close_time},
         slot_minutes = ${v.slot_minutes}, hold_minutes = ${v.hold_minutes}

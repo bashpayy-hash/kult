@@ -61,6 +61,7 @@ export default async function VenuePage({ params }: { params: Promise<{ id: stri
   // (12 Nov 2026: real photos and a logo instead of generated scenes).
   const readiness: [string, boolean][] = [
     ["Своё фото", !!photo],
+    ["Точка на карте", v.lat != null],
     ["Логотип", !!logo],
     ["Описание на русском и казахском", !!v.description && !!v.description_kk],
     ["План зала со столами", plan.items.some((i) => i.kind === "table")],

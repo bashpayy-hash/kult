@@ -38,6 +38,9 @@ export type CatalogVenue = {
   name: string;
   category: import("./types").Category;
   address: string | null;
+  city: string;
+  lat: number | null;
+  lng: number | null;
   photo_path: string | null;
   logo_path: string | null;
   avg_check: number | null;
@@ -54,7 +57,7 @@ export type CatalogVenue = {
 export async function listVenues(opts: { category?: string | null; limit?: number } = {}): Promise<CatalogVenue[]> {
   const category = opts.category ?? null;
   return db()<CatalogVenue[]>`
-    select v.id, v.slug, v.name, v.category, v.address, v.photo_path, v.logo_path, v.avg_check, v.featured,
+    select v.id, v.slug, v.name, v.category, v.address, v.city, v.lat, v.lng, v.photo_path, v.logo_path, v.avg_check, v.featured,
            v.open_time::text, v.close_time::text, v.slot_minutes, v.hold_minutes,
            o.guest_perk as perk, o.guest_perk_kk as perk_kk
     from venues v

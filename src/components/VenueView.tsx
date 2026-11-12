@@ -6,6 +6,7 @@ import { openNow, type PlanHall, type PlanItem, type VenueHours } from "@/lib/bo
 import { almatyNowMinutes, almatyToday, formatMoney, instagramHandle } from "@/lib/format";
 import { publicImageUrl } from "@/lib/storage";
 import { coverFor } from "@/lib/covers";
+import { cityByKey, cityKey, gisLink, gisSearch } from "@/lib/cities";
 import type { Dict, Lang } from "@/lib/i18n/dicts";
 import type { Category } from "@/lib/types";
 
@@ -16,6 +17,9 @@ export type VenueViewData = {
   description: string | null;
   description_kk: string | null;
   address: string | null;
+  city: string;
+  lat: number | null;
+  lng: number | null;
   instagram: string | null;
   photo_path: string | null;
   logo_path: string | null;
@@ -60,6 +64,10 @@ export function VenueView({
   const C = t.catalog;
   const state = openNow(d.hours, almatyNowMinutes());
   const facts = [state.open ? C.openUntil(state.at) : C.opensAt(state.at), d.avg_check ? `${C.avgCheck} ${formatMoney(d.avg_check)}` : null].filter(Boolean);
+  // How to get there: 2GIS is the map people in Almaty and Astana use; at the
+  // venue's point if it has one, else a search for its address.
+  const ck = cityKey(d.city);
+  const route = ck ? (d.lat != null && d.lng != null ? gisLink(cityByKey(ck), d.lat, d.lng) : d.address ? gisSearch(cityByKey(ck), d.address) : null) : null;
 
   return (
     <div className="grid gap-10 md:grid-cols-[5fr_7fr] md:gap-12 lg:gap-16">
@@ -99,6 +107,14 @@ export function VenueView({
                 {" · "}
                 <a href={`https://instagram.com/${ig}`} target="_blank" rel="noopener noreferrer" className="link-quiet">
                   Instagram
+                </a>
+              </>
+            ) : null}
+            {route ? (
+              <>
+                {" · "}
+                <a href={route} target="_blank" rel="noopener noreferrer" className="link-quiet">
+                  {C.mapRoute}
                 </a>
               </>
             ) : null}

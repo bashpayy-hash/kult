@@ -17,7 +17,7 @@ type Row = Omit<VenueViewData, "hours"> & { open_time: string; close_time: strin
 const load = cache(async (slug: string): Promise<VenueViewData | null> => {
   if (!/^[a-z0-9][a-z0-9-]{1,39}$/.test(slug)) return null;
   const [row] = await db()<Row[]>`
-    select v.id as venue_id, v.name as venue_name, v.category, v.description, v.description_kk, v.address,
+    select v.id as venue_id, v.name as venue_name, v.category, v.description, v.description_kk, v.address, v.city, v.lat, v.lng,
            v.instagram, v.photo_path, v.logo_path, v.avg_check, v.open_time::text, v.close_time::text, v.slot_minutes, v.hold_minutes,
            o.guest_perk as perk, o.guest_perk_kk as perk_kk, o.terms
     from venues v

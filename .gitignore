@@ -10,3 +10,4 @@ audit-out/
 .uploads/
 .DS_Store
 .netlify
+.osm-cache/
