@@ -4,7 +4,7 @@ import { dicts } from "@/lib/i18n/dicts";
 import { formatMoney } from "@/lib/format";
 import { publicImageUrl } from "@/lib/storage";
 import type { Venue } from "@/lib/types";
-import { Monogram } from "@/components/Monogram";
+import { coverFor } from "@/lib/covers";
 import { createVenue } from "../../actions";
 import { ActionForm, Disclosure } from "../../_ui";
 import { Empty, PageHead, StatusText } from "../../_parts";
@@ -38,7 +38,7 @@ export default async function Venues() {
             <li key={v.id}>
               <Link href={`/admin/venues/${v.id}`} className="flex h-full gap-4 rounded-tile-r bg-tile p-4 transition-colors duration-150 hover:bg-raised">
                 <div className="grid h-20 w-20 shrink-0 place-items-center overflow-hidden rounded-[var(--radius-inner)] bg-raised">
-                  {photo ? <img src={photo} alt="" className="h-full w-full object-cover" /> : <Monogram name={v.name} size={44} />}
+                  <img src={photo ?? coverFor(v.category).src} alt="" className="h-full w-full object-cover" />
                 </div>
                 <div className="min-w-0 flex-1">
                   <div className="flex items-start justify-between gap-2">

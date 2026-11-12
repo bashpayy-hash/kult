@@ -23,9 +23,10 @@ export function SiteHeader({ lang, t, logoHref = "/" }: { lang: Lang; t: Dict; l
   );
 }
 
-export function SiteFooter({ t }: { t: Dict }) {
+export function SiteFooter({ t, flush = false }: { t: Dict; flush?: boolean }) {
   return (
-    <footer className="px-edge mt-24 border-t border-line py-10 text-[14px] text-ink-3 md:mt-32">
+    // `flush`: the page ends on a paper band, so no dark gap before the footer.
+    <footer className={`px-edge border-t border-line py-10 text-[14px] text-ink-3 ${flush ? "mt-0 border-t-0" : "mt-24 md:mt-32"}`}>
       <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
         <Link href="/" className="inline-flex min-h-11 items-center gap-2.5 text-ink-2" aria-label="Shaqyru">
           <Mark size={18} />

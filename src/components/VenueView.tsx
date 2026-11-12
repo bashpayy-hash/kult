@@ -3,6 +3,7 @@ import { Monogram } from "@/components/Monogram";
 import { openNow, type PlanHall, type PlanItem, type VenueHours } from "@/lib/booking";
 import { almatyNowMinutes, almatyToday, formatMoney, instagramHandle } from "@/lib/format";
 import { publicImageUrl } from "@/lib/storage";
+import { coverFor } from "@/lib/covers";
 import type { Dict, Lang } from "@/lib/i18n/dicts";
 import type { Category } from "@/lib/types";
 
@@ -28,7 +29,7 @@ const SERVICE: Category[] = ["beauty", "wellness", "fitness"];
 /**
  * One layout for the catalog page (/v/<venue>) and a member's invite
  * (/<member>/<venue>): facts on the left, booking on the right. The venue's
- * own photo if it has one; never a generated stand-in (12 Nov 2026).
+ * own photo if it has one, otherwise its category's retro cover.
  */
 export function VenueView({
   d,
@@ -49,6 +50,7 @@ export function VenueView({
 }) {
   const photo = publicImageUrl(d.photo_path);
   const logo = publicImageUrl(d.logo_path);
+  const cover = coverFor(d.category);
   const perk = (lang === "kk" && d.perk_kk) || d.perk;
   const description = (lang === "kk" && d.description_kk) || d.description;
   const ig = instagramHandle(d.instagram);
@@ -60,11 +62,14 @@ export function VenueView({
   return (
     <div className="grid gap-10 md:grid-cols-[1fr_1fr] md:gap-12 lg:gap-16">
       <div className="flex min-w-0 flex-col gap-6">
-        {photo ? (
-          <div className="rise aspect-[16/10] overflow-hidden rounded-tile-r bg-tile">
+        <div className="rise aspect-[3/2] overflow-hidden rounded-tile-r" style={{ background: cover.bg }}>
+          {photo ? (
             <img src={photo} alt={d.venue_name} className="h-full w-full object-cover" fetchPriority="high" />
-          </div>
-        ) : null}
+          ) : (
+            // Not a photo of the venue: the category's 1950s cover.
+            <img src={cover.src} srcSet={cover.srcSet} sizes="(min-width: 768px) 50vw, 100vw" alt="" className="h-full w-full object-cover" fetchPriority="high" />
+          )}
+        </div>
 
         <div className="rise rise-1">
           {invite ? (

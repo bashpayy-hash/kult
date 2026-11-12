@@ -19,6 +19,15 @@
   --color-success: #8ccb9b;  /* «пришли», pairs at the pilot threshold */
   --color-danger: #f08f7a;   /* errors, «не пришли» */
 
+  /* Paper: the cream of the 1950s covers, for light sections that break the
+     dark (12 Nov 2026: «в целом дизайн слишком однообразен»). Text on paper
+     14.1 / 7.2 / 4.7 : 1. No text ever sits on the red or orange grounds. */
+  --color-paper: #f2e0be;
+  --color-paper-ink: #1a1511;
+  --color-paper-ink-2: #4f463b;
+  --color-paper-ink-3: #6b6153;
+  --color-paper-line: #d9c49d;
+
   /* The owner's site iitaly.net (12 Nov 2026: «используй такой же шрифт»):
      SF Pro where the device has it, Inter Tight everywhere else (Windows,
      Android), Onest for navigation and labels. Same stack, same order. */

@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { getDict } from "@/lib/i18n";
 import { SiteFooter, SiteHeader } from "@/components/SiteChrome";
+import { CLUB_COVER } from "@/lib/covers";
 import { MemberApplicationForm, PartnerApplicationForm } from "../_landing/ApplicationForms";
 
 export const metadata: Metadata = { title: "Клуб" };
@@ -13,20 +14,22 @@ export default async function Join() {
     <>
       <SiteHeader lang={lang} t={t} />
       <main>
-        <section className="px-edge pt-8 md:pt-12" aria-labelledby="join-h1">
-          <h1 id="join-h1" className="text-[38px] md:text-[48px]">
-            {t.catalog.joinTitle}
-          </h1>
-          <p className="mt-4 max-w-[40rem] text-[17px] text-ink-2">{L.lead}</p>
-        </section>
-
-        {/* One concrete example instead of the four orb steps (12 Nov 2026). */}
-        <section className="px-edge pb-8 pt-12 md:pb-12 md:pt-16" aria-labelledby="how">
-          <div className="grid gap-4 lg:grid-cols-[0.8fr_1.2fr] lg:gap-12">
-            <h2 id="how" className="text-[24px] md:text-[28px]">
-              {L.howTitle}
-            </h2>
-            <p className="max-w-[44rem] text-[17px] text-ink-2 md:text-[18px]">{L.example}</p>
+        {/* Paper cover: the envelope whose flap is a mountain (шақыру). */}
+        <section className="bg-paper text-paper-ink" aria-labelledby="join-h1">
+          <div className="px-edge grid items-center gap-8 py-10 md:grid-cols-2 md:gap-12 md:py-16">
+            <div className="max-w-[34rem]">
+              <h1 id="join-h1" className="text-[40px] text-paper-ink md:text-[56px]">
+                {t.catalog.joinTitle}
+              </h1>
+              <p className="mt-4 text-[17px] text-paper-ink-2 md:text-[18px]">{L.lead}</p>
+              <h2 id="how" className="mt-8 text-[20px] text-paper-ink">
+                {L.howTitle}
+              </h2>
+              <p className="mt-2 text-[16px] text-paper-ink-2">{L.example}</p>
+            </div>
+            <div className="aspect-[3/2] overflow-hidden rounded-tile-r" style={{ background: CLUB_COVER.bg }}>
+              <img src={CLUB_COVER.src} srcSet={CLUB_COVER.srcSet} sizes="(min-width: 768px) 50vw, 100vw" alt="" fetchPriority="high" className="h-full w-full object-cover" />
+            </div>
           </div>
         </section>
 

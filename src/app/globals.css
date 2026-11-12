@@ -20,7 +20,8 @@
   unicode-range: U+20B8;
 }
 
-/* ── Base ─────────────────────────────────────────────────────────────── */
+/* ── Base (in @layer base, so a utility like text-paper-ink can recolour a heading) */
+@layer base {
 :root {
   color-scheme: dark;
   --dur-hover: 160ms;
@@ -65,6 +66,8 @@ p { text-wrap: pretty; }
   outline: 2px solid var(--color-accent);
   outline-offset: 3px;
   border-radius: 6px;
+}
+
 }
 
 /* One edge for the whole site: header logo, page title and footer share it.
@@ -156,6 +159,8 @@ input[type="file"].field::file-selector-button {
 .btn:disabled { opacity: 0.5; pointer-events: none; }
 .btn-primary { background: var(--color-ink); color: var(--color-canvas); }
 .btn-primary:hover { background: #fffaf2; }
+.btn-ink { background: var(--color-paper-ink); color: var(--color-paper); }
+.btn-ink:hover { background: #000; }
 .btn-soft { background: var(--color-raised); color: var(--color-ink); border: 1px solid var(--color-line); }
 .btn-soft:hover { background: #2a2824; }
 .btn-sm { min-height: 40px; padding: 0 16px; font-size: 14px; }
@@ -165,6 +170,11 @@ input[type="file"].field::file-selector-button {
   transition: color var(--dur-hover) var(--ease-color), text-decoration-color var(--dur-hover) var(--ease-color);
 }
 .link-quiet:hover { color: var(--color-ink); text-decoration-color: var(--color-ink-3); }
+.link-paper {
+  color: var(--color-paper-ink);
+  text-decoration: underline; text-decoration-color: var(--color-paper-ink-3); text-underline-offset: 4px;
+}
+.link-paper:hover { text-decoration-color: var(--color-paper-ink); }
 
 }
 

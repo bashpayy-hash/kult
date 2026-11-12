@@ -1,21 +1,23 @@
 import Link from "next/link";
 import { publicImageUrl } from "@/lib/storage";
+import { coverFor } from "@/lib/covers";
 import { clock, openNow } from "@/lib/booking";
 import { formatMoney } from "@/lib/format";
 import type { Dict, Lang } from "@/lib/i18n/dicts";
 import type { CatalogVenue, FreeSlots } from "@/lib/venueData";
 
 /**
- * A catalog card that helps choose (12 Nov 2026, owner: «иллюстрации
- * слишком слопные, там по сути должны быть реальные картинки заведений»):
- * the venue's own photo if it has one, otherwise no picture at all — the
- * name set large. Facts that decide: check, hours, the next free times, each
- * a link straight into the booking with that time picked.
+ * A catalog card that helps choose: check, hours, perk and the next free
+ * times, each a link straight into the booking with that time picked.
+ * On top, the venue's own photo; without one, its category's cover — a
+ * flat 1950s illustration that plainly is not a photo of the place (owner,
+ * 12 Nov 2026: real photos for venues; retro covers for everything else).
  */
 export function VenueCard({ v, t, lang, free, nowMin }: { v: CatalogVenue; t: Dict; lang: Lang; free?: FreeSlots; nowMin: number }) {
   const C = t.catalog;
   const photo = publicImageUrl(v.photo_path);
   const logo = publicImageUrl(v.logo_path);
+  const cover = coverFor(v.category);
   const perk = (lang === "kk" && v.perk_kk) || v.perk;
   const state = openNow(v, nowMin);
   const facts = [
@@ -25,16 +27,18 @@ export function VenueCard({ v, t, lang, free, nowMin }: { v: CatalogVenue; t: Di
 
   return (
     <article className="relative flex h-full flex-col overflow-hidden rounded-tile-r bg-tile">
-      {photo ? (
-        <div className="aspect-[16/10] overflow-hidden bg-raised">
+      <div className="aspect-[3/2] overflow-hidden" style={{ background: cover.bg }}>
+        {photo ? (
           <img src={photo} alt="" loading="lazy" className="h-full w-full object-cover" />
-        </div>
-      ) : null}
+        ) : (
+          <img src={cover.src} srcSet={cover.srcSet} sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw" alt="" loading="lazy" className="h-full w-full object-cover" />
+        )}
+      </div>
       <div className="flex flex-1 flex-col gap-4 p-5 md:p-6">
         <div className="flex items-start justify-between gap-4">
           <div className="min-w-0">
             <p className="label">{[t.categories[v.category], v.address].filter(Boolean).join(" · ")}</p>
-            <h3 className={`mt-2 ${photo ? "text-[24px]" : "text-[30px] md:text-[34px]"}`}>
+            <h3 className="mt-2 text-[26px] md:text-[28px]">
               {/* Stretched link: the whole card opens the venue; slot links sit above it. */}
               <Link href={`/v/${v.slug}`} className="after:absolute after:inset-0 after:content-['']">
                 {v.name}
