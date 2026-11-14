@@ -1,0 +1,142 @@
+{
+ "date": "2026-11-14",
+ "request": "Владелец: «маскот должен быть не плюшевым, а такой, типа, Chicago Girl… не Чикаго, а Чик… казахские атрибуты, но современно казахские… издали всё должно запоминаться… орнамент, может, сәукеле… ресторанный вайб».",
+ "status": "концепт для питча; на сайте пока не используется",
+ "model": "Higgsfield gpt_image_2_6, quality high, 1k, 3:4 (сцены — 2k, 4:3, с референсами 10 и 3)",
+ "character": {
+  "name": "Чик",
+  "codes": [
+   "гладкое чёрное каре",
+   "белое перо үкі в волосах (знак девушки, как на тақия)",
+   "красные губы",
+   "золотые серьги қошқар мүйіз",
+   "чёрное платье и кремовый шапан с орнаментом цвета бычьей крови и золота"
+  ],
+  "palette": {
+   "oxblood": "#8c2a1c",
+   "gold": "#d1b475",
+   "cream": "#e9d7b5",
+   "black": "#000000",
+   "navy": "#102041",
+   "paper": "#f4ece6",
+   "night": "#261412"
+  },
+  "rules": [
+   "Чик — қыз (девушка), не келін: тақия, үкі, шекелік, сырға, шолпы, камзол, шапан",
+   "сәукеле — только цитатой: знак, выпуск к Наурызу или тою; не на героине в баре",
+   "кимешек не использовать",
+   "без кальяна, дыма и чаш: реклама кальяна запрещена (ст. 13 Закона «О рекламе»)",
+   "плоская графика, 3–5 цветов, читается на 48 px"
+  ]
+ },
+ "chosen": [
+  10,
+  3,
+  2
+ ],
+ "items": [
+  {
+   "n": 1,
+   "file": "design/mascot/chick/01-deco.webp",
+   "name": "Ар-деко, сәукеле и перо үкі",
+   "job": "8ee03107-b59e-4102-874f-2367ba2b4b88",
+   "prompt": "Brand mascot design, Art Deco jazz-age poster style, flat graphic: an elegant young Kazakh woman in her twenties, full figure, standing with quiet confidence, sleek black bob haircut, a tall slim gold headpiece inspired by the Kazakh saukele cone topped with a single white owl feather, a long black evening dress with a gold geometric border of Kazakh 'koshkar muiz' ram-horn ornament drawn as Art Deco lines, small gold drop earrings, holding a champagne coupe. Only four flat colours: deep navy background (#102041), gold (#d1b475), black, cream (#e9d7b5). Bold clear silhouette that reads from far away, very few details, no gradients, no texture noise, crisp vector shapes. Not plush, not 3D, not anime. No text, no letters, no numbers, no logo, no frame.",
+   "note": "Сәукеле на героине в баре — риск «уят» (это убор невесты); как отдельный выпуск к Наурызу — можно."
+  },
+  {
+   "n": 2,
+   "file": "design/mascot/chick/02-profile-mark.webp",
+   "name": "Знак-профиль",
+   "job": "1031dd23-155d-4304-b870-84453d0866d3",
+   "prompt": "Minimal brand mascot mark, flat vector: the profile silhouette of a young Kazakh woman's head and neck facing right, wearing a tall pointed headpiece inspired by the Kazakh saukele with an owl feather on top, one large round gold hoop earring with a small Kazakh ornament inside, a red lip as the only facial detail. Three flat colours only: oxblood red background (#8c2a1c), cream silhouette (#e9d7b5), gold (#d1b475). Iconic, simple, readable as a tiny app icon and from across a room, generous empty space. Not plush, not 3D, no gradients. No text, no letters, no numbers, no logo, no frame.",
+   "note": "Взят как знак: сәукеле только силуэтом. На слайде «Чик» в питче."
+  },
+  {
+   "n": 3,
+   "file": "design/mascot/chick/03-chapan-street.webp",
+   "name": "Шапан и шолпы",
+   "job": "6cdf9d6e-0d0c-4a2f-9a12-25aafc640b43",
+   "prompt": "Brand mascot design, contemporary flat vector illustration: a stylish young Kazakh woman in her twenties, full figure, walking, wearing an oversized modern cream chapan coat with a bold oxblood Kazakh ornament band along the hem and cuffs, black sunglasses, a sleek high ponytail with a few silver sholpy hair pendants hanging from it, white sneakers, holding a phone. Flat warm ochre background (#cd831b). Limited palette: ochre, cream, oxblood, black, silver. Bold simple silhouette that reads from far away, minimal details, clean shapes, no gradients. Not plush, not 3D, not anime. No text, no letters, no numbers, no logo, no frame.",
+   "note": "Взят как опора образа: шапан оверсайз поверх чёрного, бытовой код девушек."
+  },
+  {
+   "n": 4,
+   "file": "design/mascot/chick/04-karaoke.webp",
+   "name": "Караоке-вечер",
+   "job": "f3d75f46-03fe-45b6-95f6-db6d3245cc2f",
+   "prompt": "Brand mascot design, flat graphic poster, warm restaurant night mood: half-length portrait of a confident young Kazakh woman in her twenties singing into a vintage microphone at a karaoke night, long straight black hair, red lips, large gold geometric earrings shaped like Kazakh ornament, a black velvet camisole vest with a thin gold ornament trim, eyes closed, enjoying the song. Flat oxblood background (#8c2a1c) with a few soft gold dots of string lights. Palette limited to oxblood, gold, black, cream. Bold silhouette, few details, readable from far away, no gradients except one soft light. Not plush, not 3D, not anime. No text, no letters, no numbers, no logo, no frame."
+  },
+  {
+   "n": 5,
+   "file": "design/mascot/chick/05-takiya-collage.webp",
+   "name": "Тақия, коллаж",
+   "job": "cba1b4f0-d8cf-4a79-8c1f-330f772137c9",
+   "prompt": "Brand mascot design in the manner of a Paul Rand 1950s cut-paper collage: a young Kazakh woman in her twenties, half-length, made of cut coloured paper shapes, long straight black hair, wearing a modern dark red velvet takiya cap with a white owl feather and a cream turtleneck, holding a small white porcelain tea bowl with a curl of cotton-wool steam. Flat pale periwinkle gouache background (#879ad9), visible paper grain. Simple bold shapes, minimal facial features, readable from far away. Not plush, not 3D, not anime. No text, no letters, no numbers, no logo, no frame."
+  },
+  {
+   "n": 6,
+   "file": "design/mascot/chick/06-booth.webp",
+   "name": "Бархатный диван",
+   "job": "965654ea-653f-4932-b4b8-0d19b293de89",
+   "prompt": "Brand mascot design, flat mid-century poster: a young Kazakh woman in her twenties sitting relaxed in a round deep-green velvet restaurant booth, legs crossed, holding a glass of red wine, sleek long black hair, gold drop earrings, a simple black dress; the booth's back has a large gold Kazakh koshkar muiz ornament like an Art Deco fan. Warm dim restaurant mood. Palette: deep brown background (#231917), bottle green, gold (#d1b475), cream, oxblood. Bold readable silhouette, few details, crisp vector shapes. Not plush, not 3D, not anime. No text, no letters, no numbers, no logo, no frame."
+  },
+  {
+   "n": 7,
+   "file": "design/mascot/chick/07-sticker.webp",
+   "name": "Стикер",
+   "job": "198d0792-ae06-4c1b-937c-384da3f13491",
+   "prompt": "Brand mascot character sticker design, playful but stylish flat vector: a cute chibi-proportioned young Kazakh woman with a large head and small body, full figure, winking, black hair in a sleek high bun wrapped with a small gold saukele-inspired cone and an owl feather, a short cream chapan jacket with an oxblood ornament trim, holding a glass of lemonade, standing on a small oval shadow. Flat cream background (#e9d7b5). Thick clean shapes, 4 colours: black, oxblood, gold, cream. Instantly memorable, works as a tiny sticker. Not plush, not 3D. No text, no letters, no numbers, no logo, no frame.",
+   "note": "Для стикеров в сторис; сәукеле на макушке — заменить на перо үкі."
+  },
+  {
+   "n": 8,
+   "file": "design/mascot/chick/08-rooftop.webp",
+   "name": "Крыша, горы, шолпы",
+   "job": "c35363ce-c6e8-4244-98ab-3f71baed1867",
+   "prompt": "Brand mascot design, flat poster, Almaty night mood: a young Kazakh woman in her twenties seen from behind and slightly to the side, leaning on a rooftop railing, looking at the city lights and the dark silhouette of the snowy Zailiysky Alatau mountains, long black hair with silver sholpy pendants, an oversized black chapan with a gold ornament collar, holding a phone with its flash glowing. Palette: midnight navy sky (#102041), warm gold city lights, black, cream snow caps. Bold simple shapes, readable from afar, few details, no gradients except the sky. Not plush, not 3D, not anime. No text, no letters, no numbers, no logo, no frame."
+  },
+  {
+   "n": 9,
+   "file": "design/mascot/chick/09-line.webp",
+   "name": "Одна линия",
+   "job": "815ab235-95c8-4cae-b328-ecf67cbb24d9",
+   "prompt": "Minimal brand mascot, continuous single-line drawing style with flat colour blocks: a young Kazakh woman's face and shoulders, eyes half-closed, a tall saukele-inspired headpiece drawn as a simple gold cone with an owl feather, one round gold earring, a red lip; the line is black, the colour blocks are flat gold and oxblood, on a warm off-white background (#f5f1ea). Elegant, modern, editorial, very few lines, memorable from afar. Not plush, not 3D, not anime. No text, no letters, no numbers, no logo, no frame."
+  },
+  {
+   "n": 10,
+   "file": "design/mascot/chick/10-jazz.webp",
+   "name": "Джаз-клуб «Чикаго»",
+   "job": "25d3ce84-587a-4c42-affb-b2c471845270",
+   "prompt": "Brand mascot design, bold flat graphic in the spirit of a 1920s Chicago jazz-club poster reimagined in modern Almaty: a young Kazakh woman in her twenties dancing, one arm raised, a short sleek black bob, a sleeveless black dress with gold fringe arranged as a Kazakh ornament pattern, long gold earrings, a slim gold headband with a single owl feather. Flat gold-ochre background (#bd8f37) with a large simple black spotlight circle behind her. Palette: ochre, black, cream, oxblood. Strong silhouette that reads from far away, very few details. Not plush, not 3D, not anime. No text, no letters, no numbers, no logo, no frame.",
+   "note": "Взят как опора образа: каре, перо үкі, серьги қошқар мүйіз, ар-деко. На слайде «Чик» в питче."
+  }
+ ],
+ "scenes": [
+  {
+   "file": "design/mascot/chick/scenes/s1-cover.webp",
+   "use": "обложка питча: тост у окна",
+   "job": "1bf8669c-e4db-41ea-8c9a-b5c5132b0811",
+   "prompt": "Flat graphic illustration for a pitch deck, same character design as the references: 'Chick', a young Kazakh woman in her twenties with a sleek short black bob, a single white owl feather (uki) pinned in her hair, red lips, gold Kazakh koshkar-muiz ornament earrings, a black dress under an open cream chapan with a bold oxblood and gold ornament band. Scene: she sits at a small round restaurant table by a big window at dusk, the snowy Zailiysky Alatau mountains outside, she raises a glass in a toast, a phone lies on the table. The vignette sits in the lower right of the frame and fades into a plain warm off-white background (#f5f1ea) on the left and top, leaving lots of empty space on the left for a title. Palette: off-white, black, cream, oxblood (#8c2a1c), gold (#d1b475), navy dusk sky. Crisp flat vector shapes, few details, readable from far away. Not plush, not 3D, not anime. No text, no letters, no numbers, no logo."
+  },
+  {
+   "file": "design/mascot/chick/scenes/s2-story.webp",
+   "use": "«как это работает»: сторис у входа, подруги идут следом",
+   "job": "45b347cd-62bf-40a0-aa01-12f19ac5095d",
+   "prompt": "Flat graphic illustration for a pitch deck, same character design as the references: 'Chick', a young Kazakh woman with a sleek short black bob, a white owl feather pinned in her hair, red lips, gold ornament earrings, black dress, open cream chapan with an oxblood and gold ornament band. Scene: she stands by a restaurant entrance holding up her phone to film a story of the room; behind her two young women friends walk in through the door smiling, one holding a phone. Warm restaurant light, a few gold string lights. The vignette sits in the lower right of the frame and fades into a plain warm off-white background (#f5f1ea) on the left and top, leaving empty space on the left. Palette: off-white, black, cream, oxblood (#8c2a1c), gold (#d1b475). Crisp flat vector shapes, few details. Not plush, not 3D, not anime. No text, no letters, no numbers, no logo, no readable screens."
+  },
+  {
+   "file": "design/mascot/chick/scenes/s3-night.webp",
+   "use": "тёмный слайд «2»: крыша ночью",
+   "job": "58edb857-e442-4cac-a5b1-033c6dabb711",
+   "prompt": "Flat graphic illustration for a pitch deck, night version, same character design as the references: 'Chick', a young Kazakh woman with a sleek short black bob, a white owl feather in her hair, red lips, gold ornament earrings, black dress, cream chapan with an oxblood and gold ornament band. Scene: she leans on a rooftop terrace railing at night, glass in hand, looking over the warm lights of Almaty and the dark silhouette of the mountains with snowy peaks. The vignette sits in the lower right and fades into a plain deep warm brown background (#231917) on the left and top, leaving empty space on the left for a big number. Palette: deep brown, black, cream, gold city lights, oxblood. Crisp flat vector shapes, few details. Not plush, not 3D, not anime. No text, no letters, no numbers, no logo."
+  },
+  {
+   "file": "design/mascot/chick/scenes/s4-road.webp",
+   "use": "«что дальше»: дорога от гор Алматы к Астане",
+   "job": "ceec3f46-d900-4ae2-b2d1-29d5e7e4f671",
+   "prompt": "Flat graphic illustration for a pitch deck, same character design as the references: 'Chick', a young Kazakh woman with a sleek short black bob, a white owl feather in her hair, red lips, gold ornament earrings, black dress, cream chapan with an oxblood and gold ornament band, sneakers. Scene: she walks confidently along a road that leads from the snowy mountains of Almaty on the left towards a distant modern city skyline on the right with a tall golden tower topped by a sphere (Astana's Baiterek), pulling a small suitcase and holding a phone. The vignette sits in the lower right and fades into a plain warm off-white background (#f5f1ea) on the left and top. Palette: off-white, black, cream, oxblood (#8c2a1c), gold (#d1b475), soft periwinkle sky accents. Crisp flat vector shapes, few details. Not plush, not 3D, not anime. No text, no letters, no numbers, no logo."
+  }
+ ],
+ "sheet": "design/mascot/chick/chick-sheet.jpg",
+ "research": "docs/MASCOT_MARKET.md"
+}
