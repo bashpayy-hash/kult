@@ -76,6 +76,23 @@ async function dem(z) {
 }
 
 const pulled = await access(path.join(process.cwd(), "design", "map-source", "pulled.json")).then(() => true, () => false);
+// The walkable centre (14 Nov 2026, owner: «иммерзнуться именно в сам город…
+// пару улиц сделать и там гулять»): buildings with their levels and names,
+// trees, for the 3D walk. Pulled once, gated by its own marker.
+const WALK = { south: 43.229, west: 76.926, north: 43.269, east: 76.968 };
+const walkPulled = await access(path.join(process.cwd(), "design", "map-source", "walk-pulled.json")).then(() => true, () => false);
+const WALK_QUERIES = {
+  "walk-buildings": `[out:json][timeout:240];(way["building"](${bb(WALK)});way["building:part"](${bb(WALK)});relation["building"](${bb(WALK)}););out tags geom qt;`,
+  "walk-trees": `[out:json][timeout:180];(node["natural"="tree"](${bb(WALK)});way["natural"="tree_row"](${bb(WALK)}););out tags geom qt;`,
+};
+if (process.env.NETLIFY === "true" && !walkPulled) {
+  try {
+    await mkdir(OUT, { recursive: true });
+    for (const [k, q] of Object.entries(WALK_QUERIES)) await overpass(k, q);
+  } catch (e) {
+    console.warn(`map-raw: walk skipped (${e.message})`);
+  }
+}
 if (process.env.NETLIFY === "true" && !pulled) {
   try {
     await mkdir(OUT, { recursive: true });
