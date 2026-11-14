@@ -275,6 +275,9 @@ input[type="file"].field::file-selector-button {
 .plan-cam.is-moving .plan-label, .plan-cam.is-moving .plan-pin, .plan-cam.is-moving .plan-landmark { will-change: transform; }
 .plan-tile { max-width: none; opacity: 0; transition: opacity 260ms var(--ease-out); user-select: none; -webkit-user-drag: none; }
 .plan-tile.is-ready { opacity: 1; }
+/* A label that would sit under a place's stamp at this zoom steps aside. */
+.plan-landmark { transition: opacity 240ms var(--ease-out); }
+.plan-clash, [data-near] .plan-clash { opacity: 0 !important; }
 .plan-near, .plan-far { transition: opacity 320ms var(--ease-out); }
 .plan-near { opacity: 0; }
 [data-near] .plan-near { opacity: 1; }

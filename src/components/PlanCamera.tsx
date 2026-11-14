@@ -95,6 +95,12 @@ export function PlanCamera({ city, layers, active, setActive, focus, setFocus, o
   const tileKey = useRef("");
   const settle = useRef(0);
   const [hint, setHint] = useState(false);
+  // Labels that would sit under a place's stamp at this zoom step aside (places come first).
+  const [clash, setClash] = useState<Set<string>>(() => new Set());
+  const picked = useRef<(number | null)[]>([]);
+  useEffect(() => {
+    picked.current = [active, focus];
+  }, [active, focus]);
   const hintTimer = useRef(0);
   const pointers = useRef(new Map<number, { x: number; y: number }>());
   const gesture = useRef<{ cam: Cam; x: number; y: number; dist: number } | null>(null);
@@ -111,7 +117,24 @@ export function PlanCamera({ city, layers, active, setActive, focus, setFocus, o
       tileKey.current = key;
       setTiles(next);
     }
-  }, [layers.tiles]);
+    // On screen, how far is each label from the nearest place? Closer than its own reach: hidden.
+    const W = v.clientWidth, H = v.clientHeight;
+    // A place takes its stamp and its name to the right (about 7 px a letter), plus a margin.
+    // (lift: a landmark stands on its point, so its middle is that many pixels higher.)
+    const near = (x: number, y: number, reach: number, lift = 0) =>
+      city.venues.some((p) => {
+        const dx = ((x - p.left) * W * c.k) / 100, dy = ((y - p.top) * H * c.k) / 100 - lift;
+        if (Math.hypot(dx, dy) < reach) return true;
+        const named = c.k >= K_NEAR || picked.current.includes(p.n);
+        return named && dx > 0 && dx < 30 + p.name.length * 7.2 + reach * 0.4 && Math.abs(dy) < 14 + reach * 0.3;
+      });
+    const hide = new Set<string>();
+    for (const l of layers.landmarks) if (near(l.x, l.y, 56, 20)) hide.add(`l:${l.k}`);
+    for (const a of layers.avenues) if (near(a.x, a.y, 56)) hide.add(`a:${a.t}`);
+    for (const t of layers.contours) if (near(t.x, t.y, 48)) hide.add(`c:${t.t}`);
+    for (const d of layers.districts) if (near(d.x, d.y, 52)) hide.add(`d:${d.t}`);
+    setClash((prev) => (prev.size === hide.size && [...hide].every((k) => prev.has(k)) ? prev : hide));
+  }, [layers, city.venues]);
 
   /**
    * Puts the camera on the page: one transform, one custom property. While
@@ -381,7 +404,7 @@ export function PlanCamera({ city, layers, active, setActive, focus, setFocus, o
 
             <div aria-hidden="true">
               {layers.districts.map((d) => (
-                <span key={d.t} className="plan-label plan-far plan-district" style={{ left: `${d.x}%`, top: `${d.y}%`, transform: `translate(-50%, -50%) ${inv}` }}>
+                <span key={d.t} className={`plan-label plan-far plan-district ${clash.has(`d:${d.t}`) ? "plan-clash" : ""}`} style={{ left: `${d.x}%`, top: `${d.y}%`, transform: `translate(-50%, -50%) ${inv}` }}>
                   {d.t}
                 </span>
               ))}
@@ -389,17 +412,17 @@ export function PlanCamera({ city, layers, active, setActive, focus, setFocus, o
                 {layers.range.t}
               </span>
               {layers.avenues.map((a) => (
-                <span key={a.t} className="plan-label plan-near plan-avenue" style={{ left: `${a.x}%`, top: `${a.y}%`, transform: `translate(-50%, -50%) rotate(${a.a ?? 0}deg) ${inv}` }}>
+                <span key={a.t} className={`plan-label plan-near plan-avenue ${clash.has(`a:${a.t}`) ? "plan-clash" : ""}`} style={{ left: `${a.x}%`, top: `${a.y}%`, transform: `translate(-50%, -50%) rotate(${a.a ?? 0}deg) ${inv}` }}>
                   {a.t}
                 </span>
               ))}
               {layers.contours.map((c) => (
-                <span key={c.t} className="plan-label plan-near plan-contour" style={{ left: `${c.x}%`, top: `${c.y}%`, transform: `translate(-50%, -50%) rotate(${c.a ?? 0}deg) ${inv}` }}>
+                <span key={c.t} className={`plan-label plan-near plan-contour ${clash.has(`c:${c.t}`) ? "plan-clash" : ""}`} style={{ left: `${c.x}%`, top: `${c.y}%`, transform: `translate(-50%, -50%) rotate(${c.a ?? 0}deg) ${inv}` }}>
                   {c.t}
                 </span>
               ))}
               {layers.landmarks.map((l) => (
-                <span key={l.k} className="plan-landmark" style={{ left: `${l.x}%`, top: `${l.y}%`, transform: `translate(-50%, -100%) ${inv}` }}>
+                <span key={l.k} className={`plan-landmark ${clash.has(`l:${l.k}`) ? "plan-clash" : ""}`} style={{ left: `${l.x}%`, top: `${l.y}%`, transform: `translate(-50%, -100%) ${inv}` }}>
                   <Landmark k={l.k} />
                   <span className="plan-label plan-near plan-landmark-name">{l.t}</span>
                 </span>
