@@ -118,6 +118,7 @@ h1 { margin: 0; font-size: clamp(34px, 5vw, 56px); font-weight: 600; letter-spac
 .chip:disabled { cursor: default; color: var(--ink-p3); background: transparent; border-style: dashed; text-decoration: line-through; text-decoration-thickness: 1px; }
 .times { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; }
 .times .chip { padding: 8px 4px; font-size: 15px; font-weight: 500; }
+.more { justify-self: start; background: none; border: 0; border-bottom: 1px solid var(--line-p); padding: 6px 0 3px; font-size: 14px; font-weight: 600; color: var(--ink-p2); cursor: pointer; }
 
 .stepper { display: grid; grid-template-columns: 48px 1fr 48px; align-items: center; border: 1px solid var(--line-p); background: var(--surf); max-width: 220px; }
 .stepper button { height: 46px; background: none; border: 0; font-size: 22px; cursor: pointer; color: var(--ink-p); }
@@ -229,6 +230,9 @@ details.note textarea { margin-top: 8px; min-height: 80px; resize: vertical; }
 .rules { margin: 0; padding: 0; list-style: none; display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 0 28px; counter-reset: r; }
 .rules li { counter-increment: r; padding: 12px 0 12px 34px; border-top: 1px solid var(--line); position: relative; font-size: 15px; color: var(--ink-2); }
 .rules li::before { content: counter(r); position: absolute; left: 0; top: 12px; font-weight: 600; color: var(--gold); font-variant-numeric: tabular-nums; }
+.research .sub { margin: 8px 0 0; font-size: 22px; font-weight: 600; letter-spacing: -0.03em; }
+.srcs p { margin: 0 0 6px; }
+.srcs code { font-family: ui-monospace, Menlo, monospace; font-size: 12px; color: var(--ink-2); }
 .srcs { font-size: 13px; color: var(--ink-3); display: grid; gap: 4px; }
 .srcs a { color: var(--ink-3); word-break: break-word; }
 footer { font-size: 13px; color: var(--ink-3); border-top: 1px solid var(--line); padding-top: 16px; }
@@ -256,10 +260,57 @@ footer { font-size: 13px; color: var(--ink-3); border-top: 1px solid var(--line)
     <aside class="why" id="why" aria-label="Почему так"></aside>
   </section>
 
-  <section class="research" id="research" aria-labelledby="research-h" hidden>
+  <section class="research" id="research" aria-labelledby="research-h">
     <p class="eyebrow">Ресерч</p>
     <h2 id="research-h">Что подталкивает дойти до брони</h2>
-    <div id="research-body"></div>
+    <p>Бронь доводят до конца, когда в ней мало работы: мало полей, нет входа, почти всё уже выбрано и страница быстро открывается. Давить на человека не нужно. Его подталкивает рекомендация подруги, точные умолчания и спокойное подтверждение.</p>
+    <div class="facts">
+      <div class="fact"><span class="n">18–19%</span><b>бросают оформление из-за обязательного аккаунта</b><span>Ещё 17–18% — потому что оно долгое. Количество полей весит больше, чем количество шагов. В прототипе: без входа, два поля.</span><span class="s">Baymard Institute, 2025</span></div>
+      <div class="fact"><span class="n">d = 0,68</span><b>эффект умолчаний, метаанализ 58 исследований</b><span>Что выбрано заранее, то чаще и остаётся. В прототипе: сегодня, 2 гостя, ближайшее свободное время, «любой стол».</span><span class="s">Jachimowicz и др., 2019</span></div>
+      <div class="fact"><span class="n">≈ 0</span><b>средний эффект «перегрузки выбором»</b><span>Он появляется, только когда выбор трудный и хочется поменьше думать. В прототипе: 8 слотов на экране, остальные — по кнопке «Другое время».</span><span class="s">Scheibehenne, 2010; Chernev, 2015</span></div>
+      <div class="fact"><span class="n">+8,4%</span><b>к конверсии на каждые 0,1 с скорости</b><span>Это данные ритейла, в путешествиях +10,1%. Корреляция, исследование заказал Google. Для нас: свободные слоты сразу в HTML, страница готова к касанию быстрее 2,5 с в браузере Instagram.</span><span class="s">Google и Deloitte, 2020</span></div>
+      <div class="fact"><span class="n">нет данных</span><b>что карта зала помогает дойти до брони</b><span>OpenTable даёт выбрать зону, а не стол. Поэтому план в прототипе — по желанию, а «любой подходящий» стоит первым.</span><span class="s">обзор платформ, 2026</span></div>
+      <div class="fact"><span class="n">88%</span><b>доверяют рекомендации знакомых</b><span>Это больше, чем любой рекламе. Табличка «топ-5 блюд» подняла спрос на них на 13–20%. В прототипе: первым видно «Вы от Аружан» и её бонус.</span><span class="s">Nielsen, 2021; Cai и др., 2009</span></div>
+      <div class="fact"><span class="n">11 → 26%</span><b>согласий даёт мягкий тёмный паттерн</b><span>Агрессивный даёт до 42%, но вызывает отпор. Британский CMA штрафует за это до 10% оборота. Поэтому в прототипе нет таймеров, «смотрят сейчас» и выдуманного «осталось 2 стола».</span><span class="s">Luguri и Strahilevitz, 2021; CMA</span></div>
+      <div class="fact"><span class="n">RR 1,14</span><b>к явке от SMS-напоминания</b><span>Если в напоминании сказано, чего стоит неявка, неявок 8,4% против 11,1%. В прототипе: напоминание в WhatsApp включено, в подтверждении — «стол отдадим другим гостям».</span><span class="s">Cochrane, 2013; Hallsworth и др., 2015</span></div>
+      <div class="fact"><span class="n">0,80%</span><b>неявок с картой против 2,47% без неё</b><span>Но без карты бронируют на 28% охотнее (это заявление вендора). На пилоте карту не просим, решение пересмотрим через четыре недели.</span><span class="s">Resos, 3,77 млн броней; Quandoo через The Caterer</span></div>
+      <div class="fact"><span class="n">80–89%</span><b>казахстанцев пользуются WhatsApp</b><span>Telegram — от 25% до 70%, смотря чей опрос. Поэтому подтверждение и напоминание приходят в WhatsApp.</span><span class="s">Kursiv, 2025; Finance.kz</span></div>
+    </div>
+    <h3 class="sub">Правила для брони бөлек</h3>
+    <ol class="rules">
+      <li>Обязательных полей два: имя и телефон. Пожелание — за ссылкой. Согласие на обработку данных — сверить с юристом.</li>
+      <li>Телефон с маской +7: принимает 8, пробелы и вставку.</li>
+      <li>Без входа, аккаунта и кода из SMS.</li>
+      <li>По умолчанию: сегодня, 2 гостя, ближайшее свободное время.</li>
+      <li>На экране 6–8 слотов, остальные — «Другое время». Проверить A/B-тестом.</li>
+      <li>План зала — по желанию. По умолчанию «любой стол»; зоны — кнопками.</li>
+      <li>Кнопка с исходом («Забронировать · 20:00») — в зоне большого пальца. Касание не меньше 44 px. Строка с уже выбранным — над кнопкой.</li>
+      <li>Свободные слоты — сразу в HTML страницы. Страница готова к касанию быстрее 2,5 с в браузере Instagram.</li>
+      <li>Первое, что видно, — рекомендация участницы и её бонус.</li>
+      <li>Счётчики — только из базы и только от пяти и больше.</li>
+      <li>Дефицит — только точный. Таймеров и «смотрят сейчас» нет.</li>
+      <li>Подтверждение сразу: на экране и в WhatsApp.</li>
+      <li>Напоминание в WhatsApp с просьбой предупредить об отмене и с ценой неявки.</li>
+      <li>На пилоте — без депозита и карты. Пересмотреть через четыре недели.</li>
+      <li>Салон: услуга → время → «любой мастер» первым.</li>
+    </ol>
+    <div class="srcs">
+      <p>Цифры взяты из выдачи веб-поиска: сайты baymard.com и web.dev из песочницы не открылись. Перед питчем их нужно сверить с первоисточниками. Полная справка со 101 источником — <code>docs/BOOKING_RESEARCH.md</code> в репозитории.</p>
+      <a href="https://baymard.com/lists/cart-abandonment-rate" target="_blank" rel="noopener">Baymard Institute — Cart Abandonment Rate Statistics</a>
+      <a href="https://ideas.repec.org/a/cup/bpubpo/v3y2019i02p159-186_00.html" target="_blank" rel="noopener">Jachimowicz и др. — When and why defaults influence decisions, 2019</a>
+      <a href="https://abcwest.cogs.indiana.edu/pmwiki/pdf/scheibehenne.options.2010.pdf" target="_blank" rel="noopener">Scheibehenne и др. — Can there ever be too many options?, 2010</a>
+      <a href="https://www.kellogg.northwestern.edu/faculty/research/detail/2015/when-product-assortment-leads-to-choice-overload-a-conceptual" target="_blank" rel="noopener">Chernev и др. — Choice overload: a meta-analysis, 2015</a>
+      <a href="https://www2.deloitte.com/content/dam/Deloitte/ie/Documents/Consulting/Milliseconds_Make_Millions_report.pdf" target="_blank" rel="noopener">Google и Deloitte — Milliseconds Make Millions, 2020</a>
+      <a href="https://www.nielsen.com/insights/2021/beyond-martech-building-trust-with-consumers-and-engaging-where-sentiment-is-high/" target="_blank" rel="noopener">Nielsen — Beyond martech: building trust with consumers, 2021</a>
+      <a href="https://www.nber.org/papers/w13516" target="_blank" rel="noopener">Cai, Chen, Fang — Observational learning, 2009</a>
+      <a href="https://academic.oup.com/jla/article/13/1/43/6180579" target="_blank" rel="noopener">Luguri, Strahilevitz — Shining a Light on Dark Patterns, 2021</a>
+      <a href="https://natlawreview.com/article/it-s-final-countdown-or-it-cma-issues-decision-online-pressure-selling-tactics" target="_blank" rel="noopener">National Law Review — CMA и давление на покупателя</a>
+      <a href="https://pubmed.ncbi.nlm.nih.gov/24310741/" target="_blank" rel="noopener">Cochrane — Mobile phone messaging reminders, 2013</a>
+      <a href="https://doi.org/10.1371/journal.pone.0137306" target="_blank" rel="noopener">Hallsworth и др. — Stating appointment costs in SMS reminders, 2015</a>
+      <a href="https://resos.com/restaurant-no-show-rate/" target="_blank" rel="noopener">Resos — Restaurant No-Show Index (данные вендора)</a>
+      <a href="https://www.thecaterer.com/articles/541896/huge-increase-in-restaurants-taking-credit-card-details-but-some-diners-still-turned-off" target="_blank" rel="noopener">The Caterer — рестораны и данные карты (Quandoo)</a>
+      <a href="https://kz.kursiv.media/en/2025-04-10/engk-yeri-digital-habits-why-kazakhstan-loves-whatsapp-and-uzbekistan-prefers-telegram/amp/" target="_blank" rel="noopener">Kursiv — Why Kazakhstan loves WhatsApp, 2025</a>
+    </div>
   </section>
 
   <footer>Все места, мастера, цены и занятость — демо, чтобы показать поведение. Ничего не отправляется: кнопки работают внутри страницы.</footer>
@@ -403,14 +454,17 @@ footer { font-size: 13px; color: var(--ink-3); border-top: 1px solid var(--line)
   }
 
   const dateChips = (s) => `<div class="group"><div class="lab">Дата</div><div class="chips" role="group" aria-label="Дата">${DAYS.map((x) => `<button class="chip" data-act="day" data-v="${x.i}" aria-pressed="${s.d === x.i}">${x.short}</button>`).join("")}</div></div>`;
+  /* Eight slots around the chosen one, the rest behind «Другое время»:
+     choice overload is near zero on average, but appears when choosing is
+     hard (Chernev 2015) — research rule 5, to be A/B-tested. */
   function timeGrid(s, label = "Время", note = "") {
-    const c = CATS[cat]; const out = [];
-    for (let m = c.open; m <= c.close; m += 30) {
-      const past = s.d === 0 && m < nowMin + 30; if (past) continue;
-      const open = timeOpen(cat, s, s.d, m);
-      out.push(`<button class="chip" data-act="time" data-v="${m}" aria-pressed="${s.m === m}" ${open ? "" : `disabled aria-label="${hm(m)}, мест нет"`}>${hm(m)}</button>`);
-    }
-    return `<div class="group"><div class="lab">${label}${note ? `<em>${note}</em>` : ""}</div>${out.length ? `<div class="times" role="group" aria-label="${label}">${out.join("")}</div>` : `<p class="hint">На сегодня записи больше нет — выберите другой день.</p>`}</div>`;
+    const c = CATS[cat]; const all = [];
+    for (let m = c.open; m <= c.close; m += 30) { if (s.d === 0 && m < nowMin + 30) continue; all.push(m); }
+    let shown = all;
+    if (!s.allTimes && all.length > 8) { const i = Math.max(0, all.indexOf(s.m)); const from = Math.max(0, Math.min(i - 2, all.length - 8)); shown = all.slice(from, from + 8); }
+    const chips = shown.map((m) => { const open = timeOpen(cat, s, s.d, m); return `<button class="chip" data-act="time" data-v="${m}" aria-pressed="${s.m === m}" ${open ? "" : `disabled aria-label="${hm(m)}, мест нет"`}>${hm(m)}</button>`; });
+    const more = all.length > 8 ? `<button class="more" data-act="more-times" aria-expanded="${!!s.allTimes}">${s.allTimes ? "Свернуть" : `Другое время · ещё ${all.length - shown.length}`}</button>` : "";
+    return `<div class="group"><div class="lab">${label}${note ? `<em>${note}</em>` : ""}</div>${all.length ? `<div class="times" role="group" aria-label="${label}">${chips.join("")}</div>${more}` : `<p class="hint">На этот день мест больше нет — выберите другой.</p>`}</div>`;
   }
   const guests = (s, max) => `<div class="group"><div class="lab">Гостей</div><div class="stepper"><button data-act="g-" aria-label="Меньше гостей" ${s.g <= 1 ? "disabled" : ""}>−</button><output aria-live="polite">${guestsWord(s.g)}</output><button data-act="g+" aria-label="Больше гостей" ${s.g >= max ? "disabled" : ""}>+</button></div></div>`;
 
@@ -572,6 +626,7 @@ footer { font-size: 13px; color: var(--ink-3); border-top: 1px solid var(--line)
       case "day": s.d = +v; s.stools = []; s.table = "any"; s.room = "any"; if (s.m === null || !timeOpen(cat, s, s.d, s.m) || (s.d === 0 && s.m < nowMin + 30)) s.m = c.flow[0] === "when" ? defaultTime(cat, s) : firstFree(cat, s.d, (m) => timeOpen(cat, s, s.d, m)); break;
       case "time": s.m = +v; s.stools = []; if (s.table !== "any") { const t = allTables(cat).find((x) => x.id === s.table); if (t && tableBusy(cat, t, s.d, s.m)) s.table = "any"; } if (s.room !== "any" && busyAt(`w${s.room}`, s.d, s.m, c.base)) s.room = "any"; break;
       case "g-": case "g+": s.g = Math.max(1, Math.min(c.maxG, s.g + (a === "g+" ? 1 : -1))); s.stools = []; s.table = "any"; if (s.m !== null && !timeOpen(cat, s, s.d, s.m)) s.m = defaultTime(cat, s); break;
+      case "more-times": s.allTimes = !s.allTimes; break;
       case "zone": s.zone = v; break;
       case "hall": s.hall = v; break;
       case "table": s.table = v; s.stools = []; break;
@@ -647,7 +702,7 @@ footer { font-size: 13px; color: var(--ink-3); border-top: 1px solid var(--line)
       <h3>${first ? esc(first) + ", ждём вас" : "Ждём вас"}</h3>
       <dl class="sum">${[["Где", c.venue], ...summaryRows()].map(([k, v]) => `<div><dt>${k}</dt><dd>${esc(v)}</dd></div>`).join("")}</dl>
       <p class="perk">На входе скажите: <b>«я от ${MEMBER}»</b> — ${c.perk}. Хостес уже видит вашу бронь.</p>
-      <p class="hint">${s.remind ? `Подтверждение и напоминание за 2 часа придут в WhatsApp на ${esc(s.phone)}.` : `Подтверждение придёт SMS на ${esc(s.phone)}.`} Отменить можно в один клик из сообщения.</p>
+      <p class="hint">${s.remind ? `Подтверждение и напоминание за 2 часа придут в WhatsApp на ${esc(s.phone)}.` : `Подтверждение придёт SMS на ${esc(s.phone)}.`} Если планы поменяются — отмените в один клик из сообщения: место отдадим другим гостям.</p>
       <div class="row"><button class="ghost" data-act="calendar">Добавить в календарь</button><button class="ghost" data-act="edit">Изменить</button><button class="ghost" data-act="restart">Новая бронь</button></div>
     </div>`;
   }
@@ -664,8 +719,9 @@ footer { font-size: 13px; color: var(--ink-3); border-top: 1px solid var(--line)
     common: {
       when: [["Время уже выбрано", "Ближайшее свободное (в ресторане — ближе к 19:30, в баре — к 20:30). Гость меняет, только если нужно; не нужно — жмёт «Дальше»."],
         ["Занятые слоты видны, но погашены", "Зачёркнуты и не нажимаются. Место выглядит живым без выдуманного «осталось 2 стола»."],
+        ["Восемь слотов, остальное — по кнопке", "«Другое время» раскрывает весь день. Перегрузка выбором в среднем близка к нулю, но появляется, когда выбор трудный (Chernev, 2015)."],
         ["Гостей — кнопки ± вместо списка", "Одно касание большим пальцем; при смене числа гостей время и столы пересчитываются сами."]],
-      contact: [["Два поля: имя и телефон", "Без почты, регистрации и пароля. Маска +7 сама ставит скобки и дефисы, клавиатура цифровая."],
+      contact: [["Два поля: имя и телефон", "Без почты, регистрации и пароля: из-за обязательного аккаунта бросают 18–19% (Baymard). Маска +7 сама ставит скобки и дефисы, клавиатура цифровая."],
         ["Кнопка говорит, что случится", "«Забронировать · пт, 19:30», а не «Отправить». Ошибки — под полем и только после попытки."],
         ["Напоминание в WhatsApp включено", "С кнопкой «отменить»: гость, который не придёт, освобождает стол сам."],
         ["Бонус участницы повторён", "Сверху и у кнопки: «я от Аружан — десерт от шефа». Это причина довести бронь до конца и сказать фразу на входе."]],
