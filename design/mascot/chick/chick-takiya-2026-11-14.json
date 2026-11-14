@@ -1,0 +1,130 @@
+{
+ "date": "2026-11-14",
+ "request": "Владелец: «вот развивайся в сторону варианта номер 5».",
+ "base": {
+  "variant": 5,
+  "file": "design/mascot/chick/05-takiya-collage.webp",
+  "job": "cba1b4f0-d8cf-4a79-8c1f-330f772137c9",
+  "role": "image_references во всех кадрах"
+ },
+ "model": "Higgsfield gpt_image_2_6, quality high",
+ "character": {
+  "name": "Чик",
+  "technique": "вырезанная цветная бумага в духе Пола Рэнда 1950-х, видно зерно бумаги, вата для пара, без контуров — тот же мир, что обложки сайта",
+  "constant": [
+   "длинные прямые чёрные волосы ниже плеч",
+   "тақия из бордового бархата (плоский верх) с одним белым бумажным пером үкі",
+   "кремовые бумажные серьги-подвески в форме қошқар мүйіз",
+   "миндалевидные глаза, простые чёрные брови, терракотовый треугольник носа, коралловые губы, тёплая охристая кожа",
+   "кремовая водолазка"
+  ],
+  "props": [
+   "белая кесе с паром из ваты",
+   "на выход — кремовый шапан оверсайз с узкой бордовой полосой орнамента, широкие чёрные брюки"
+  ],
+  "never": [
+   "сәукеле на героине",
+   "кальян, дым, чаши",
+   "бокал в руке героини на главных кадрах (кесе вместо бокала)",
+   "ИИ-реализм, 3D, плюш, аниме"
+  ]
+ },
+ "deckFix": "Светлые фоны сцен были розовее фона слайдов (#f4ece6): цвета, близкие к фону, сдвинуты к нему с весом exp(-(d/45)^2), остальное не тронуто. Ночная сцена — к #261412. Результат — takiya/deck/*.webp.",
+ "items": [
+  {
+   "n": 1,
+   "file": "design/mascot/chick/takiya/01-turnaround.webp",
+   "use": "разворот: анфас, три четверти, профиль",
+   "job": "38e3e12d-3199-49ff-bb42-db8da33a271c",
+   "aspect": "16:9",
+   "resolution": "2k",
+   "prompt": "Character turnaround sheet. Same character as the reference image, in exactly the same Paul Rand 1950s cut-paper collage technique: 'Chick', a young Kazakh woman in her twenties made of cut coloured paper shapes — long straight black hair falling past the shoulders, a dark oxblood red velvet takiya cap (a flat-topped pillbox) with one white paper owl feather (uki) standing up from it, cream paper drop earrings shaped like a Kazakh koshkar-muiz ornament, almond eyes with simple black brows, a small terracotta triangle for the nose shadow, coral-red lips, warm ochre skin. She is shown three times side by side at the same scale, full figure, standing calmly: front view, three-quarter view, side profile. Outfit: cream ribbed turtleneck, wide black trousers, simple black flat shoes. Plain flat warm paper ground (#f4ece6) with visible paper grain, one soft contact shadow under each figure. Flat shapes, no outlines, minimal facial features. Not plush, not 3D, not anime. No text, no letters, no numbers, no labels, no logo, no frame."
+  },
+  {
+   "n": 2,
+   "file": "design/mascot/chick/takiya/02-expressions.webp",
+   "use": "четыре настроения; слайд «Чик» в питче",
+   "job": "8f0bbaf6-bd8a-45f7-9e8e-6c40d85686ab",
+   "aspect": "1:1",
+   "resolution": "1k",
+   "prompt": "Expression sheet. Same character as the reference image, in exactly the same Paul Rand 1950s cut-paper collage technique: 'Chick', a young Kazakh woman made of cut coloured paper shapes — long straight black hair, a dark oxblood red velvet takiya cap with one white paper owl feather standing up, cream paper koshkar-muiz ornament drop earrings, almond eyes, simple black brows, terracotta nose triangle, coral-red lips, warm ochre skin, cream turtleneck. Her head and shoulders shown four times in a neat 2 by 2 grid on a plain flat warm paper ground (#f4ece6): laughing with eyes closed; winking with a sly smile; surprised with raised brows and a small round mouth; calm half-smile looking aside. Each expression made with only a few changed paper shapes. Visible paper grain, flat shapes, no outlines. Not plush, not 3D, not anime. No text, no letters, no numbers, no labels, no logo, no frame lines."
+  },
+  {
+   "n": 3,
+   "file": "design/mascot/chick/takiya/03-avatar.webp",
+   "use": "аватар на бордовом круге — отклонён: тақия сливается с кругом на 48 px",
+   "job": "9d1397c2-e24d-488c-a204-d73c0ce2c640",
+   "aspect": "1:1",
+   "resolution": "1k",
+   "prompt": "Profile avatar icon. Same character as the reference image, same cut-paper collage technique: 'Chick', a young Kazakh woman — long straight black hair, dark oxblood red velvet takiya cap with one white paper owl feather standing up, one cream paper koshkar-muiz ornament earring visible, coral-red lips, warm ochre skin, cream turtleneck collar. Head and shoulders centred inside a flat oxblood red (#8c2a1c) circle of cut paper, on a plain warm paper ground (#f4ece6). Simplified to the fewest possible shapes so it still reads at 48 pixels: hair, cap, feather, earring, lips. Bold silhouette, generous margin. Visible paper grain, no outlines. Not plush, not 3D, not anime. No text, no letters, no numbers, no logo."
+  },
+  {
+   "n": 4,
+   "file": "design/mascot/chick/takiya/04-cover.webp",
+   "use": "обложка питча",
+   "job": "b5a933b5-20ad-44cf-a42d-afa725b65ced",
+   "aspect": "4:3",
+   "resolution": "2k",
+   "prompt": "Illustration for a pitch deck cover. Same character as the reference image, in exactly the same Paul Rand 1950s cut-paper collage technique: 'Chick', a young Kazakh woman made of cut coloured paper — long straight black hair, dark oxblood red velvet takiya cap with one white paper owl feather standing up, cream paper koshkar-muiz ornament earrings, coral-red lips, warm ochre skin, cream turtleneck. Scene: evening in an Almaty restaurant; she sits at a small round table with a white paper tablecloth by a large window, raising a small white porcelain kese bowl in a toast, a cut-paper candle with a flat amber flame shape, a plate with a simple dessert; outside the window, a deep navy dusk sky and flat cut-paper silhouettes of snowy mountains. The vignette sits in the lower right two thirds of the frame and the plain flat warm paper ground (#f4ece6) fills the left side and top, leaving a large empty area on the left for a title. Palette: warm paper, oxblood, cream, black, ochre, navy, a little gold. Visible paper grain, flat shapes, no outlines, no glow effects. Not plush, not 3D, not anime. No text, no letters, no numbers, no logo, no signs."
+  },
+  {
+   "n": 5,
+   "file": "design/mascot/chick/takiya/05-story.webp",
+   "use": "слайд «Как это работает»",
+   "job": "9120475f-c230-4751-87f1-6c71c18f3fa8",
+   "aspect": "4:3",
+   "resolution": "2k",
+   "prompt": "Illustration for a pitch deck. Same character as the reference image, in exactly the same Paul Rand 1950s cut-paper collage technique: 'Chick', a young Kazakh woman made of cut coloured paper — long straight black hair, dark oxblood red velvet takiya cap with one white paper owl feather standing up, cream paper koshkar-muiz ornament earrings, coral-red lips, warm ochre skin, cream turtleneck, wide black trousers. Scene: at the entrance of a restaurant in the evening she holds up a phone to film a story of the room; behind her two young women friends walk in through an open door, smiling — one with a short black bob in a mustard coat, one with a high ponytail in a black coat, neither wears a cap. A cut-paper doorway with a warm amber interior and a small string of flat paper lights. The vignette sits in the lower right two thirds of the frame and the plain flat warm paper ground (#f4ece6) fills the left side and top with empty space. Palette: warm paper, oxblood, cream, black, ochre, mustard, a little gold. Visible paper grain, flat shapes, no outlines, no glow effects. Not plush, not 3D, not anime. No text, no letters, no numbers, no logo, no signs, no readable screens."
+  },
+  {
+   "n": 6,
+   "file": "design/mascot/chick/takiya/06-night.webp",
+   "use": "тёмный слайд «2»",
+   "job": "1ab41e56-4fbf-4485-81c0-2e8657192e59",
+   "aspect": "4:3",
+   "resolution": "2k",
+   "prompt": "Night illustration for a pitch deck. Same character as the reference image, in exactly the same Paul Rand 1950s cut-paper collage technique: 'Chick', a young Kazakh woman made of cut coloured paper — long straight black hair, dark oxblood red velvet takiya cap with one white paper owl feather standing up, cream paper koshkar-muiz ornament earrings, coral-red lips, warm ochre skin, cream turtleneck. Scene: night on a restaurant rooftop terrace; she leans on a simple railing holding a small white porcelain kese with a wisp of cotton-wool steam, looking over the city — small flat gold paper squares for the lights of Almaty and cut-paper silhouettes of dark mountains with snowy peaks. The vignette sits in the lower right two thirds of the frame and the plain flat deep warm brown paper ground (#261412) fills the left side and top, leaving a large empty area on the left for a big number. Palette: deep brown, black, cream, oxblood, gold. Visible paper grain, flat shapes, no outlines, no glow effects. Not plush, not 3D, not anime. No text, no letters, no numbers, no logo."
+  },
+  {
+   "n": 7,
+   "file": "design/mascot/chick/takiya/07-road.webp",
+   "use": "слайд «Что дальше»",
+   "job": "e34f0503-e81a-4fd5-833d-91313bcaa4b8",
+   "aspect": "4:3",
+   "resolution": "2k",
+   "prompt": "Illustration for a pitch deck. Same character as the reference image, in exactly the same Paul Rand 1950s cut-paper collage technique: 'Chick', a young Kazakh woman made of cut coloured paper — long straight black hair, dark oxblood red velvet takiya cap with one white paper owl feather standing up, cream paper koshkar-muiz ornament earrings, coral-red lips, warm ochre skin, cream turtleneck, an oversized cream chapan coat with a narrow oxblood ornament band, wide black trousers, black flat shoes. Scene: she walks confidently along a road pulling a small oxblood suitcase, from cut-paper snowy mountains of Almaty on the left towards a distant flat city skyline on the right with a tall golden tower topped by a sphere (Astana's Baiterek). The vignette sits in the lower right two thirds of the frame and the plain flat warm paper ground (#f4ece6) fills the left side and top with empty space. Palette: warm paper, oxblood, cream, black, ochre, gold, soft periwinkle sky (#879ad9). Visible paper grain, flat shapes, no outlines. Not plush, not 3D, not anime. No text, no letters, no numbers, no logo, no signs."
+  },
+  {
+   "n": 8,
+   "file": "design/mascot/chick/takiya/08-karaoke.webp",
+   "use": "караоке-вечер, для соцсетей",
+   "job": "d736ae3e-3d98-40f6-acee-e5a8e4e6ba49",
+   "aspect": "3:4",
+   "resolution": "1k",
+   "prompt": "Same character as the reference image, in exactly the same Paul Rand 1950s cut-paper collage technique: 'Chick', a young Kazakh woman made of cut coloured paper — long straight black hair, dark oxblood red velvet takiya cap with one white paper owl feather standing up, cream paper koshkar-muiz ornament earrings, coral-red lips, warm ochre skin, a black velvet top. Scene: a warm restaurant evening, half-length, she sings into a vintage gold paper microphone at a karaoke night, eyes closed, happy; a few flat gold paper discs for string lights above. Flat oxblood red gouache ground (#8c2a1c) with visible paper grain. Palette: oxblood, black, gold, cream, ochre. Bold silhouette, few details, flat shapes, no outlines, no glow effects. Not plush, not 3D, not anime. No text, no letters, no numbers, no logo."
+  },
+  {
+   "n": 9,
+   "file": "design/mascot/chick/takiya/09-booth.webp",
+   "use": "ужин с подругами в бархатной кабинке, для соцсетей",
+   "job": "9f36ef46-3a3f-41c0-8c4f-fd72d1d18ed9",
+   "aspect": "4:3",
+   "resolution": "1k",
+   "prompt": "Same character as the reference image, in exactly the same Paul Rand 1950s cut-paper collage technique: 'Chick', a young Kazakh woman made of cut coloured paper — long straight black hair, dark oxblood red velvet takiya cap with one white paper owl feather standing up, cream paper koshkar-muiz ornament earrings, coral-red lips, warm ochre skin, cream turtleneck. Scene: evening dinner in a restaurant with two women friends (one with a short black bob, one with a high ponytail, neither wears a cap) sitting in a deep bottle-green velvet booth, laughing, a low table with shared plates, white porcelain kese bowls and a teapot; behind the booth a large flat gold cut-paper fan shaped like a Kazakh koshkar-muiz ornament. Flat deep warm brown ground (#261412). Palette: deep brown, bottle green, oxblood, gold, cream, black. Visible paper grain, flat shapes, few details, no outlines, no glow effects. Not plush, not 3D, not anime. No text, no letters, no numbers, no logo."
+  },
+  {
+   "n": 10,
+   "file": "design/mascot/chick/takiya/10-avatar-periwinkle.webp",
+   "use": "аватар — основной: бордовая тақия читается на 32 и 48 px",
+   "job": "c9dafcc6-567c-40af-ac20-56f67749db95",
+   "aspect": "1:1",
+   "resolution": "1k",
+   "references": [
+    "cba1b4f0-d8cf-4a79-8c1f-330f772137c9",
+    "9d1397c2-e24d-488c-a204-d73c0ce2c640"
+   ],
+   "prompt": "Profile avatar icon. Same character and same composition as the second reference image, same cut-paper collage technique as both references: 'Chick', a young Kazakh woman — long straight black hair, dark oxblood red velvet takiya cap with one white paper owl feather standing up, one cream paper koshkar-muiz ornament earring visible, coral-red lips, warm ochre skin, cream turtleneck collar. Head and shoulders centred inside a flat pale periwinkle blue (#879ad9) circle of cut paper, so that the oxblood cap, black hair and white feather stand out strongly against it; plain warm paper ground (#f4ece6) around the circle. Simplified to the fewest possible shapes so it still reads at 48 pixels: hair, cap, feather, earring, lips. Bold silhouette, generous margin. Visible paper grain, no outlines. Not plush, not 3D, not anime. No text, no letters, no numbers, no logo."
+  }
+ ],
+ "sheet": "design/mascot/chick/takiya/takiya-sheet.jpg"
+}
