@@ -7,11 +7,11 @@ import type { MapCity, MapVenue } from "./CityMap";
 
 export type PlanLabel = { t: string; x: number; y: number; a?: number };
 export type PlanLandmark = { k: "tower" | "hotel" | "bazaar" | "cathedral" | "square"; t: string; x: number; y: number };
+/** The plan as WebP tiles at several widths (scripts/render-map-tiles.mjs). */
+export type TileSet = { url: string; tile: number; levels: { id: string; w: number; h: number; cols: number; rows: number; near: boolean }[] };
 /** The detailed plan's layers and labels (src/lib/almatyPlan.generated.json). */
 export type PlanLayers = {
-  relief: string;
-  base: string;
-  detail: string;
+  tiles: TileSet;
   avenues: PlanLabel[];
   districts: PlanLabel[];
   landmarks: PlanLandmark[];
@@ -20,7 +20,35 @@ export type PlanLayers = {
   /** Plan width in metres, for the live scale bar. */
   widthM: number;
 };
-export type CameraStrings = { zoomIn: string; zoomOut: string; whole: string; aria: string; close: string; open: string; north: string; m: string; km: string; hint: string; walk: string; walkHere: string };
+export type CameraStrings = { zoomIn: string; zoomOut: string; whole: string; aria: string; close: string; open: string; north: string; m: string; km: string; hint: string; twoFingers: string; walk: string; walkHere: string };
+
+type Tile = { key: string; src: string; left: number; top: number; w: number; h: number };
+/**
+ * The tiles the view needs: the smallest level as sharp as the screen (a
+ * phone counts as 2× at most), only those that overlap the view.
+ */
+function tilesFor(set: TileSet, c: Cam, near: boolean, plateCssW: number, dpr: number): { base: Tile[]; top: Tile[] } {
+  const need = plateCssW * dpr * c.k;
+  const pick = (ls: TileSet["levels"]) => ls.find((l) => l.w >= need * 0.8) ?? ls[ls.length - 1];
+  const of = (L: TileSet["levels"][number]) => {
+    const x0 = (c.cx - 50 / c.k) / 100, x1 = (c.cx + 50 / c.k) / 100, y0 = (c.cy - 50 / c.k) / 100, y1 = (c.cy + 50 / c.k) / 100;
+    const out: Tile[] = [];
+    for (let r = Math.max(0, Math.floor((y0 * L.h) / set.tile)); r <= Math.min(L.rows - 1, Math.floor((y1 * L.h - 1) / set.tile)); r++)
+      for (let q = Math.max(0, Math.floor((x0 * L.w) / set.tile)); q <= Math.min(L.cols - 1, Math.floor((x1 * L.w - 1) / set.tile)); q++)
+        out.push({ key: `${L.id}-${r}-${q}`, src: `${set.url}${L.id}-${r}-${q}.webp`, left: ((q * set.tile) / L.w) * 100, top: ((r * set.tile) / L.h) * 100, w: (set.tile / L.w) * 100, h: (Math.min(set.tile, L.h - r * set.tile) / L.h) * 100 });
+    return out;
+  };
+  const bases = set.levels.filter((l) => !l.near), nears = set.levels.filter((l) => l.near);
+  // The whole city at the smallest width is always there, so nothing is ever blank.
+  const base = of(bases[0]);
+  if (!near) {
+    const b = pick(bases);
+    return { base, top: b === bases[0] ? [] : of(b) };
+  }
+  const n = pick(nears);
+  // The first close level stays under a sharper one while that one loads.
+  return { base, top: n === nears[0] ? of(n) : [...of(nears[0]), ...of(n)] };
+}
 
 type Cam = { k: number; cx: number; cy: number };
 const K_MAX = 4.5;
@@ -62,22 +90,56 @@ export function PlanCamera({ city, layers, active, setActive, focus, setFocus, o
   const [ui, setUi] = useState<Cam>({ k: 1, cx: 50, cy: 50 });
   const [dragging, setDragging] = useState(false);
   const [wantDetail, setWantDetail] = useState(false);
+  // The whole city is in the server's HTML already: no blank plate before the script runs.
+  const [tiles, setTiles] = useState<{ base: Tile[]; top: Tile[] }>(() => tilesFor(layers.tiles, { k: 1, cx: 50, cy: 50 }, false, 360, 1));
+  const tileKey = useRef("");
+  const settle = useRef(0);
+  const [hint, setHint] = useState(false);
+  const hintTimer = useRef(0);
   const pointers = useRef(new Map<number, { x: number; y: number }>());
   const gesture = useRef<{ cam: Cam; x: number; y: number; dist: number } | null>(null);
   const reduce = useRef(false);
 
-  /** Puts the camera on the page: one transform, one custom property. */
+  /** The tiles for a camera; React hears about it only when the set changes. */
+  const refreshTiles = useCallback((c: Cam) => {
+    const v = view.current;
+    if (!v) return;
+    const coarse = window.matchMedia("(pointer: coarse)").matches;
+    const next = tilesFor(layers.tiles, c, c.k >= K_NEAR - 0.25, v.clientWidth || 360, Math.min(window.devicePixelRatio || 1, coarse ? 2 : 2.5));
+    const key = next.base.map((t) => t.key).join() + "|" + next.top.map((t) => t.key).join();
+    if (key !== tileKey.current) {
+      tileKey.current = key;
+      setTiles(next);
+    }
+  }, [layers.tiles]);
+
+  /**
+   * Puts the camera on the page: one transform, one custom property. While
+   * it moves, the plate is its own GPU layer (will-change) and is only
+   * scaled, never redrawn; once it rests for a moment it is redrawn sharp.
+   */
   const apply = useCallback((c: Cam, commit = false) => {
     cam.current = c;
     const el = camEl.current, v = view.current;
-    if (el) el.style.transform = `translate(${50 - c.cx * c.k}%, ${50 - c.cy * c.k}%) scale(${c.k})`;
+    if (el) {
+      el.style.transform = `translate(${50 - c.cx * c.k}%, ${50 - c.cy * c.k}%) scale(${c.k})`;
+      el.classList.add("is-moving");
+      window.clearTimeout(settle.current);
+      settle.current = window.setTimeout(() => {
+        el.classList.remove("is-moving");
+        refreshTiles(cam.current);
+      }, 180);
+    }
     if (v) {
       v.style.setProperty("--k", String(c.k));
       v.toggleAttribute("data-near", c.k >= K_NEAR);
     }
     if (c.k >= K_NEAR - 0.25) setWantDetail(true);
-    if (commit) setUi(c);
-  }, []);
+    if (commit) {
+      setUi(c);
+      refreshTiles(c);
+    }
+  }, [refreshTiles]);
 
   /** One eased flight; a far one climbs (zooms out) on the way and settles down. */
   const fly = useCallback((to: Cam, ms = 1100) => {
@@ -88,21 +150,32 @@ export function PlanCamera({ city, layers, active, setActive, focus, setFocus, o
     const travel = Math.hypot(target.cx - from.cx, target.cy - from.cy) * Math.min(from.k, target.k) / 100;
     const climb = Math.min(0.55, travel * 0.45);
     const t0 = performance.now();
+    let prefetched = false;
     const step = (now: number) => {
       const t = Math.min(1, (now - t0) / ms), e = ease(t);
       const k = Math.exp(Math.log(from.k) + (Math.log(target.k) - Math.log(from.k)) * e - climb * Math.sin(Math.PI * e));
-      apply(clamp({ k, cx: from.cx + (target.cx - from.cx) * e, cy: from.cy + (target.cy - from.cy) * e }), t === 1);
+      const c = clamp({ k, cx: from.cx + (target.cx - from.cx) * e, cy: from.cy + (target.cy - from.cy) * e });
+      apply(c, t === 1);
+      // Start loading the destination's tiles while still on the way.
+      if (t > 0.55 && !prefetched) {
+        prefetched = true;
+        refreshTiles(target);
+      }
       if (t < 1) raf.current = requestAnimationFrame(step);
     };
     raf.current = requestAnimationFrame(step);
-  }, [apply]);
+  }, [apply, refreshTiles]);
 
-  useEffect(() => () => cancelAnimationFrame(raf.current), []);
+  useEffect(() => () => {
+    cancelAnimationFrame(raf.current);
+    window.clearTimeout(settle.current);
+    window.clearTimeout(hintTimer.current);
+  }, []);
 
   // The approach, once, when half the plate is on screen: 2.6 s from the whole city to the places.
   useEffect(() => {
     reduce.current = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    apply(cam.current);
+    apply(cam.current, true);
     const el = view.current;
     if (!el) return;
     const io = new IntersectionObserver(
@@ -141,16 +214,34 @@ export function PlanCamera({ city, layers, active, setActive, focus, setFocus, o
   const onPointerDown = (e: React.PointerEvent) => {
     if ((e.target as HTMLElement).closest("a,button")) return;
     pointers.current.set(e.pointerId, toPct(e));
-    if (cam.current.k <= 1.01 && e.pointerType === "touch" && pointers.current.size < 2) return; // let the page scroll
+    // On a phone one finger scrolls the page past the map, two fingers move
+    // and pinch it (a map that grabs every swipe traps the page).
+    if (e.pointerType === "touch" && pointers.current.size < 2) {
+      gesture.current = null;
+      return;
+    }
     cancelAnimationFrame(raf.current);
-    (e.currentTarget as HTMLElement).setPointerCapture(e.pointerId);
+    const el = e.currentTarget as HTMLElement;
+    for (const id of pointers.current.keys()) {
+      try { el.setPointerCapture(id); } catch { /* the first finger may have been released already */ }
+    }
     const pts = [...pointers.current.values()];
     const mid = pts.length > 1 ? { x: (pts[0].x + pts[1].x) / 2, y: (pts[0].y + pts[1].y) / 2 } : pts[0];
     gesture.current = { cam: cam.current, x: mid.x, y: mid.y, dist: pts.length > 1 ? Math.hypot(pts[0].x - pts[1].x, pts[0].y - pts[1].y) : 0 };
     setDragging(true);
   };
   const onPointerMove = (e: React.PointerEvent) => {
-    if (!pointers.current.has(e.pointerId) || !gesture.current) return;
+    if (!pointers.current.has(e.pointerId)) return;
+    if (!gesture.current) {
+      // One finger sliding sideways over a zoomed map: say how to move it.
+      const start = pointers.current.get(e.pointerId)!, now = toPct(e);
+      if (e.pointerType === "touch" && cam.current.k > 1.01 && Math.abs(now.x - start.x) > 6 && !hint) {
+        setHint(true);
+        window.clearTimeout(hintTimer.current);
+        hintTimer.current = window.setTimeout(() => setHint(false), 1600);
+      }
+      return;
+    }
     pointers.current.set(e.pointerId, toPct(e));
     const g = gesture.current;
     const pts = [...pointers.current.values()];
@@ -170,9 +261,18 @@ export function PlanCamera({ city, layers, active, setActive, focus, setFocus, o
       gesture.current = null;
       setDragging(false);
       setUi(cam.current);
+      refreshTiles(cam.current);
     } else if (gesture.current) {
-      const p = [...pointers.current.values()][0];
-      gesture.current = { cam: cam.current, x: p.x, y: p.y, dist: 0 };
+      // Down to one finger: on a phone that ends the move, with a mouse it carries on.
+      if (e.pointerType === "touch") {
+        gesture.current = null;
+        setDragging(false);
+        setUi(cam.current);
+        refreshTiles(cam.current);
+      } else {
+        const p = [...pointers.current.values()][0];
+        gesture.current = { cam: cam.current, x: p.x, y: p.y, dist: 0 };
+      }
     }
   };
 
@@ -269,12 +369,15 @@ export function PlanCamera({ city, layers, active, setActive, focus, setFocus, o
             zoomAt(1.8, p.x, p.y);
           }}
           className={`plan-view relative w-full select-none overflow-hidden outline-none focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--color-paper-ink)] ${dragging ? "cursor-grabbing" : ui.k > 1.01 ? "cursor-grab" : ""}`}
-          style={{ aspectRatio: String(city.aspect), touchAction: ui.k > 1.01 ? "none" : "pan-y", ["--k" as string]: 1 }}
+          style={{ aspectRatio: String(city.aspect), touchAction: "pan-y", ["--k" as string]: 1 }}
         >
           <div ref={camEl} className="plan-cam absolute inset-0">
-            <img src={layers.relief} alt="" className="absolute inset-0 h-full w-full" loading="lazy" decoding="async" draggable={false} />
-            <img src={layers.base} alt="" className="absolute inset-0 h-full w-full" loading="lazy" decoding="async" draggable={false} />
-            {wantDetail ? <img src={layers.detail} alt="" className="plan-near absolute inset-0 h-full w-full" decoding="async" draggable={false} /> : null}
+            {tiles.base.map((t) => <TileImg key={t.key} t={t} />)}
+            {wantDetail || tiles.top.length ? (
+              <div className={wantDetail ? "plan-near" : ""}>
+                {tiles.top.map((t) => <TileImg key={t.key} t={t} />)}
+              </div>
+            ) : null}
 
             <div aria-hidden="true">
               {layers.districts.map((d) => (
@@ -340,6 +443,12 @@ export function PlanCamera({ city, layers, active, setActive, focus, setFocus, o
             ) : null}
           </div>
 
+          {hint ? (
+            <div aria-hidden="true" className="pointer-events-none absolute inset-0 z-20 grid place-items-center bg-[rgba(35,25,23,0.42)]">
+              <p className="sheet-in border border-paper-ink bg-paper px-4 py-2.5 text-[14px] font-semibold text-paper-ink">{s.twoFingers}</p>
+            </div>
+          ) : null}
+
           {/* On a phone the card docks to the plate's bottom edge instead of the pin. */}
           {focused ? <div className="absolute inset-x-2 bottom-2 z-10 sm:hidden">{card(focused, true)}</div> : null}
 
@@ -371,12 +480,35 @@ export function PlanCamera({ city, layers, active, setActive, focus, setFocus, o
         <span aria-hidden="true" className="block h-[5px] border-x border-b border-ink-3 transition-[width] duration-300" style={{ width: `${len / mPerPct}%`, maxWidth: "40%" }} />
         <span className="num">{len >= 1000 ? `${len / 1000} ${s.km}` : `${len} ${s.m}`}</span>
         <span className="hidden sm:inline">{s.hint}</span>
+        <span className="sm:hidden">{s.twoFingers}</span>
         <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener noreferrer" className="link-quiet ml-auto text-ink-3">
           © OpenStreetMap · AWS Terrain Tiles
         </a>
       </figcaption>
       <p className="sr-only" aria-live="polite">{focused ? focused.name : ""}</p>
     </figure>
+  );
+}
+
+/** One tile: decoded off the main thread, faded in when ready, a hair wider so no seam shows. */
+function TileImg({ t }: { t: Tile }) {
+  const [ready, setReady] = useState(false);
+  const ref = useRef<HTMLImageElement>(null);
+  // A tile the server sent may finish loading before React is listening.
+  useEffect(() => {
+    if (ref.current?.complete && ref.current.naturalWidth) setReady(true);
+  }, []);
+  return (
+    <img
+      ref={ref}
+      src={t.src}
+      alt=""
+      draggable={false}
+      decoding="async"
+      onLoad={() => setReady(true)}
+      className={`plan-tile absolute ${ready ? "is-ready" : ""}`}
+      style={{ left: `${t.left}%`, top: `${t.top}%`, width: `calc(${t.w}% + 0.6px)`, height: `calc(${t.h}% + 0.6px)` }}
+    />
   );
 }
 

@@ -13,6 +13,7 @@ import { HeroCover } from "@/components/HeroCover";
 import { Tick } from "@/components/Tick";
 import plans from "@/lib/cityPlans.generated.json";
 import almatyPlan from "@/lib/almatyPlan.generated.json";
+import almatyTiles from "../../public/maps/almaty/tiles/tiles.json";
 import type { PlanLandmark, PlanLayers } from "@/components/PlanCamera";
 import { CITIES, cityKey, placeOnCountry, placeOnPlan, planAspect, planHeightKm, planWidthKm } from "@/lib/cities";
 
@@ -60,9 +61,7 @@ export default async function Overview({ searchParams }: { searchParams: Promise
   const pick = (o: { ru: string; kk: string }) => (lang === "kk" ? o.kk : o.ru);
   const almatyCity = CITIES.find((c) => c.key === "almaty")!;
   const almatyLayers: PlanLayers = {
-    relief: "/maps/almaty/relief.webp",
-    base: "/maps/almaty/base.svg",
-    detail: "/maps/almaty/detail.svg",
+    tiles: { url: "/maps/almaty/tiles/", ...almatyTiles },
     avenues: almatyPlan.avenues.map((a) => ({ t: pick(a), x: a.x, y: a.y, a: a.a })),
     districts: almatyPlan.districts.map((d) => ({ t: pick(d), x: d.x, y: d.y })),
     landmarks: almatyPlan.landmarks.map((l) => ({ k: l.k as PlanLandmark["k"], t: pick(l), x: l.x, y: l.y })),
@@ -195,7 +194,7 @@ export default async function Overview({ searchParams }: { searchParams: Promise
             lang={lang}
             s={{
               soonText: C.mapSoonText, soonCta: C.mapSoonCta, credit: C.mapCredit, km: C.mapKm, countryAlt: C.mapCountryAlt, countryCredit: C.mapCountryCredit, showOnMap: C.mapShow,
-              camera: { zoomIn: C.mapZoomIn, zoomOut: C.mapZoomOut, whole: C.mapWhole, aria: C.mapAria, close: C.mapClose, open: C.mapOpen, north: C.mapNorth, m: C.mapM, km: C.mapKm, hint: C.mapHint, walk: C.walkCta, walkHere: C.walkHere },
+              camera: { zoomIn: C.mapZoomIn, zoomOut: C.mapZoomOut, whole: C.mapWhole, aria: C.mapAria, close: C.mapClose, open: C.mapOpen, north: C.mapNorth, m: C.mapM, km: C.mapKm, hint: C.mapHint, twoFingers: C.mapTwoFingers, walk: C.walkCta, walkHere: C.walkHere },
               walk: { title: C.walkTitle, air: C.walkAir, hint: C.walkHint, hintTouch: C.walkHintTouch, forward: C.walkForward, back: C.walkBack, go: C.walkGo, stop: C.walkStop, loading: C.walkLoading, close: C.walkClose, open: C.mapOpen, routes: C.walkRoutes, fail: C.walkFail },
             }}
           />

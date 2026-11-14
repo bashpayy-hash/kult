@@ -57,7 +57,7 @@ const SUN_DIR = new THREE.Vector3(-0.78, 0.13, 0.52).normalize();
 const CARS = ["#e8dcc0", "#9fb7c4", "#c25b3f", "#7f8f6a", "#d9b45a", "#f1ece0", "#5f7d8c", "#a4473a"];
 const AWNINGS = ["#f4ead6", "#b8553a", "#4f7d78", "#c69a3b"];
 const FONT = '"Inter Tight Variable", system-ui, sans-serif';
-const ROAD = ["#9c907f", "#a3978a", "#ab9f8d", "#b4a892", "#e2cfa3"];
+const ROAD = ["#9c907f", "#a3978a", "#ab9f8d", "#b4a892", "#d9ccb2"];
 const ROAD_W = [24, 18, 13, 8, 9];
 const AUTUMN = ["#6f7b3a", "#8a8a3f", "#b08a36", "#c69a3b", "#7f6f34", "#5f6b33"];
 const ease = (t: number) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2);
@@ -93,13 +93,26 @@ export default function CityWalk({ venues, startVenue, lang, onClose, s }: { ven
     let disposed = false;
     let raf = 0;
     const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    const renderer = new THREE.WebGLRenderer({ antialias: true, powerPreference: "high-performance" });
-    // Phones get half the trees, plainer crowns and a lower pixel ratio.
+    // Phones get half the trees, plainer crowns, a lower pixel ratio and 30
+    // frames a second while nothing moves (15 Nov 2026, owner: «очень много
+    // лагов… особенность телефона… мощнейшая оптимизация»).
     const lite = window.matchMedia("(pointer: coarse)").matches || window.innerWidth < 700;
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio, lite ? 1.5 : 1.75));
+    const renderer = new THREE.WebGLRenderer({ antialias: true, powerPreference: "high-performance" });
+    // The pixel ratio follows the frame rate: down a step when frames run
+    // long, up once when there is room, between 0.75 and the cap.
+    const DPR_CAP = Math.min(window.devicePixelRatio || 1, lite ? 1.5 : 1.75);
+    let dpr = Math.min(DPR_CAP, lite ? 1.25 : 1.5);
+    renderer.setPixelRatio(dpr);
     renderer.outputColorSpace = THREE.SRGBColorSpace;
     el.appendChild(renderer.domElement);
     renderer.domElement.className = "walk-canvas";
+    // iOS drops WebGL when the app goes to the background for long: say so instead of a black screen.
+    const onLost = (e: Event) => {
+      e.preventDefault();
+      cancelAnimationFrame(raf);
+      setState("fail");
+    };
+    renderer.domElement.addEventListener("webglcontextlost", onLost);
     const scene = new THREE.Scene();
     scene.fog = new THREE.Fog(HAZE, 900, 16000);
     const camera = new THREE.PerspectiveCamera(55, 1, 1, 40000);
@@ -115,8 +128,8 @@ export default function CityWalk({ venues, startVenue, lang, onClose, s }: { ven
     const disposables: { dispose: () => void }[] = [renderer];
 
     // Late-afternoon light from the south-west, a warm sky dome, haze.
-    scene.add(new THREE.HemisphereLight(0xffe8c8, 0x8a6a4c, 1.4));
-    const sun = new THREE.DirectionalLight(0xffc98a, 2.0);
+    scene.add(new THREE.HemisphereLight(0xf6e6cc, 0x7d6a55, 1.05));
+    const sun = new THREE.DirectionalLight(0xffd8ad, 1.5);
     sun.position.set(-0.7, 0.5, 0.5).multiplyScalar(1000);
     scene.add(sun);
     const skyGeo = new THREE.SphereGeometry(30000, 32, 16);
@@ -127,7 +140,7 @@ export default function CityWalk({ venues, startVenue, lang, onClose, s }: { ven
       uniforms: { top: { value: new THREE.Color("#8fb0b8") }, mid: { value: new THREE.Color("#efd3a4") }, low: { value: HAZE }, sunDir: { value: SUN_DIR }, sunCol: { value: new THREE.Color("#ffd9a0") } },
       vertexShader: "varying vec3 vP; void main(){ vP = normalize(position); gl_Position = projectionMatrix * modelViewMatrix * vec4(position,1.0); }",
       // The sun low in the south-west: a soft disc and its glow in the haze.
-      fragmentShader: "uniform vec3 top; uniform vec3 mid; uniform vec3 low; uniform vec3 sunDir; uniform vec3 sunCol; varying vec3 vP; void main(){ vec3 n = normalize(vP); float h = clamp(n.y, 0.0, 1.0); vec3 c = mix(low, mid, smoothstep(0.0, 0.14, h)); c = mix(c, top, smoothstep(0.12, 0.65, h)); float d = max(dot(n, sunDir), 0.0); c += sunCol * (smoothstep(0.9994, 0.9997, d) * 0.55 + pow(d, 28.0) * 0.28); gl_FragColor = vec4(c, 1.0); }",
+      fragmentShader: "uniform vec3 top; uniform vec3 mid; uniform vec3 low; uniform vec3 sunDir; uniform vec3 sunCol; varying vec3 vP; void main(){ vec3 n = normalize(vP); float h = clamp(n.y, 0.0, 1.0); vec3 c = mix(low, mid, smoothstep(0.0, 0.14, h)); c = mix(c, top, smoothstep(0.12, 0.65, h)); float d = max(dot(n, sunDir), 0.0); c += sunCol * (smoothstep(0.9994, 0.9997, d) * 0.55 + pow(d, 28.0) * 0.18); gl_FragColor = vec4(c, 1.0); }",
     });
     const sky = new THREE.Mesh(skyGeo, skyMat);
     scene.add(sky);
@@ -135,8 +148,11 @@ export default function CityWalk({ venues, startVenue, lang, onClose, s }: { ven
 
     const signAnchors: THREE.Vector3[] = [];
     let data: Scene | null = null;
+    let ready = false;
     // Things that drive: the trolleybus shuttles, the cars loop.
-    const movers: { mesh: THREE.Group; path: THREE.Vector3[]; cum: number[]; s: number; dir: number; speed: number; loop: boolean }[] = [];
+    const movers: { mesh?: THREE.Group; slot?: number; path: THREE.Vector3[]; cum: number[]; s: number; dir: number; speed: number; loop: boolean }[] = [];
+    let cars: THREE.InstancedMesh[] = [];
+    const carM = new THREE.Matrix4(), carQ = new THREE.Quaternion(), carP = new THREE.Vector3(), UP = new THREE.Vector3(0, 1, 0), ONE = new THREE.Vector3(1, 1, 1);
     const jets: THREE.Mesh[] = [];
 
     // ── Camera rig ─────────────────────────────────────────────────────────
@@ -362,22 +378,28 @@ export default function CityWalk({ venues, startVenue, lang, onClose, s }: { ven
         g.fillRect(0, 0, W, 2);
         g.fillRect(0, H - 2, W, 2);
       }
-      const px = g.getImageData(0, 0, W, H).data;
+      // Lay it in tiles: the small drawing blown up without smoothing, every
+      // tile shaded a touch lighter or darker, a frame, and the grout.
+      // (No pixel readback: reading a canvas back stalls the GPU on a phone.)
       const S = 12;
       const hi = document.createElement("canvas");
       hi.width = W * S;
       hi.height = H * S;
       const h2 = hi.getContext("2d")!;
-      h2.fillStyle = "#d9cdb5";
-      h2.fillRect(0, 0, hi.width, hi.height);
+      h2.imageSmoothingEnabled = false;
+      h2.drawImage(lo, 0, 0, W, H, 0, 0, W * S, H * S);
+      const shades = ["rgba(255,250,240,0.12)", "rgba(255,250,240,0.06)", "rgba(40,28,20,0.06)", "rgba(40,28,20,0.12)"];
       for (let y = 0; y < H; y++)
         for (let x = 0; x < W; x++) {
-          const edge = x === 0 || y === 0 || x === W - 1 || y === H - 1;
-          const i = (y * W + x) * 4, j = (rnd() - 0.5) * 26;
-          const [r, gg, bb] = edge ? [138, 74, 50] : [px[i], px[i + 1], px[i + 2]];
-          h2.fillStyle = `rgb(${Math.max(0, Math.min(255, r + j))},${Math.max(0, Math.min(255, gg + j))},${Math.max(0, Math.min(255, bb + j))})`;
-          h2.fillRect(x * S + 1, y * S + 1, S - 2, S - 2);
+          h2.fillStyle = shades[Math.floor(rnd() * 4)];
+          h2.fillRect(x * S, y * S, S, S);
         }
+      h2.strokeStyle = "#8a4a32";
+      h2.lineWidth = S * 2;
+      h2.strokeRect(0, 0, W * S, H * S);
+      h2.fillStyle = "#d9cdb5";
+      for (let x = 0; x <= W; x++) h2.fillRect(x * S - 1, 0, 2, H * S);
+      for (let y = 0; y <= H; y++) h2.fillRect(0, y * S - 1, W * S, 2);
       const t = tex(hi);
       t.wrapS = t.wrapT = THREE.ClampToEdgeWrapping;
       return t;
@@ -463,6 +485,23 @@ export default function CityWalk({ venues, startVenue, lang, onClose, s }: { ven
       return t;
     }
 
+    // Light falls in three flat bands, the way a screen print or a 70s
+    // illustration shades a form, instead of a smooth photographic gradient.
+    const bands = new THREE.DataTexture(new Uint8Array([105, 175, 235]), 3, 1, THREE.RedFormat);
+    bands.minFilter = bands.magFilter = THREE.NearestFilter;
+    bands.generateMipmaps = false;
+    bands.needsUpdate = true;
+    disposables.push(bands);
+    // (flatShading is dropped: the meshes that want facets carry face normals already.)
+    const lit = (p: THREE.MeshToonMaterialParameters & { flatShading?: boolean }) => {
+      const q = { ...p };
+      delete q.flatShading;
+      return new THREE.MeshToonMaterial({ gradientMap: bands, ...q });
+    };
+
+    // Soft round shadows on the ground under trees, lamps and the street's furniture.
+    const blobs: number[] = [];
+
     const part = (geo: THREE.BufferGeometry, x: number, y: number, z: number, rx = 0, rz = 0) => {
       geo.rotateX(rx);
       geo.rotateZ(rz);
@@ -477,12 +516,95 @@ export default function CityWalk({ venues, startVenue, lang, onClose, s }: { ven
       { geo: mergeGeometries([-1, 1].flatMap((sx) => [-1, 1].map((sz) => part(new THREE.CylinderGeometry(0.3, 0.3, 0.2, 10), sx * 0.72, 0.3, sz * 1.3, 0, Math.PI / 2)))), color: "#2b2420" },
     ];
 
-    function build(d: Scene) {
-      const pal = d.pal.map((c) => new THREE.Color(c));
+    // The city is built in stages with a frame between them, so the page
+    // keeps answering (and the loading line keeps showing) on a slow phone.
+    const breathe = () => new Promise<void>((r) => requestAnimationFrame(() => r()));
+    const stage = async (name: string, fn: () => void | Promise<void>) => {
+      if (disposed) return;
+      const t = performance.now();
+      await fn();
+      performance.measure(`walk:${name}`, { start: t, end: performance.now() });
+      await breathe();
+    };
+
+    // The 40 m cells the walks pass through: shopfronts and tree shadows only there.
+    const walkCells = new Set<string>();
+
+    async function build(d: Scene) {
+      for (const r of d.routes)
+        for (let i = 0; i < r.p.length; i += 2) {
+          const gx = Math.floor(r.p[i] / 40), gz = Math.floor(r.p[i + 1] / 40);
+          for (let a = -1; a <= 1; a++) for (let b = -1; b <= 1; b++) walkCells.add(`${gx + a},${gz + b}`);
+        }
+      await stage("ground", () => buildGround(d));
+      await stage("flat", () => buildFlat(d));
+      await stage("buildings", () => buildBuildings(d));
+      await stage("trees", () => buildTrees(d));
+      await stage("street", () => buildStreet(d));
+      await stage("furniture", () => buildFurniture(d));
+      await stage("air", () => buildAir());
+    }
+
+    // Shadows in one instanced mesh; a few paper clouds drifting high over the range.
+    const clouds: THREE.Sprite[] = [];
+    function buildAir() {
+      if (blobs.length) {
+        const c = document.createElement("canvas");
+        c.width = c.height = 64;
+        const g = c.getContext("2d")!;
+        const grad = g.createRadialGradient(32, 32, 0, 32, 32, 32);
+        grad.addColorStop(0, "rgba(58,42,32,0.55)");
+        grad.addColorStop(0.6, "rgba(58,42,32,0.22)");
+        grad.addColorStop(1, "rgba(58,42,32,0)");
+        g.fillStyle = grad;
+        g.fillRect(0, 0, 64, 64);
+        const geo = new THREE.PlaneGeometry(2, 2);
+        geo.rotateX(-Math.PI / 2);
+        const mat = new THREE.MeshBasicMaterial({ map: tex(c), transparent: true, depthWrite: false, polygonOffset: true, polygonOffsetFactor: -8, polygonOffsetUnits: -8 });
+        const n = blobs.length / 3;
+        const inst = new THREE.InstancedMesh(geo, mat, n);
+        const m = new THREE.Matrix4();
+        for (let i = 0; i < n; i++) {
+          const r = blobs[i * 3 + 2];
+          m.makeScale(r, 1, r).setPosition(blobs[i * 3], 0.13, blobs[i * 3 + 1]);
+          inst.setMatrixAt(i, m);
+        }
+        inst.renderOrder = 1;
+        scene.add(inst);
+        disposables.push(geo, mat);
+      }
+      // Cut-paper clouds: long thin cream strips, a shade darker beneath, as an 80s poster draws them.
+      const c = document.createElement("canvas");
+      c.width = 512;
+      c.height = 64;
+      const g = c.getContext("2d")!;
+      const strip = (x: number, y: number, rx: number, ry: number, col: string) => {
+        g.fillStyle = col;
+        g.beginPath();
+        g.ellipse(x, y, rx, ry, 0, 0, Math.PI * 2);
+        g.fill();
+      };
+      strip(256, 38, 240, 13, "#e9d3ad");
+      strip(250, 34, 236, 12, "#f8eedb");
+      strip(330, 24, 120, 10, "#f8eedb");
+      strip(170, 28, 90, 8, "#f8eedb");
+      const mat = new THREE.SpriteMaterial({ map: tex(c), transparent: true, depthWrite: false, fog: false, opacity: 0.7 });
+      disposables.push(mat);
+      for (let i = 0; i < 8; i++) {
+        const sp = new THREE.Sprite(mat);
+        const a = (i / 8) * Math.PI * 2 + 0.4, dist = 5200 + (i % 3) * 2200;
+        sp.position.set(Math.sin(a) * dist, 2300 + (i % 4) * 380, Math.cos(a) * dist + 1500);
+        sp.scale.set(2600 + (i % 3) * 900, 330 + (i % 3) * 90, 1);
+        scene.add(sp);
+        clouds.push(sp);
+      }
+    }
+
+    function buildGround(d: Scene) {
       // Ground: warm earth; the mountains rise from the same plane outside the centre.
       const groundTex = grain(0.09);
       groundTex.repeat.set(60000 / 7, 60000 / 7);
-      const ground = new THREE.Mesh(new THREE.PlaneGeometry(60000, 60000), new THREE.MeshLambertMaterial({ color: "#d9c39a", map: groundTex }));
+      const ground = new THREE.Mesh(new THREE.PlaneGeometry(60000, 60000), lit({ color: "#d2c2a0", map: groundTex }));
       ground.rotation.x = -Math.PI / 2;
       ground.position.y = -2;
       scene.add(ground);
@@ -493,41 +615,49 @@ export default function CityWalk({ venues, startVenue, lang, onClose, s }: { ven
         const { w, h, x0, z0, x1, z1 } = d.dem;
         const raw = Uint8Array.from(atob(d.dem.data), (ch) => ch.charCodeAt(0));
         const H = new Int16Array(raw.buffer);
-        const pos: number[] = [], col: number[] = [];
-        const at = (i: number, j: number) => H[j * w + i];
-        const vx = (i: number) => x0 + ((x1 - x0) * i) / (w - 1), vz = (j: number) => z0 + ((z1 - z0) * j) / (h - 1);
+        // Plain numbers into typed arrays: no vector objects per vertex (a phone felt that).
+        const pos = new Float32Array((w - 1) * (h - 1) * 18), col = new Float32Array((w - 1) * (h - 1) * 18);
+        let n = 0;
         const c = new THREE.Color();
-        const tint = (y: number, slope: number, n: number) => {
-          if (y > 1650 + n * 140) return c.set("#f6f1e7");
+        const tint = (y: number, slope: number, k: number) => {
+          if (y > 1650 + k * 140) return c.set("#f6f1e7");
           if (y > 1350) return c.set(slope > 0.7 ? "#9a8f97" : "#a99c8f");
           if (y > 520) return c.set(slope > 0.6 ? "#66684a" : "#536343");
           if (y > 90) return c.set(slope > 0.5 ? "#8c8a5c" : "#7f8a55");
           return c.set("#b9ac7c");
         };
+        const dx = (x1 - x0) / (w - 1), dz = (z1 - z0) / (h - 1);
+        const tri = (ax: number, ay: number, az: number, bx: number, by: number, bz: number, cx: number, cy: number, cz: number) => {
+          const yMid = (ay + by + cy) / 3;
+          if (yMid < 0.5) return;
+          // The face's normal, only its upward part matters for the slope.
+          const ux = bx - ax, uy = by - ay, uz = bz - az, vx2 = cx - ax, vy = cy - ay, vz2 = cz - az;
+          const nx = uy * vz2 - uz * vy, ny = uz * vx2 - ux * vz2, nz = ux * vy - uy * vx2;
+          const slope = 1 - Math.abs(ny) / (Math.hypot(nx, ny, nz) || 1);
+          tint(yMid, slope, Math.sin(ax * 0.004) * Math.cos(az * 0.003));
+          pos.set([ax, ay, az, bx, by, bz, cx, cy, cz], n);
+          col.set([c.r, c.g, c.b, c.r, c.g, c.b, c.r, c.g, c.b], n);
+          n += 9;
+        };
         for (let j = 0; j < h - 1; j++)
           for (let i = 0; i < w - 1; i++) {
-            const q = [[i, j], [i + 1, j], [i, j + 1], [i + 1, j + 1]].map(([a, b]) => new THREE.Vector3(vx(a), at(a, b), vz(b)));
-            for (const tri of [[0, 2, 1], [1, 2, 3]]) {
-              const [A, B, C] = tri.map((k) => q[k]);
-              const yMid = (A.y + B.y + C.y) / 3;
-              if (yMid < 0.5) continue;
-              const nrm = B.clone().sub(A).cross(C.clone().sub(A)).normalize();
-              tint(yMid, 1 - Math.abs(nrm.y), Math.sin(A.x * 0.004) * Math.cos(A.z * 0.003));
-              for (const v of [A, B, C]) {
-                pos.push(v.x, v.y, v.z);
-                col.push(c.r, c.g, c.b);
-              }
-            }
+            const xa = x0 + dx * i, xb = xa + dx, za = z0 + dz * j, zb = za + dz;
+            const h00 = H[j * w + i], h10 = H[j * w + i + 1], h01 = H[(j + 1) * w + i], h11 = H[(j + 1) * w + i + 1];
+            tri(xa, h00, za, xa, h01, zb, xb, h10, za);
+            tri(xb, h10, za, xa, h01, zb, xb, h11, zb);
           }
         const g = new THREE.BufferGeometry();
-        g.setAttribute("position", new THREE.Float32BufferAttribute(pos, 3));
-        g.setAttribute("color", new THREE.Float32BufferAttribute(col, 3));
+        g.setAttribute("position", new THREE.BufferAttribute(pos.subarray(0, n), 3));
+        g.setAttribute("color", new THREE.BufferAttribute(col.subarray(0, n), 3));
         g.computeVertexNormals();
-        const m = new THREE.MeshLambertMaterial({ vertexColors: true, flatShading: true });
+        const m = lit({ vertexColors: true, flatShading: true });
         scene.add(new THREE.Mesh(g, m));
         disposables.push(g, m);
       }
 
+    }
+
+    function buildFlat(d: Scene) {
       // Flat layers: parks, sidewalks, roads, rivers.
       const flatMesh = (tris: number[], color: string, y: number, map?: THREE.Texture, metres = 2) => {
         const g = new THREE.BufferGeometry();
@@ -541,7 +671,7 @@ export default function CityWalk({ venues, startVenue, lang, onClose, s }: { ven
           g.setAttribute("uv", new THREE.BufferAttribute(uv, 2));
         }
         g.computeVertexNormals();
-        const m = new THREE.MeshLambertMaterial({ color, map, polygonOffset: true, polygonOffsetFactor: -y, polygonOffsetUnits: -y });
+        const m = lit({ color, map, polygonOffset: true, polygonOffsetFactor: -y, polygonOffsetUnits: -y });
         const mesh = new THREE.Mesh(g, m);
         mesh.position.y = y * 0.02;
         scene.add(mesh);
@@ -580,13 +710,17 @@ export default function CityWalk({ venues, startVenue, lang, onClose, s }: { ven
         // The walking line is always paved, also where it crosses a park.
         for (const r of d.routes) ribbon(r.p, r.id === "dostyk" ? 5 : 11, byCls[4]);
         const tiles = paving(), asphalt = grain(0.1);
-        flatMesh(side, "#e3d1aa", 2, tiles, 2);
+        flatMesh(side, "#ddd0b6", 2, tiles, 2);
         byCls.forEach((tris, i) => (i === 4 ? flatMesh(tris, ROAD[4], 4, tiles, 1.6) : flatMesh(tris, ROAD[i], 3, asphalt, 3)));
         const water: number[] = [];
         for (const w of d.w) ribbon(w.slice(1), w[0] === 2 ? 7 : 3, water);
         flatMesh(water, "#8fa1d2", 5);
       }
 
+    }
+
+    async function buildBuildings(d: Scene) {
+      const pal = d.pal.map((c) => new THREE.Color(c));
       // Buildings: walls with window rows, roofs, an ink outline.
       {
         // Three facades: the 70s–80s panel blocks, the sun-breaker grids, today's glass towers.
@@ -597,14 +731,12 @@ export default function CityWalk({ venues, startVenue, lang, onClose, s }: { ven
         const crowns: { x: number; z: number; h: number; ring: THREE.Vector2[] }[] = [];
         const domes: { x: number; z: number; h: number }[] = [];
         // Which buildings stand on a walk: a 40 m grid of the routes' points.
-        const near = new Set<string>();
-        for (const r of d.routes)
-          for (let i = 0; i < r.p.length; i += 2) {
-            const gx = Math.floor(r.p[i] / 40), gz = Math.floor(r.p[i + 1] / 40);
-            for (let a = -1; a <= 1; a++) for (let b2 = -1; b2 <= 1; b2++) near.add(`${gx + a},${gz + b2}`);
-          }
+        const near = walkCells;
         const shop: number[] = [], shopUv: number[] = [], shopCol: number[] = [], shopN: number[] = [];
-        for (const b of d.b) {
+        for (let bi = 0; bi < d.b.length; bi++) {
+          // A breath every 1200 houses: a phone keeps drawing the loading line.
+          if (bi && bi % 1200 === 0) await breathe();
+          const b = d.b[bi];
           const [h, mh, ci, flag] = b;
           const ring: THREE.Vector2[] = [];
           for (let i = 4; i < b.length; i += 2) ring.push(new THREE.Vector2(b[i], b[i + 1]));
@@ -669,7 +801,7 @@ export default function CityWalk({ venues, startVenue, lang, onClose, s }: { ven
           gw.setAttribute("normal", new THREE.Float32BufferAttribute(W.n, 3));
           gw.setAttribute("uv", new THREE.Float32BufferAttribute(W.uv, 2));
           gw.setAttribute("color", new THREE.Float32BufferAttribute(W.col, 3));
-          const mw = new THREE.MeshLambertMaterial({ vertexColors: true, map: facade(kind) });
+          const mw = lit({ vertexColors: true, map: facade(kind) });
           scene.add(new THREE.Mesh(gw, mw));
           disposables.push(gw, mw);
         });
@@ -677,7 +809,7 @@ export default function CityWalk({ venues, startVenue, lang, onClose, s }: { ven
         gr.setAttribute("position", new THREE.Float32BufferAttribute(roof, 3));
         gr.setAttribute("color", new THREE.Float32BufferAttribute(roofCol, 3));
         gr.computeVertexNormals();
-        const mr = new THREE.MeshLambertMaterial({ vertexColors: true });
+        const mr = lit({ vertexColors: true });
         scene.add(new THREE.Mesh(gr, mr));
         const ge = new THREE.BufferGeometry();
         ge.setAttribute("position", new THREE.Float32BufferAttribute(edges, 3));
@@ -690,13 +822,13 @@ export default function CityWalk({ venues, startVenue, lang, onClose, s }: { ven
           gs.setAttribute("normal", new THREE.Float32BufferAttribute(shopN, 3));
           gs.setAttribute("uv", new THREE.Float32BufferAttribute(shopUv, 2));
           gs.setAttribute("color", new THREE.Float32BufferAttribute(shopCol, 3));
-          const ms = new THREE.MeshLambertMaterial({ vertexColors: true, map: shopfronts() });
+          const ms = lit({ vertexColors: true, map: shopfronts() });
           scene.add(new THREE.Mesh(gs, ms));
           disposables.push(gs, ms);
         }
 
         // Hotel Kazakhstan's golden crown.
-        const gold = new THREE.MeshLambertMaterial({ color: "#d2a948", emissive: "#4a3410" });
+        const gold = lit({ color: "#d2a948", emissive: "#4a3410" });
         disposables.push(gold);
         for (const cr of crowns) {
           const spike = new THREE.BoxGeometry(1.1, 9, 0.4);
@@ -720,11 +852,11 @@ export default function CityWalk({ venues, startVenue, lang, onClose, s }: { ven
         for (const dm of domes) {
           const drum = new THREE.CylinderGeometry(5, 5, 8, 12);
           const onion = new THREE.SphereGeometry(5.8, 14, 10);
-          const mat = new THREE.MeshLambertMaterial({ color: "#c7a24e" });
+          const mat = lit({ color: "#c7a24e" });
           disposables.push(drum, onion, mat);
           const spots: [number, number, number][] = [[0, 0, 1.25], [10, 10, 0.7], [-10, 10, 0.7], [10, -10, 0.7], [-10, -10, 0.7]];
           for (const [ox, oz, sc] of spots) {
-            const dr = new THREE.Mesh(drum, new THREE.MeshLambertMaterial({ color: "#f3e3b6" }));
+            const dr = new THREE.Mesh(drum, lit({ color: "#f3e3b6" }));
             dr.scale.setScalar(sc);
             dr.position.set(dm.x + ox, dm.h + 4 * sc, dm.z + oz);
             const on = new THREE.Mesh(onion, mat);
@@ -735,14 +867,17 @@ export default function CityWalk({ venues, startVenue, lang, onClose, s }: { ven
         }
       }
 
+    }
+
+    function buildTrees(d: Scene) {
       // Trees: golden-autumn crowns, a poplar in every fourth.
       {
         const step = lite ? 2 : 1;
         const n = Math.floor(d.t.length / 3 / step);
-        const crownGeo = new THREE.IcosahedronGeometry(1, lite ? 0 : 1);
+        const crownGeo = lite ? new THREE.SphereGeometry(1, 7, 5) : new THREE.SphereGeometry(1, 10, 7);
         const trunkGeo = new THREE.CylinderGeometry(0.22, 0.32, 1, 5);
-        const crownMat = new THREE.MeshLambertMaterial({ flatShading: true });
-        const trunkMat = new THREE.MeshLambertMaterial({ color: "#5a4636" });
+        const crownMat = lit({});
+        const trunkMat = lit({ color: "#5a4636" });
         const crowns = new THREE.InstancedMesh(crownGeo, crownMat, n);
         const trunks = new THREE.InstancedMesh(trunkGeo, trunkMat, n);
         const m = new THREE.Matrix4(), q = new THREE.Quaternion(), sc = new THREE.Vector3(), p = new THREE.Vector3();
@@ -759,6 +894,7 @@ export default function CityWalk({ venues, startVenue, lang, onClose, s }: { ven
           crowns.setMatrixAt(i, m.compose(p, q, sc));
           crowns.setColorAt(i, col.set(AUTUMN[Math.floor(rr * AUTUMN.length) % AUTUMN.length]));
           trunks.setMatrixAt(i, m.compose(p.set(x, H * 0.24, z), q, sc.set(0.8, H * 0.48, 0.8)));
+          if (walkCells.has(`${Math.floor(x / 40)},${Math.floor(z / 40)}`)) blobs.push(x, z, poplar ? 2.2 : 3.4 + rr);
         }
         scene.add(crowns, trunks);
         disposables.push(crownGeo, trunkGeo, crownMat, trunkMat);
@@ -768,12 +904,13 @@ export default function CityWalk({ venues, startVenue, lang, onClose, s }: { ven
       if (d.lamps?.length) {
         const n = d.lamps.length / 2;
         const parts: [THREE.BufferGeometry, THREE.Material, number][] = [
-          [new THREE.CylinderGeometry(0.07, 0.1, 4.4, 6), new THREE.MeshLambertMaterial({ color: "#2f3a33" }), 2.2],
-          [new THREE.CylinderGeometry(0.2, 0.26, 0.7, 8), new THREE.MeshLambertMaterial({ color: "#2f3a33" }), 0.35],
-          [new THREE.SphereGeometry(0.34, 12, 8), new THREE.MeshLambertMaterial({ color: "#fff6e2", emissive: "#a0835a" }), 4.75],
-          [new THREE.ConeGeometry(0.2, 0.32, 8), new THREE.MeshLambertMaterial({ color: "#2f3a33" }), 5.2],
+          [new THREE.CylinderGeometry(0.07, 0.1, 4.4, 6), lit({ color: "#2f3a33" }), 2.2],
+          [new THREE.CylinderGeometry(0.2, 0.26, 0.7, 8), lit({ color: "#2f3a33" }), 0.35],
+          [new THREE.SphereGeometry(0.34, 12, 8), lit({ color: "#fff6e2", emissive: "#a0835a" }), 4.75],
+          [new THREE.ConeGeometry(0.2, 0.32, 8), lit({ color: "#2f3a33" }), 5.2],
         ];
         const m = new THREE.Matrix4();
+        for (let i = 0; i < n; i++) blobs.push(d.lamps[i * 2], d.lamps[i * 2 + 1], 0.9);
         for (const [geo, mat, y] of parts) {
           const inst = new THREE.InstancedMesh(geo, mat, n);
           for (let i = 0; i < n; i++) inst.setMatrixAt(i, m.makeTranslation(d.lamps[i * 2], y, d.lamps[i * 2 + 1]));
@@ -782,11 +919,14 @@ export default function CityWalk({ venues, startVenue, lang, onClose, s }: { ven
         }
       }
 
+    }
+
+    function buildStreet(d: Scene) {
       // Kok-Tobe: the TV tower on its hill.
       {
         const [x, z, gy] = d.kokTobe;
-        const mat = new THREE.MeshLambertMaterial({ color: "#f2ece0" });
-        const red = new THREE.MeshLambertMaterial({ color: "#b8553a" });
+        const mat = lit({ color: "#f2ece0" });
+        const red = lit({ color: "#b8553a" });
         const g1 = new THREE.CylinderGeometry(1.2, 11, 372, 4, 1, true);
         const g2 = new THREE.CylinderGeometry(9, 9, 6, 12);
         disposables.push(mat, red, g1, g2);
@@ -816,7 +956,7 @@ export default function CityWalk({ venues, startVenue, lang, onClose, s }: { ven
           return { path: out, cum };
         };
         const box = (g: THREE.Group, w: number, h: number, l: number, color: string, y: number, z = 0) => {
-          const geo = new THREE.BoxGeometry(w, h, l), mat = new THREE.MeshLambertMaterial({ color });
+          const geo = new THREE.BoxGeometry(w, h, l), mat = lit({ color });
           disposables.push(geo, mat);
           const m = new THREE.Mesh(geo, mat);
           m.position.set(0, y, z);
@@ -828,7 +968,7 @@ export default function CityWalk({ venues, startVenue, lang, onClose, s }: { ven
         box(bus, 2.5, 1.5, 11.5, "#efe3c6", 2.55);
         box(bus, 2.52, 0.6, 9.5, "#5a6a74", 2.3);
         const pole = new THREE.CylinderGeometry(0.05, 0.05, 6.5, 4);
-        const pm = new THREE.MeshLambertMaterial({ color: "#2b2420" });
+        const pm = lit({ color: "#2b2420" });
         disposables.push(pole, pm);
         for (const ox of [-0.5, 0.5]) {
           const p = new THREE.Mesh(pole, pm);
@@ -851,21 +991,28 @@ export default function CityWalk({ venues, startVenue, lang, onClose, s }: { ven
         disposables.push(gw, mw);
         // Zhigulis and Volgas: boxy, enamel-bright, one way up the far lanes, one way down the near.
         const far = lane(18.5), mid = lane(7.5);
+        // Six cars, four draw calls: each part is one instanced mesh.
         const driving = carParts();
-        disposables.push(...driving.map((p) => p.geo));
+        const fleet = driving.map(({ geo, color, tint }) => {
+          const mat = lit({ color });
+          const inst = new THREE.InstancedMesh(geo, mat, 6);
+          inst.instanceMatrix.setUsage(THREE.DynamicDrawUsage);
+          if (tint) for (let k = 0; k < 6; k++) inst.setColorAt(k, new THREE.Color(CARS[(k * 3 + 1) % CARS.length]));
+          inst.frustumCulled = false;
+          scene.add(inst);
+          disposables.push(geo, mat);
+          return inst;
+        });
+        cars = fleet;
         for (let k = 0; k < 6; k++) {
-          const car = new THREE.Group();
-          for (const { geo, color, tint } of driving) {
-            const mat = new THREE.MeshLambertMaterial({ color: tint ? CARS[(k * 3 + 1) % CARS.length] : color });
-            disposables.push(mat);
-            car.add(new THREE.Mesh(geo, mat));
-          }
-          scene.add(car);
           const L = k % 2 ? far : mid;
-          movers.push({ mesh: car, ...L, s: (k * 337) % Math.max(1, L.cum[L.cum.length - 1]), dir: k % 2 ? -1 : 1, speed: 11 + (k % 3) * 2, loop: true });
+          movers.push({ slot: k, ...L, s: (k * 337) % Math.max(1, L.cum[L.cum.length - 1]), dir: k % 2 ? -1 : 1, speed: 11 + (k % 3) * 2, loop: true });
         }
       }
 
+    }
+
+    function buildFurniture(d: Scene) {
       // ── The street's furniture: the 80s and today, side by side ──────────
       const words = [...(d.words ?? []), "КВАС"];
       const wordCache = new Map<string, { mat: THREE.Material; aspect: number }>();
@@ -911,27 +1058,37 @@ export default function CityWalk({ venues, startVenue, lang, onClose, s }: { ven
         wordCache.set(key, out);
         return out;
       };
-      const wallPlane = (x0: number, z0: number, x1: number, z1: number, w: number, h: number, y: number, mat: THREE.Material, out = 0.12) => {
+      const planeOn = (x0: number, z0: number, x1: number, z1: number, w: number, h: number, y: number, out = 0.12) => {
         const L = Math.hypot(x1 - x0, z1 - z0) || 1;
         const nx = (z1 - z0) / L, nz = -(x1 - x0) / L;
         const geo = new THREE.PlaneGeometry(w, h);
-        disposables.push(geo);
-        const m = new THREE.Mesh(geo, mat);
-        m.position.set((x0 + x1) / 2 + nx * out, y, (z0 + z1) / 2 + nz * out);
-        m.rotation.y = Math.atan2(nx, nz);
-        scene.add(m);
+        geo.rotateY(Math.atan2(nx, nz));
+        geo.translate((x0 + x1) / 2 + nx * out, y, (z0 + z1) / 2 + nz * out);
+        return geo;
       };
-      // Shop lettering in red over the awnings: КНИГИ, ГАСТРОНОМ, ЦВЕТЫ…
+      const wallPlane = (x0: number, z0: number, x1: number, z1: number, w: number, h: number, y: number, mat: THREE.Material, out = 0.12) => {
+        const geo = planeOn(x0, z0, x1, z1, w, h, y, out);
+        disposables.push(geo);
+        scene.add(new THREE.Mesh(geo, mat));
+      };
+      // Shop lettering in red over the awnings: КНИГИ, ГАСТРОНОМ, ЦВЕТЫ… One mesh a word, not one a shop.
+      const byWord = new Map<THREE.Material, THREE.BufferGeometry[]>();
       for (const [x0, z0, x1, z1, wi] of d.signs ?? []) {
         const { mat, aspect } = word(words[wi] ?? "КАФЕ", "#c8402a");
         const L = Math.hypot(x1 - x0, z1 - z0);
         const h = Math.min(0.95, L / aspect);
-        wallPlane(x0, z0, x1, z1, h * aspect, h, 4.35, mat);
+        byWord.set(mat, [...(byWord.get(mat) ?? []), planeOn(x0, z0, x1, z1, h * aspect, h, 4.35)]);
+      }
+      for (const [mat, geos] of byWord) {
+        const geo = mergeGeometries(geos);
+        geos.forEach((g) => g.dispose());
+        disposables.push(geo);
+        scene.add(new THREE.Mesh(geo, mat));
       }
       // Mosaic panels high on the end walls: the apple, the poplars, the ram's horn.
       for (const [x0, z0, x1, z1, y0, y1, design] of d.mosaics ?? []) {
         const w = Math.hypot(x1 - x0, z1 - z0), h = y1 - y0;
-        const mat = new THREE.MeshLambertMaterial({ map: mosaic(design, w / h) });
+        const mat = lit({ map: mosaic(design, w / h) });
         disposables.push(mat);
         wallPlane(x0, z0, x1, z1, w, h, (y0 + y1) / 2, mat, 0.08);
       }
@@ -971,9 +1128,10 @@ export default function CityWalk({ venues, startVenue, lang, onClose, s }: { ven
           const list = props.filter((p) => p[0] === Number(k));
           if (!list.length) continue;
           for (const { geo, color, tint } of parts) {
-            const mat = new THREE.MeshLambertMaterial({ color, side: Number(k) === 0 ? THREE.DoubleSide : THREE.FrontSide });
+            const mat = lit({ color, side: Number(k) === 0 ? THREE.DoubleSide : THREE.FrontSide });
             const inst = new THREE.InstancedMesh(geo, mat, list.length);
             list.forEach(([, x, z, yaw], i) => {
+              if (geo === parts[0].geo) blobs.push(x, z, Number(k) === 1 ? 2.6 : Number(k) === 0 ? 1.7 : 1.2);
               inst.setMatrixAt(i, m4.makeTranslation(x, 0, z).multiply(rot.makeRotationY(yaw)));
               if (tint) inst.setColorAt(i, col.set(tint[Math.abs(Math.round(x * 7 + z * 3)) % tint.length]));
             });
@@ -984,8 +1142,8 @@ export default function CityWalk({ venues, startVenue, lang, onClose, s }: { ven
         // A kvass barrel on Arbat, yellow, on two wheels.
         for (const [, x, z, yaw] of props.filter((p) => p[0] === 2)) {
           const g = new THREE.Group();
-          const tank = new THREE.Mesh(part(new THREE.CylinderGeometry(0.72, 0.72, 2.3, 18), 0, 1.15, 0, Math.PI / 2), new THREE.MeshLambertMaterial({ color: "#e0b23a" }));
-          const wheels = new THREE.Mesh(mergeGeometries([part(new THREE.CylinderGeometry(0.32, 0.32, 0.14, 10), 0.78, 0.32, 0, 0, Math.PI / 2), part(new THREE.CylinderGeometry(0.32, 0.32, 0.14, 10), -0.78, 0.32, 0, 0, Math.PI / 2)]), new THREE.MeshLambertMaterial({ color: "#2b2420" }));
+          const tank = new THREE.Mesh(part(new THREE.CylinderGeometry(0.72, 0.72, 2.3, 18), 0, 1.15, 0, Math.PI / 2), lit({ color: "#e0b23a" }));
+          const wheels = new THREE.Mesh(mergeGeometries([part(new THREE.CylinderGeometry(0.32, 0.32, 0.14, 10), 0.78, 0.32, 0, 0, Math.PI / 2), part(new THREE.CylinderGeometry(0.32, 0.32, 0.14, 10), -0.78, 0.32, 0, 0, Math.PI / 2)]), lit({ color: "#2b2420" }));
           g.add(tank, wheels);
           const { mat, aspect } = word("КВАС", "#c8402a");
           for (const sx of [1, -1]) {
@@ -1003,8 +1161,8 @@ export default function CityWalk({ venues, startVenue, lang, onClose, s }: { ven
         }
         // A fountain: a stone basin, a bowl, jets that rise and fall.
         for (const [, x, z] of props.filter((p) => p[0] === 4)) {
-          const stone = new THREE.MeshLambertMaterial({ color: "#e9dcc0" });
-          const water = new THREE.MeshLambertMaterial({ color: "#8fb3c0" });
+          const stone = lit({ color: "#e9dcc0" });
+          const water = lit({ color: "#8fb3c0" });
           const spray = new THREE.MeshBasicMaterial({ color: "#eef4f2", transparent: true, opacity: 0.7 });
           const basin = mergeGeometries([part(new THREE.CylinderGeometry(3.1, 3.2, 0.55, 36), 0, 0.27, 0), part(new THREE.CylinderGeometry(0.35, 0.5, 1.2, 12), 0, 1.0, 0), part(new THREE.CylinderGeometry(1.0, 0.6, 0.3, 18), 0, 1.7, 0)]);
           const pool = part(new THREE.CylinderGeometry(2.85, 2.85, 0.06, 36), 0, 0.52, 0);
@@ -1095,10 +1253,17 @@ export default function CityWalk({ venues, startVenue, lang, onClose, s }: { ven
         await document.fonts.load(`800 96px ${FONT}`, text).catch(() => undefined);
         return d;
       })
-      .then((d: Scene) => {
+      .then(async (d: Scene) => {
         if (disposed) return;
         data = d;
-        build(d);
+        await build(d);
+        if (disposed) return;
+        // Shaders compile in parallel where the phone allows it, before the first frame needs them.
+        const t = performance.now();
+        await renderer.compileAsync(scene, camera).catch(() => undefined);
+        performance.measure("walk:shaders", { start: t, end: performance.now() });
+        if (disposed) return;
+        ready = true;
         setRoutes(d.routes);
         setState("ready");
         // From the map: straight down over the centre, then the city tilts up with the mountains behind it.
@@ -1126,9 +1291,11 @@ export default function CityWalk({ venues, startVenue, lang, onClose, s }: { ven
     // ── Input ──────────────────────────────────────────────────────────────
     const ptr = new Map<number, { x: number; y: number }>();
     let pinch = 0;
+    let lastInput = 0;
     const onDown = (e: PointerEvent) => {
       if ((e.target as HTMLElement).closest("a,button")) return;
       ptr.set(e.pointerId, { x: e.clientX, y: e.clientY });
+      lastInput = performance.now();
       renderer.domElement.setPointerCapture(e.pointerId);
       if (ptr.size === 2) {
         const [a, b] = [...ptr.values()];
@@ -1140,6 +1307,7 @@ export default function CityWalk({ venues, startVenue, lang, onClose, s }: { ven
       if (!last) return;
       const dx = e.clientX - last.x, dy = e.clientY - last.y;
       ptr.set(e.pointerId, { x: e.clientX, y: e.clientY });
+      lastInput = performance.now();
       if (ptr.size === 2) {
         const [a, b] = [...ptr.values()];
         const dd = Math.hypot(a.x - b.x, a.y - b.y);
@@ -1153,8 +1321,10 @@ export default function CityWalk({ venues, startVenue, lang, onClose, s }: { ven
         air.pitch = Math.max(0.12, Math.min(1.45, air.pitch + dy * 0.004));
       } else if (modeNow === "walk" && walk) {
         walk.yawTo -= dx * 0.005;
-        walk.pitch = Math.max(-0.35, Math.min(0.5, walk.pitch + dy * 0.003));
-        if (e.pointerType === "touch") walk.sTo -= dy * 0.25; // a vertical swipe walks
+        // A finger: sideways looks around, up and down walks (tilting too made the street swim).
+        // A mouse: drag looks around and up and down; the wheel walks.
+        if (e.pointerType === "touch") walk.sTo -= dy * 0.22;
+        else walk.pitch = Math.max(-0.35, Math.min(0.5, walk.pitch + dy * 0.003));
       }
     };
     const onUp = (e: PointerEvent) => {
@@ -1163,6 +1333,7 @@ export default function CityWalk({ venues, startVenue, lang, onClose, s }: { ven
     };
     const onWheel = (e: WheelEvent) => {
       e.preventDefault();
+      lastInput = performance.now();
       if (modeNow === "air") air.radius = Math.max(220, Math.min(4200, air.radius * Math.exp(e.deltaY * 0.0012)));
       else if (modeNow === "walk" && walk) walk.sTo -= e.deltaY * 0.12;
     };
@@ -1170,6 +1341,7 @@ export default function CityWalk({ venues, startVenue, lang, onClose, s }: { ven
     const onKey = (e: KeyboardEvent) => {
       const k = e.key.toLowerCase();
       if (["arrowup", "arrowdown", "arrowleft", "arrowright", "w", "a", "s", "d"].includes(k)) {
+        lastInput = performance.now();
         if (e.type === "keydown") held.add(k);
         else held.delete(k);
         e.preventDefault();
@@ -1187,9 +1359,44 @@ export default function CityWalk({ venues, startVenue, lang, onClose, s }: { ven
     // ── Loop ───────────────────────────────────────────────────────────────
     let last = performance.now();
     const v3 = new THREE.Vector3();
+    let skip = false, tuneAt = performance.now(), frameSum = 0, frames = 0, lowered = 0, raised = false;
     const tick = (now: number) => {
-      const dt = Math.min(0.05, (now - last) / 1000);
+      raf = requestAnimationFrame(tick);
+      if (!ready) {
+        last = now;
+        return;
+      }
+      // A phone at rest draws every other frame: the city is still, the battery and the heat matter more.
+      const busy = !!flight || autoOn || held.size > 0 || ptr.size > 0 || now - lastInput < 600 || (!!walk && Math.abs(walk.sTo - walk.s) > 0.05);
+      if (lite && !busy) {
+        skip = !skip;
+        if (skip) return;
+      }
+      const interval = now - last;
+      const dt = Math.min(0.05, interval / 1000);
       last = now;
+      // Resolution follows the frame rate, measured only while things move at full pace.
+      if (busy || !lite) {
+        frameSum += interval;
+        frames++;
+      }
+      if (now - tuneAt > 1200) {
+        const avg = frames > 20 ? frameSum / frames : 0;
+        if (avg > 26 && dpr > 0.75) {
+          dpr = Math.max(0.75, dpr - 0.25);
+          lowered++;
+          renderer.setPixelRatio(dpr);
+          resize();
+        } else if (avg && avg < 17.5 && dpr < DPR_CAP && !lowered && !raised) {
+          dpr = Math.min(DPR_CAP, dpr + 0.25);
+          raised = true;
+          renderer.setPixelRatio(dpr);
+          resize();
+        }
+        tuneAt = now;
+        frameSum = 0;
+        frames = 0;
+      }
       if (flight) {
         const t = Math.min(1, (now - flight.t0) / flight.ms), e = ease(t);
         cur.pos.lerpVectors(flight.from.pos, flight.to.pos, e);
@@ -1230,10 +1437,11 @@ export default function CityWalk({ venues, startVenue, lang, onClose, s }: { ven
       camera.lookAt(cur.look);
       sky.position.copy(camera.position);
 
-      if (!reduce) {
+      {
+        // With «less motion» everything stands where it was placed (cars too, not stacked at the origin).
         for (const m of movers) {
           const len = m.cum[m.cum.length - 1];
-          m.s += m.dir * m.speed * dt;
+          m.s += m.dir * m.speed * (reduce ? 0 : dt);
           if (m.loop) m.s = ((m.s % len) + len) % len;
           else if (m.s > len - 5 || m.s < 5) {
             m.dir *= -1;
@@ -1243,11 +1451,25 @@ export default function CityWalk({ venues, startVenue, lang, onClose, s }: { ven
           while (i < m.cum.length - 1 && m.cum[i] < m.s) i++;
           const a = m.path[i - 1], b = m.path[i];
           const f = (m.s - m.cum[i - 1]) / Math.max(0.01, m.cum[i] - m.cum[i - 1]);
-          m.mesh.position.lerpVectors(a, b, Math.min(1, Math.max(0, f)));
-          m.mesh.lookAt(v3.copy(m.mesh.position).add(b.clone().sub(a).multiplyScalar(m.dir)));
+          carP.lerpVectors(a, b, Math.min(1, Math.max(0, f)));
+          if (m.mesh) {
+            m.mesh.position.copy(carP);
+            m.mesh.lookAt(v3.copy(carP).add(b.clone().sub(a).multiplyScalar(m.dir)));
+          } else if (m.slot !== undefined) {
+            carQ.setFromAxisAngle(UP, Math.atan2((b.x - a.x) * m.dir, (b.z - a.z) * m.dir));
+            carM.compose(carP, carQ, ONE);
+            for (const c of cars) c.setMatrixAt(m.slot, carM);
+          }
         }
+        for (const c of cars) c.instanceMatrix.needsUpdate = true;
         const t = now / 1000;
-        jets.forEach((j, i) => (j.scale.y = 0.85 + 0.15 * Math.sin(t * 2.6 + i * 0.7)));
+        if (!reduce) {
+          jets.forEach((j, i) => (j.scale.y = 0.85 + 0.15 * Math.sin(t * 2.6 + i * 0.7)));
+          for (const c of clouds) {
+            c.position.x += dt * 6;
+            if (c.position.x > 12000) c.position.x = -12000;
+          }
+        }
       }
 
       // Signs: projected each frame, kept at one size, hidden far away or behind.
@@ -1267,7 +1489,6 @@ export default function CityWalk({ venues, startVenue, lang, onClose, s }: { ven
       });
 
       renderer.render(scene, camera);
-      raf = requestAnimationFrame(tick);
     };
     raf = requestAnimationFrame(tick);
 
@@ -1287,16 +1508,24 @@ export default function CityWalk({ venues, startVenue, lang, onClose, s }: { ven
         if (m.geometry) m.geometry.dispose();
       });
       disposables.forEach((x) => x.dispose());
+      renderer.domElement.removeEventListener("webglcontextlost", onLost);
+      // Give the context back now: iOS keeps only a few alive, and a walk can be opened again and again.
+      renderer.forceContextLoss();
       renderer.domElement.remove();
     };
   }, [venues, startVenue]);
 
   const cardV = venues.find((v) => v.n === card);
+  // A held arrow keeps walking while the finger stays down, even if it slides off the button.
+  const hold = (e: React.PointerEvent<HTMLButtonElement>, v: number) => {
+    e.currentTarget.setPointerCapture(e.pointerId);
+    api.current?.setMove(v);
+  };
 
   return (
     <div role="dialog" aria-modal="true" aria-label={s.title} className="walk fixed inset-0 z-[70] bg-[#ecdcbe] text-paper-ink">
       <div ref={host} className="absolute inset-0 touch-none" />
-      <div aria-hidden="true" className="walk-grain pointer-events-none absolute inset-0" />
+      <div aria-hidden="true" className="walk-vignette pointer-events-none absolute inset-0" />
 
       {venues.map((v, i) => (
         <div key={v.n} ref={(el) => { signs.current[i] = el; }} className="walk-sign absolute left-0 top-0 opacity-0">
@@ -1353,21 +1582,21 @@ export default function CityWalk({ venues, startVenue, lang, onClose, s }: { ven
         <div className="absolute inset-x-0 bottom-0 flex flex-col items-center gap-2 p-3 sm:p-4" style={{ paddingBottom: "max(12px, env(safe-area-inset-bottom))" }}>
           {mode !== "air" ? (
             <div className="flex items-center gap-1.5">
-              <button type="button" onPointerDown={() => api.current?.setMove(-1)} onPointerUp={() => api.current?.setMove(0)} onPointerLeave={() => api.current?.setMove(0)} aria-label={s.back} className="grid h-11 w-11 place-items-center border border-paper-ink bg-paper">
+              <button type="button" onPointerDown={(e) => hold(e, -1)} onPointerUp={() => api.current?.setMove(0)} onPointerCancel={() => api.current?.setMove(0)} onContextMenu={(e) => e.preventDefault()} aria-label={s.back} className="walk-hold grid h-11 w-11 place-items-center border border-paper-ink bg-paper">
                 <svg viewBox="0 0 14 14" className="h-3.5 w-3.5" aria-hidden="true"><path d="M7 2v10M3 8l4 4 4-4" fill="none" stroke="currentColor" strokeWidth="1.6" /></svg>
               </button>
               <button type="button" onClick={() => api.current?.toggleAuto()} aria-pressed={auto} className={`min-h-11 border border-paper-ink px-5 text-[15px] font-semibold ${auto ? "bg-paper text-paper-ink" : "bg-paper-ink text-paper"}`}>
                 {auto ? s.stop : s.go}
               </button>
-              <button type="button" onPointerDown={() => api.current?.setMove(1)} onPointerUp={() => api.current?.setMove(0)} onPointerLeave={() => api.current?.setMove(0)} aria-label={s.forward} className="grid h-11 w-11 place-items-center border border-paper-ink bg-paper">
+              <button type="button" onPointerDown={(e) => hold(e, 1)} onPointerUp={() => api.current?.setMove(0)} onPointerCancel={() => api.current?.setMove(0)} onContextMenu={(e) => e.preventDefault()} aria-label={s.forward} className="walk-hold grid h-11 w-11 place-items-center border border-paper-ink bg-paper">
                 <svg viewBox="0 0 14 14" className="h-3.5 w-3.5" aria-hidden="true"><path d="M7 12V2M3 6l4-4 4 4" fill="none" stroke="currentColor" strokeWidth="1.6" /></svg>
               </button>
             </div>
           ) : null}
           <div role="group" aria-label={s.routes} className="flex max-w-full gap-0 overflow-x-auto border border-paper-ink bg-paper">
-            <button type="button" aria-pressed={mode === "air"} onClick={() => api.current?.air()} className={`min-h-11 shrink-0 px-4 text-[14px] font-semibold ${mode === "air" ? "bg-accent" : "hover:bg-[#f3ead6]"}`}>{s.air}</button>
+            <button type="button" aria-pressed={mode === "air"} onClick={() => api.current?.air()} className={`min-h-11 shrink-0 px-2.5 text-[13px] font-semibold sm:px-4 sm:text-[14px] ${mode === "air" ? "bg-accent" : "hover:bg-[#f3ead6]"}`}>{s.air}</button>
             {routes.map((r) => (
-              <button key={r.id} type="button" aria-pressed={mode === r.id} onClick={() => api.current?.walk(r.id)} className={`min-h-11 shrink-0 border-l border-paper-line px-4 text-[14px] font-semibold ${mode === r.id ? "bg-accent" : "hover:bg-[#f3ead6]"}`}>
+              <button key={r.id} type="button" aria-pressed={mode === r.id} onClick={() => api.current?.walk(r.id)} className={`min-h-11 shrink-0 border-l border-paper-line px-2.5 text-[13px] font-semibold sm:px-4 sm:text-[14px] ${mode === r.id ? "bg-accent" : "hover:bg-[#f3ead6]"}`}>
                 {lang === "kk" ? r.kk : r.ru}
               </button>
             ))}

@@ -268,6 +268,13 @@ input[type="file"].field::file-selector-button {
    place is a short one, a drag or pinch has none. Labels scale back by 1/k
    on the same curve, so they hold their size while the city grows. */
 .plan-cam { transform-origin: 0 0; }
+/* While the camera moves, the plate is one GPU layer that is only scaled;
+   labels and places get layers of their own, so their counter-scale costs
+   no repaint either. At rest the layers go and everything is drawn sharp. */
+.plan-cam.is-moving { will-change: transform; }
+.plan-cam.is-moving .plan-label, .plan-cam.is-moving .plan-pin, .plan-cam.is-moving .plan-landmark { will-change: transform; }
+.plan-tile { max-width: none; opacity: 0; transition: opacity 260ms var(--ease-out); user-select: none; -webkit-user-drag: none; }
+.plan-tile.is-ready { opacity: 1; }
 .plan-near, .plan-far { transition: opacity 320ms var(--ease-out); }
 .plan-near { opacity: 0; }
 [data-near] .plan-near { opacity: 1; }
@@ -300,9 +307,13 @@ input[type="file"].field::file-selector-button {
 
 /* The 3D walk (CityWalk): the render is graded like the site's photographs
    (faded, a touch warm) and printed over with the same grain. */
-/* The walk is a warm 80s print: a touch of sepia, an amber vignette, paper grain. */
-.walk-canvas { display: block; width: 100%; height: 100%; filter: saturate(0.92) sepia(0.16) contrast(1.04); }
-.walk-grain { background-image: var(--tex-paper); opacity: 0.5; mix-blend-mode: multiply; box-shadow: inset 0 0 180px rgba(120, 64, 24, 0.3); }
+/* The walk is a warm 80s print. The warmth is in the scene's own colours;
+   over it lies one still layer, an amber vignette with a little paper, at
+   plain opacity: no CSS filter or blend mode on the canvas, which cost a
+   phone a full-screen pass on every frame (15 Nov 2026). */
+.walk-canvas { display: block; width: 100%; height: 100%; }
+.walk-vignette { background-image: radial-gradient(ellipse at 50% 45%, transparent 55%, rgba(120, 64, 24, 0.26) 100%), var(--tex-paper); background-size: 100% 100%, 360px 360px; opacity: 0.6; }
+.walk-hold { -webkit-touch-callout: none; user-select: none; -webkit-user-select: none; touch-action: none; }
 .walk-sign { transition: opacity 240ms var(--ease-out); will-change: transform; }
 
 @keyframes pulse-ring { from { opacity: 0.55; transform: scale(1); } to { opacity: 0; transform: scale(3.2); } }

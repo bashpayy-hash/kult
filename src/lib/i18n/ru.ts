@@ -70,6 +70,7 @@ const ru = {
     mapOpen: "Открыть",
     mapNorth: "С",
     mapHint: "Двойное касание приближает, карту можно тянуть",
+    mapTwoFingers: "Двигайте карту двумя пальцами",
     mapCountryAlt: "Казахстан: Алматы и Астана на карте страны",
     mapCountryCredit: "Границы страны: geoBoundaries, CC BY 4.0",
     nearestTitle: "Ближайшее свободное время",

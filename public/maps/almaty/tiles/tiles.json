@@ -1,0 +1,1 @@
+{"tile":1024,"ratio":1.1764000000000001,"levels":[{"id":"base-0","w":1024,"h":1205,"cols":1,"rows":2,"near":false},{"id":"base-1","w":2048,"h":2409,"cols":2,"rows":3,"near":false},{"id":"near-1","w":2048,"h":2409,"cols":2,"rows":3,"near":true},{"id":"near-2","w":4096,"h":4819,"cols":4,"rows":5,"near":true},{"id":"near-3","w":8192,"h":9637,"cols":8,"rows":10,"near":true}]}

@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import dynamic from "next/dynamic";
-import { useRef, useState } from "react";
+import { useCallback, useMemo, useRef, useState } from "react";
 import { CategoryMark } from "./CategoryMark";
 import type { WalkStrings } from "./CityWalk";
 import { PlanCamera, type CameraStrings, type PlanLayers } from "./PlanCamera";
@@ -66,6 +66,12 @@ export function CityMap({ title, cities, s, lang = "ru" }: { title: string; citi
   const [active, setActive] = useState<number | null>(null);
   const [focus, setFocus] = useState<number | null>(null);
   const [walking, setWalking] = useState<{ venue?: number } | null>(null);
+  // The walk rebuilds its whole city when these change: keep them the same objects between renders.
+  const walkVenues = useMemo(
+    () => (cities.find((c) => c.key === "almaty")?.venues ?? []).map((v) => ({ n: v.n, name: v.name, category: v.category, kind: v.kind, href: v.href, lat: v.lat, lng: v.lng, slot: v.slot })),
+    [cities],
+  );
+  const closeWalk = useCallback(() => setWalking(null), []);
   const plate = useRef<HTMLDivElement>(null);
   const city = cities.find((c) => c.key === key) ?? cities[0];
   if (!city) return null;
@@ -235,10 +241,10 @@ export function CityMap({ title, cities, s, lang = "ru" }: { title: string; citi
       </div>
       {walking ? (
         <CityWalk
-          venues={(cities.find((c) => c.key === "almaty")?.venues ?? []).map((v) => ({ n: v.n, name: v.name, category: v.category, kind: v.kind, href: v.href, lat: v.lat, lng: v.lng, slot: v.slot }))}
+          venues={walkVenues}
           startVenue={walking.venue}
           lang={lang}
-          onClose={() => setWalking(null)}
+          onClose={closeWalk}
           s={s.walk}
         />
       ) : null}

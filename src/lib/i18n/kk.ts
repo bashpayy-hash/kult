@@ -70,6 +70,7 @@ const kk: Dict = {
     mapOpen: "Ашу",
     mapNorth: "С",
     mapHint: "Екі рет түрту жақындатады, картаны тартуға болады",
+    mapTwoFingers: "Картаны екі саусақпен жылжытыңыз",
     mapCountryAlt: "Қазақстан: ел картасындағы Алматы мен Астана",
     mapCountryCredit: "Ел шекарасы: geoBoundaries, CC BY 4.0",
     nearestTitle: "Ең жақын бос уақыт",
