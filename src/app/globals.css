@@ -262,6 +262,32 @@ input[type="file"].field::file-selector-button {
     animation-range: entry calc(35% + min(var(--n, 0), 8) * 4%) entry calc(65% + min(var(--n, 0), 8) * 4%);
   }
 }
+/* The detailed city plan (PlanCamera, 14 Nov 2026, owner: «детальная и
+   реалистичная, концептуальная карта… с анимациями приближения»). The camera
+   moves only by transform; the approach is the one long move, a tap on a
+   place is a short one, a drag or pinch has none. Labels scale back by 1/k
+   on the same curve, so they hold their size while the city grows. */
+.plan-cam { transform-origin: 0 0; }
+.plan-glide, .plan-glide :is(.plan-label, .plan-landmark, .plan-pin, .plan-card) { transition: transform 900ms var(--ease-out), opacity 320ms var(--ease-out); }
+.plan-approach, .plan-approach :is(.plan-label, .plan-landmark, .plan-pin, .plan-card) { transition: transform 1800ms var(--ease-out), opacity 320ms var(--ease-out); }
+.plan-near, .plan-far { transition: opacity 320ms var(--ease-out); }
+.plan-near { opacity: 0; }
+[data-near] .plan-near { opacity: 1; }
+[data-near] .plan-far { opacity: 0; }
+.plan-label {
+  position: absolute; white-space: nowrap; pointer-events: none; line-height: 1;
+  color: var(--color-paper-ink-2);
+  /* A paper halo keeps type readable on relief, streets and blocks. */
+  text-shadow: 0 0 2px var(--color-paper), 0 0 2px var(--color-paper), 0 0 4px var(--color-paper);
+}
+.plan-district { font-size: 11px; font-weight: 600; letter-spacing: 0.18em; text-transform: uppercase; color: var(--color-paper-ink-3); }
+.plan-avenue { font-size: 10px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: var(--color-paper-ink); }
+.plan-contour { font-size: 9.5px; font-weight: 500; color: var(--color-paper-ink-3); font-variant-numeric: tabular-nums; }
+.plan-range { font-size: 10.5px; font-weight: 600; letter-spacing: 0.2em; text-transform: uppercase; color: var(--color-paper-ink-2); }
+.plan-landmark { position: absolute; display: grid; justify-items: center; gap: 1px; pointer-events: none; }
+.plan-landmark-name { position: static; font-size: 10px; font-weight: 600; color: var(--color-paper-ink); }
+.plan-pin { transform-origin: 50% 50%; }
+
 @keyframes pulse-ring { from { opacity: 0.55; transform: scale(1); } to { opacity: 0; transform: scale(3.2); } }
 .pulse-ring { animation: pulse-ring 2.4s var(--ease-out) infinite; }
 

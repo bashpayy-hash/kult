@@ -29,8 +29,10 @@ export const CITIES: City[] = [
     name: { ru: "Алматы", kk: "Алматы" },
     gis: "almaty",
     // Centre of the city between Raiymbek Ave and the foothills, Saina St
-    // and Medeu Rd: about 11 × 11 km.
-    frame: { south: 43.19, west: 76.86, north: 43.29, east: 77.0 },
+    // and Medeu Rd: about 11 × 13 km. Since 14 Nov 2026 it reaches 2 km
+    // further south, so the detailed plan (public/maps/almaty/, drawn by
+    // scripts/draw-almaty-plan.py) shows the foothills rising.
+    frame: { south: 43.17, west: 76.86, north: 43.29, east: 77.0 },
     centre: { lat: 43.2389, lng: 76.8897 },
   },
   {

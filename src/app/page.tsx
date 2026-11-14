@@ -12,6 +12,8 @@ import { CityMap, type MapCity } from "@/components/CityMap";
 import { HeroCover } from "@/components/HeroCover";
 import { Tick } from "@/components/Tick";
 import plans from "@/lib/cityPlans.generated.json";
+import almatyPlan from "@/lib/almatyPlan.generated.json";
+import type { PlanLandmark, PlanLayers } from "@/components/PlanCamera";
 import { CITIES, cityKey, placeOnCountry, placeOnPlan, planAspect, planHeightKm, planWidthKm } from "@/lib/cities";
 
 export const dynamic = "force-dynamic";
@@ -54,6 +56,20 @@ export default async function Overview({ searchParams }: { searchParams: Promise
 
   // The map: per city, the places that have a point inside its plan,
   // numbered in catalog order (the list beside the plan uses the same).
+  // The detailed Almaty plan (scripts/draw-almaty-plan.py): layers and labels in the page's language.
+  const pick = (o: { ru: string; kk: string }) => (lang === "kk" ? o.kk : o.ru);
+  const almatyCity = CITIES.find((c) => c.key === "almaty")!;
+  const almatyLayers: PlanLayers = {
+    relief: "/maps/almaty/relief.webp",
+    base: "/maps/almaty/base.svg",
+    detail: "/maps/almaty/detail.svg",
+    avenues: almatyPlan.avenues.map((a) => ({ t: pick(a), x: a.x, y: a.y, a: a.a })),
+    districts: almatyPlan.districts.map((d) => ({ t: pick(d), x: d.x, y: d.y })),
+    landmarks: almatyPlan.landmarks.map((l) => ({ k: l.k as PlanLandmark["k"], t: pick(l), x: l.x, y: l.y })),
+    contours: almatyPlan.contours.map((c) => ({ t: `${c.t} ${C.mapM}`, x: c.x, y: c.y, a: c.a })),
+    range: { t: C.mapMountains, x: 63, y: 96.5, a: -6 },
+    widthM: planWidthKm(almatyCity) * 1000,
+  };
   const mapCities: MapCity[] = CITIES.map((city) => {
     const placed = all.flatMap((v) => {
       if (cityKey(v.city) !== city.key || v.lat == null || v.lng == null) return [];
@@ -71,6 +87,7 @@ export default async function Overview({ searchParams }: { searchParams: Promise
       kmY: 100 / planHeightKm(city),
       onCountry: placeOnCountry(city.centre.lat, city.centre.lng),
       edge: city.key === "almaty" ? C.mapMountains : undefined,
+      layers: city.key === "almaty" ? almatyLayers : undefined,
       venues: placed.map(({ v, at }, i) => {
         const f = free.get(v.id);
         return {
@@ -172,7 +189,10 @@ export default async function Overview({ searchParams }: { searchParams: Promise
           <CityMap
             title={C.mapTitle}
             cities={mapCities}
-            s={{ soonText: C.mapSoonText, soonCta: C.mapSoonCta, credit: C.mapCredit, km: C.mapKm, countryAlt: C.mapCountryAlt, countryCredit: C.mapCountryCredit }}
+            s={{
+              soonText: C.mapSoonText, soonCta: C.mapSoonCta, credit: C.mapCredit, km: C.mapKm, countryAlt: C.mapCountryAlt, countryCredit: C.mapCountryCredit, showOnMap: C.mapShow,
+              camera: { zoomIn: C.mapZoomIn, zoomOut: C.mapZoomOut, whole: C.mapWhole, aria: C.mapAria, close: C.mapClose, open: C.mapOpen, north: C.mapNorth, m: C.mapM, km: C.mapKm, hint: C.mapHint },
+            }}
           />
         </section>
 

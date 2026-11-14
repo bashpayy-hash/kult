@@ -1,0 +1,5 @@
+{
+ "pulledAt": "2026-11-14",
+ "note": "Raw OSM and elevation pulled by scripts/fetch-map-raw.mjs on a Netlify build and drawn by scripts/draw-almaty-plan.py into public/maps/almaty/. The raw files are not committed (39 MB, .gitignore); delete this file to pull them again on the next Netlify build.",
+ "sources": ["© OpenStreetMap contributors, ODbL", "AWS Terrain Tiles (Terrarium), public domain"]
+}

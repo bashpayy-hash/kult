@@ -21,6 +21,8 @@ import { access, mkdir, readFile, writeFile } from "node:fs/promises";
 import path from "node:path";
 
 const CITIES = {
+  // Almaty is drawn in detail by scripts/draw-almaty-plan.py (public/maps/almaty/);
+  // the plain almaty.svg here is only the fallback and keeps its old frame.
   almaty: { south: 43.19, west: 76.86, north: 43.29, east: 77.0 },
   astana: { south: 51.08, west: 71.33, north: 51.2, east: 71.52 },
 };

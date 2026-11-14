@@ -11,3 +11,7 @@ audit-out/
 .DS_Store
 .netlify
 .osm-cache/
+design/map-source/*.json
+!design/map-source/manifest.json
+!design/map-source/pulled.json
+design/map-source/dem/

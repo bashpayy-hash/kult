@@ -1,0 +1,29 @@
+{
+ "at": "2026-11-14T17:40:37.783Z",
+ "bbox": {
+  "south": 43.12,
+  "west": 76.8,
+  "north": 43.32,
+  "east": 77.1
+ },
+ "core": {
+  "south": 43.2,
+  "west": 76.88,
+  "north": 43.275,
+  "east": 76.99
+ },
+ "done": {
+  "roads": true,
+  "land": true,
+  "buildings": true,
+  "places": true,
+  "dem": {
+   "z": 13,
+   "x0": 5843,
+   "x1": 5850,
+   "y0": 3000,
+   "y1": 3006,
+   "ok": 56
+  }
+ }
+}

@@ -1,7 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { useRef, useState } from "react";
+import { PlanCamera, type CameraStrings, type PlanLayers } from "./PlanCamera";
 
 export type MapVenue = {
   n: number;
@@ -31,10 +32,12 @@ export type MapCity = {
   onCountry: { left: number; top: number };
   /** A line along the plan's bottom edge (Almaty's mountains). */
   edge?: string;
+  /** The detailed, zoomable plan (Almaty since 14 Nov 2026); without it the grid plate. */
+  layers?: PlanLayers;
   venues: MapVenue[];
 };
 
-type Strings = { soonText: string; soonCta: string; credit: string; km: string; countryAlt: string; countryCredit: string };
+type Strings = { soonText: string; soonCta: string; credit: string; km: string; countryAlt: string; countryCredit: string; camera: CameraStrings; showOnMap: string };
 
 const GRID = "rgba(109, 76, 46, 0.2)"; // paper-ink-3 at 20%: the survey grid on the paper
 
@@ -51,11 +54,14 @@ const GRID = "rgba(109, 76, 46, 0.2)"; // paper-ink-3 at 20%: the survey grid on
 export function CityMap({ title, cities, s }: { title: string; cities: MapCity[]; s: Strings }) {
   const [key, setKey] = useState(cities[0]?.key);
   const [active, setActive] = useState<number | null>(null);
+  const [focus, setFocus] = useState<number | null>(null);
+  const plate = useRef<HTMLDivElement>(null);
   const city = cities.find((c) => c.key === key) ?? cities[0];
   if (!city) return null;
   const pick = (k: string) => {
     setKey(k);
     setActive(null);
+    setFocus(null);
   };
 
   return (
@@ -75,6 +81,10 @@ export function CityMap({ title, cities, s }: { title: string; cities: MapCity[]
       </div>
 
       <div className="mt-8 grid gap-8 md:grid-cols-[7fr_5fr] md:gap-12">
+        <div ref={plate} className="min-w-0 scroll-mt-6">
+        {city.layers ? (
+          <PlanCamera key={city.key} city={city} layers={city.layers} active={active} setActive={setActive} focus={focus} setFocus={setFocus} s={s.camera} />
+        ) : (
         <figure className="min-w-0">
           <div className="bg-paper p-2 sm:p-2.5">
             <div
@@ -134,6 +144,8 @@ export function CityMap({ title, cities, s }: { title: string; cities: MapCity[]
             )}
           </figcaption>
         </figure>
+        )}
+        </div>
 
         <div className="flex min-w-0 flex-col gap-6">
           {/* Kazakhstan with both cities: the project's reach at a glance. */}
@@ -175,9 +187,25 @@ export function CityMap({ title, cities, s }: { title: string; cities: MapCity[]
                   onMouseLeave={() => setActive(null)}
                   className="flex items-center gap-4 border-b border-line py-3"
                 >
+                  {city.layers ? (
+                    // On the detailed plan the number flies the camera to the place.
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setFocus(v.n);
+                        const r = plate.current?.getBoundingClientRect();
+                        if (r && (r.top < 0 || r.bottom > window.innerHeight)) plate.current?.scrollIntoView({ block: "start", behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth" });
+                      }}
+                      aria-label={`${s.showOnMap}: ${v.name}`}
+                      className="-m-2.5 grid h-11 w-11 shrink-0 place-items-center"
+                    >
+                      <span className={`num grid h-6 min-w-6 place-items-center px-1 text-[12px] ${active === v.n || focus === v.n ? "bg-accent text-paper-ink" : "bg-paper text-paper-ink"}`}>{v.n}</span>
+                    </button>
+                  ) : (
                   <span aria-hidden="true" className={`num grid h-6 min-w-6 shrink-0 place-items-center px-1 text-[12px] text-paper ${active === v.n ? "bg-navy" : "bg-oxblood"}`}>
                     {v.n}
                   </span>
+                  )}
                   <Link href={v.href} className="group min-w-0 flex-1">
                     <span className={`block truncate text-[16px] font-medium transition-colors duration-150 group-hover:text-accent ${active === v.n ? "text-accent" : "text-ink"}`}>{v.name}</span>
                     <span className="block text-[13px] text-ink-3">{v.category}</span>
