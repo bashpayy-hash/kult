@@ -20,6 +20,7 @@ from collections import defaultdict
 import numpy as np
 from PIL import Image
 from shapely.geometry import LineString, Point, Polygon, box
+from shapely.geometry.polygon import orient
 from shapely.ops import linemerge, unary_union
 from shapely.strtree import STRtree
 
@@ -304,9 +305,13 @@ for rid, ru, kk, ls in ROUTES:
     n = int(ls.length / 4)
     pts = [ls.interpolate(i / n, normalized=True) for i in range(n + 1)]
     # Dostyk walks south, towards the mountains; the others walk north.
-    if (rid == "dostyk") == (pts[0].y > pts[-1].y):
+    flipped = (rid == "dostyk") == (pts[0].y > pts[-1].y)
+    if flipped:
         pts = pts[::-1]
-    routes.append({"id": rid, "ru": ru, "kk": kk, "len": round(ls.length), "p": flat([(q.x, q.y) for q in pts])})
+    # Dostyk is walked on its sidewalk, 15 m left of the carriageway's line:
+    # "road" says on which hand of the walker the carriageway lies (+1 left).
+    road = 0 if rid != "dostyk" else (1 if flipped else -1)
+    routes.append({"id": rid, "ru": ru, "kk": kk, "len": round(ls.length), "road": road, "p": flat([(q.x, q.y) for q in pts])})
     route_lines.append(ls)
     # Retro lamp posts: both sides of the two pedestrian streets, the road side of Dostyk.
     step, sides = (19, (4.6, -4.6)) if rid != "dostyk" else (27, (-5.2,))
@@ -323,12 +328,157 @@ for rid, ru, kk, ls in ROUTES:
             if not in_building(q, 0.8):
                 lamps += [round(q.x, 1), round(q.y, 1)]
 
+# ── The street's furniture: 1980s Alma-Ata with today's café life ──────────
+# 14 Nov 2026, owner: «keep the old 80s almaty warm nostalgic aesthetic but
+# with modern elements». Retro: shop lettering, rooftop letters, mosaic
+# panels, a kvass barrel, a fountain, benches, pastel Zhigulis and Volgas.
+# Today: café terraces under umbrellas (string lights and glass towers are
+# drawn by the browser).
+SHOP_WORDS = ["КНИГИ", "ГАСТРОНОМ", "ЦВЕТЫ", "КУЛИНАРИЯ", "ЧАСЫ", "ОДЕЖДА", "КАФЕ", "СУВЕНИРЫ", "ФОТО", "ОБУВЬ"]
+ROOF_WORDS = ["АЛМА-АТА", "ҚОШ КЕЛДІҢІЗ", "ДОБРО ПОЖАЛОВАТЬ"]
+route_by_id = {rid: ls for (rid, _, _, ls) in ROUTES if ls is not None and ls.length >= 150}
+signs, mosaics, roof_signs, props = [], [], [], []
+taken = [(Point(lamps[i], lamps[i + 1]), 0.4) for i in range(0, len(lamps), 2)]  # what is placed, kept apart
+
+
+def free(pt, r):
+    return not in_building(pt, r) and all(pt.distance(p) > r + rr for p, rr in taken)
+
+
+def place(kind, x, z, yaw, r):
+    pt = Point(x, z)
+    if not free(pt, r):
+        return False
+    taken.append((pt, r))
+    props.append([kind, round(x, 1), round(z, 1), round(yaw, 2)])
+    return True
+
+
+# Walls facing a walk: shop lettering over the awnings, mosaics higher up.
+walk_lines = unary_union(list(route_by_id.values()))
+cands = []
+for g, t in kept:
+    if g.distance(walk_lines) > 32:
+        continue
+    pg = orient(g.simplify(0.35, preserve_topology=True), sign=1.0)
+    hb = num(t.get("height")) or ((num(t.get("building:levels")) or 0) * 3.2 + 1.5) or 0
+    ring = list(pg.exterior.coords)[:-1]
+    for i in range(len(ring)):
+        (ax, az), (bx, bz) = ring[i], ring[(i + 1) % len(ring)]
+        L = math.hypot(bx - ax, bz - az)
+        if L < 7:
+            continue
+        nx, nz = (bz - az) / L, -(bx - ax) / L
+        mx, mz = (ax + bx) / 2, (az + bz) / 2
+        near = walk_lines.interpolate(walk_lines.project(Point(mx, mz))) if walk_lines.geom_type == "LineString" else min((l.interpolate(l.project(Point(mx, mz))) for l in walk_lines.geoms), key=lambda q: q.distance(Point(mx, mz)))
+        dx, dz = near.x - mx, near.y - mz
+        dist = math.hypot(dx, dz) or 1
+        facing = (nx * dx + nz * dz) / dist
+        if facing > 0.55 and dist < 30:
+            cands.append((L, hb, ax, az, bx, bz, nx, nz, dist))
+for L, hb, ax, az, bx, bz, nx, nz, dist in cands:
+    if hb < 6.5:
+        continue
+    # One shop every ~14 m of a long facade; most of them lettered.
+    n = max(1, int(L // 14))
+    for k in range(n):
+        seed = hsh(f"{ax:.0f}{az:.0f}{k}")
+        if seed % 5 >= 3:
+            continue
+        word = SHOP_WORDS[seed % len(SHOP_WORDS)]
+        w = min(L / n * 0.75, 1.6 + len(word) * 0.62)
+        c = (k + 0.5) / n
+        f0, f1 = c - w / L / 2, c + w / L / 2
+        signs.append([round(ax + (bx - ax) * f0, 2), round(az + (bz - az) * f0, 2), round(ax + (bx - ax) * f1, 2), round(az + (bz - az) * f1, 2), SHOP_WORDS.index(word)])
+# Mosaics: the longest tall walls that look at each walk, at most two a walk.
+for rid, ls in route_by_id.items():
+    best = sorted([c for c in cands if c[0] > 13 and c[1] > 13 and Point((c[2] + c[4]) / 2, (c[3] + c[5]) / 2).distance(ls) < 34], key=lambda c: -c[0])
+    for L, hb, ax, az, bx, bz, nx, nz, dist in best[:2]:
+        w = min(L * 0.72, 12.0)
+        hgt = min(w * 0.78, hb - 6.2)
+        if hgt < 4:
+            continue
+        f0, f1 = 0.5 - w / L / 2, 0.5 + w / L / 2
+        mosaics.append([round(ax + (bx - ax) * f0, 2), round(az + (bz - az) * f0, 2), round(ax + (bx - ax) * f1, 2), round(az + (bz - az) * f1, 2), 5.6, round(5.6 + hgt, 1), len(mosaics) % 3])
+
+# Rooftop letters on the tallest mid-rise roof near each walk.
+for k, (rid, ls) in enumerate(route_by_id.items()):
+    best = None
+    for g, t in kept:
+        hb = num(t.get("height")) or ((num(t.get("building:levels")) or 0) * 3.2 + 1.5)
+        if not hb or not (16 <= hb <= 48) or g.area < 500:
+            continue
+        d = g.distance(ls)
+        if 10 < d < 160 and (best is None or hb > best[0]):
+            best = (hb, g)
+    if best:
+        hb, g = best
+        c = g.centroid
+        mid = ls.interpolate(0.5, normalized=True)
+        yaw = math.atan2(mid.x - c.x, mid.y - c.y)
+        minx, miny, maxx, maxy = g.bounds
+        roof_signs.append([round(c.x, 1), round(c.y, 1), round(hb, 1), round(yaw, 3), round(min(26.0, max(12.0, 0.8 * min(maxx - minx, maxy - miny))), 1), k % len(ROOF_WORDS)])
+
+# Benches between the lamps; café terraces; a kvass barrel and a fountain on Arbat.
+for rid, ls in route_by_id.items():
+    if rid == "dostyk":
+        continue
+    for side in (3.3, -3.3):
+        off = ls.offset_curve(side)
+        if off.is_empty or off.geom_type != "LineString":
+            continue
+        for i in range(1, int(off.length / 19)):
+            q, q2 = off.interpolate(i * 19 + 5), off.interpolate(i * 19 + 6)
+            yaw = math.atan2(q2.x - q.x, q2.y - q.y) + (math.pi / 2 if side > 0 else -math.pi / 2)
+            place(3, q.x, q.y, yaw, 1.0)
+    for side in (8.0, -8.0):
+        off = ls.offset_curve(side)
+        if off.is_empty or off.geom_type != "LineString":
+            continue
+        s = 12.0
+        while s < off.length - 12:
+            if hsh(f"{rid}{side}{int(s)}") % 3 == 0:
+                for j in range(3):
+                    q = off.interpolate(s + j * 3.4)
+                    place(0, q.x, q.y, (hsh(f"{q.x:.0f}") % 628) / 100, 1.5)
+                s += 24
+            else:
+                s += 11
+arb = route_by_id.get("arbat")
+if arb is not None:
+    # The first free spot beside the walk (never on the walking line itself).
+    for kind, r, fracs in ((2, 1.4, [0.12 + 0.04 * i for i in range(12)]), (4, 3.2, [0.6 + 0.04 * i for i in range(8)])):
+        done = False
+        for frac in fracs:
+            for side in (5.0, -5.0, 7.5, -7.5):
+                q = arb.offset_curve(side).interpolate(frac, normalized=True)
+                q2 = arb.interpolate(min(1, frac + 0.01), normalized=True)
+                if place(kind, q.x, q.y, math.atan2(q2.x - q.x, q2.y - q.y), r):
+                    done = True
+                    break
+            if done:
+                break
+# Parked Zhigulis and Volgas on Dostyk's kerb.
+dos = route_by_id.get("dostyk")
+if dos is not None:
+    off = dos.offset_curve(-7.4)
+    if not off.is_empty and off.geom_type == "LineString":
+        s = 8.0
+        while s < off.length - 8:
+            q, q2 = off.interpolate(s), off.interpolate(s + 1)
+            if hsh(f"car{int(s)}") % 5 < 2:
+                place(1, q.x, q.y, math.atan2(q2.x - q.x, q2.y - q.y), 2.3)
+            s += 6.2
+
 # Trees: not inside buildings, not on the walking line itself.
 paths = unary_union([l.buffer(3.6) for l in route_lines]) if route_lines else None
+TX = np.array([p.x for p, _ in taken]); TZ = np.array([p.y for p, _ in taken]); TR = np.array([r for _, r in taken])
 clear = []
 for x, z in trees:
     pt = Point(x, z)
     if in_building(pt) or (paths is not None and paths.contains(pt)):
+        continue
+    if len(TX) and np.any((TX - x) ** 2 + (TZ - z) ** 2 < (TR + 1.6) ** 2):
         continue
     clear.append((x, z))
 rng.shuffle(clear)
@@ -373,7 +523,7 @@ H = elev(LO, LA) - E0
 # The city floor stays flat around the walk; the ground rises outside it.
 gx, gz = (LO - LON0) * KX, (LAT0 - LA) * KZ
 d = np.maximum(np.abs(gx) / 1900, np.abs(gz) / 2400)
-fade = np.clip((d - 1.0) / 0.6, 0, 1)
+fade = np.clip((d - 1.0) / 0.25, 0, 1)
 H = np.maximum(H, 0) * fade - 1.5
 hm = np.round(H).astype(np.int16)
 kx, kz = P(76.9763, 43.2287)
@@ -382,6 +532,7 @@ k_ground = float(elev(np.array([76.9763]), np.array([43.2287]))[0]) - E0
 scene = {
     "origin": [LAT0, LON0], "k": [round(KX, 3), KZ], "pal": PAL,
     "b": buildings, "r": roads, "g": parks, "w": rivers, "t": tree_flat, "routes": routes, "lamps": lamps,
+    "signs": signs, "mosaics": mosaics, "roofSigns": roof_signs, "props": props, "words": SHOP_WORDS, "roofWords": ROOF_WORDS,
     "dem": {"w": GW, "h": GH, "x0": round(float(gx[0, 0]), 1), "z0": round(float(gz[0, 0]), 1), "x1": round(float(gx[-1, -1]), 1), "z1": round(float(gz[-1, -1]), 1), "data": base64.b64encode(hm.tobytes()).decode()},
     "kokTobe": [round(kx, 1), round(kz, 1), round(k_ground, 1)],
     "credit": "© OpenStreetMap contributors; relief: AWS Terrain Tiles",
@@ -389,4 +540,4 @@ scene = {
 with open(OUT, "w", encoding="utf8") as f:
     json.dump(scene, f, separators=(",", ":"), ensure_ascii=False)
 print("walk.json", os.path.getsize(OUT) // 1024, "KB;", len(buildings), "buildings,", len(roads), "roads,", len(parks), "parks,", len(clear), "trees,", [(r["id"], r["len"]) for r in routes], "E0", round(E0), "max h", int(hm.max()))
-print("flags", {f: sum(1 for b in buildings if b[3] == f) for f in (1, 2, 3)}, "lamps", len(lamps) // 2)
+print("flags", {f: sum(1 for b in buildings if b[3] == f) for f in (1, 2, 3)}, "lamps", len(lamps) // 2, "signs", len(signs), "mosaics", len(mosaics), "roof", roof_signs, "props", {k: sum(1 for p in props if p[0] == k) for k in range(5)})

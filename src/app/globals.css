@@ -300,8 +300,9 @@ input[type="file"].field::file-selector-button {
 
 /* The 3D walk (CityWalk): the render is graded like the site's photographs
    (faded, a touch warm) and printed over with the same grain. */
-.walk-canvas { display: block; width: 100%; height: 100%; filter: saturate(0.88) sepia(0.12) contrast(1.03); }
-.walk-grain { background-image: var(--tex-paper); opacity: 0.55; mix-blend-mode: multiply; box-shadow: inset 0 0 160px rgba(35, 25, 23, 0.28); }
+/* The walk is a warm 80s print: a touch of sepia, an amber vignette, paper grain. */
+.walk-canvas { display: block; width: 100%; height: 100%; filter: saturate(0.92) sepia(0.16) contrast(1.04); }
+.walk-grain { background-image: var(--tex-paper); opacity: 0.5; mix-blend-mode: multiply; box-shadow: inset 0 0 180px rgba(120, 64, 24, 0.3); }
 .walk-sign { transition: opacity 240ms var(--ease-out); will-change: transform; }
 
 @keyframes pulse-ring { from { opacity: 0.55; transform: scale(1); } to { opacity: 0; transform: scale(3.2); } }

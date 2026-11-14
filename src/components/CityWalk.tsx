@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import * as THREE from "three";
+import { mergeGeometries } from "three/examples/jsm/utils/BufferGeometryUtils.js";
 import { CategoryMark } from "./CategoryMark";
 
 /**
@@ -33,14 +34,29 @@ type Scene = {
   g: number[][];
   w: number[][];
   t: number[];
-  routes: { id: string; ru: string; kk: string; len: number; p: number[] }[];
+  routes: { id: string; ru: string; kk: string; len: number; road?: number; p: number[] }[];
   dem: { w: number; h: number; x0: number; z0: number; x1: number; z1: number; data: string };
   kokTobe: [number, number, number];
   lamps?: number[];
+  /** Shop lettering over the awnings: x0, z0, x1, z1, word. */
+  signs?: number[][];
+  /** Mosaic panels: x0, z0, x1, z1, y0, y1, design. */
+  mosaics?: number[][];
+  /** Rooftop letters: x, z, roof height, yaw, width, word. */
+  roofSigns?: number[][];
+  /** Street furniture: kind (0 café table, 1 parked car, 2 kvass barrel, 3 bench, 4 fountain), x, z, yaw. */
+  props?: number[][];
+  words?: string[];
+  roofWords?: string[];
 };
 
 const INK = new THREE.Color("#3a2a20");
-const HAZE = new THREE.Color("#ecdcbe");
+// Late-afternoon Alma-Ata in October: a low warm sun, apricot haze, a faded teal sky.
+const HAZE = new THREE.Color("#efd6ab");
+const SUN_DIR = new THREE.Vector3(-0.78, 0.13, 0.52).normalize();
+const CARS = ["#e8dcc0", "#9fb7c4", "#c25b3f", "#7f8f6a", "#d9b45a", "#f1ece0", "#5f7d8c", "#a4473a"];
+const AWNINGS = ["#f4ead6", "#b8553a", "#4f7d78", "#c69a3b"];
+const FONT = '"Inter Tight Variable", system-ui, sans-serif';
 const ROAD = ["#9c907f", "#a3978a", "#ab9f8d", "#b4a892", "#e2cfa3"];
 const ROAD_W = [24, 18, 13, 8, 9];
 const AUTUMN = ["#6f7b3a", "#8a8a3f", "#b08a36", "#c69a3b", "#7f6f34", "#5f6b33"];
@@ -85,7 +101,7 @@ export default function CityWalk({ venues, startVenue, lang, onClose, s }: { ven
     el.appendChild(renderer.domElement);
     renderer.domElement.className = "walk-canvas";
     const scene = new THREE.Scene();
-    scene.fog = new THREE.Fog(HAZE, 900, 11000);
+    scene.fog = new THREE.Fog(HAZE, 900, 16000);
     const camera = new THREE.PerspectiveCamera(55, 1, 1, 40000);
     const resize = () => {
       const w = el.clientWidth, h = el.clientHeight;
@@ -99,18 +115,19 @@ export default function CityWalk({ venues, startVenue, lang, onClose, s }: { ven
     const disposables: { dispose: () => void }[] = [renderer];
 
     // Late-afternoon light from the south-west, a warm sky dome, haze.
-    scene.add(new THREE.HemisphereLight(0xfff1d8, 0x8f7a5c, 1.55));
-    const sun = new THREE.DirectionalLight(0xffe9c8, 1.55);
-    sun.position.set(-0.65, 0.75, 0.55).multiplyScalar(1000);
+    scene.add(new THREE.HemisphereLight(0xffe8c8, 0x8a6a4c, 1.4));
+    const sun = new THREE.DirectionalLight(0xffc98a, 2.0);
+    sun.position.set(-0.7, 0.5, 0.5).multiplyScalar(1000);
     scene.add(sun);
     const skyGeo = new THREE.SphereGeometry(30000, 32, 16);
     const skyMat = new THREE.ShaderMaterial({
       side: THREE.BackSide,
       depthWrite: false,
       fog: false,
-      uniforms: { top: { value: new THREE.Color("#98b6c2") }, mid: { value: new THREE.Color("#d9dccb") }, low: { value: HAZE } },
+      uniforms: { top: { value: new THREE.Color("#8fb0b8") }, mid: { value: new THREE.Color("#efd3a4") }, low: { value: HAZE }, sunDir: { value: SUN_DIR }, sunCol: { value: new THREE.Color("#ffd9a0") } },
       vertexShader: "varying vec3 vP; void main(){ vP = normalize(position); gl_Position = projectionMatrix * modelViewMatrix * vec4(position,1.0); }",
-      fragmentShader: "uniform vec3 top; uniform vec3 mid; uniform vec3 low; varying vec3 vP; void main(){ float h = clamp(vP.y, 0.0, 1.0); vec3 c = mix(low, mid, smoothstep(0.0, 0.12, h)); c = mix(c, top, smoothstep(0.1, 0.6, h)); gl_FragColor = vec4(c, 1.0); }",
+      // The sun low in the south-west: a soft disc and its glow in the haze.
+      fragmentShader: "uniform vec3 top; uniform vec3 mid; uniform vec3 low; uniform vec3 sunDir; uniform vec3 sunCol; varying vec3 vP; void main(){ vec3 n = normalize(vP); float h = clamp(n.y, 0.0, 1.0); vec3 c = mix(low, mid, smoothstep(0.0, 0.14, h)); c = mix(c, top, smoothstep(0.12, 0.65, h)); float d = max(dot(n, sunDir), 0.0); c += sunCol * (smoothstep(0.9994, 0.9997, d) * 0.55 + pow(d, 28.0) * 0.28); gl_FragColor = vec4(c, 1.0); }",
     });
     const sky = new THREE.Mesh(skyGeo, skyMat);
     scene.add(sky);
@@ -118,7 +135,9 @@ export default function CityWalk({ venues, startVenue, lang, onClose, s }: { ven
 
     const signAnchors: THREE.Vector3[] = [];
     let data: Scene | null = null;
-    let tram: { mesh: THREE.Group; path: THREE.Vector3[]; len: number; s: number; dir: number } | null = null;
+    // Things that drive: the trolleybus shuttles, the cars loop.
+    const movers: { mesh: THREE.Group; path: THREE.Vector3[]; cum: number[]; s: number; dir: number; speed: number; loop: boolean }[] = [];
+    const jets: THREE.Mesh[] = [];
 
     // ── Camera rig ─────────────────────────────────────────────────────────
     const cur: Pose = { pos: new THREE.Vector3(0, 4200, 1), look: new THREE.Vector3(0, 0, 0) };
@@ -170,7 +189,9 @@ export default function CityWalk({ venues, startVenue, lang, onClose, s }: { ven
       const cum = [0];
       for (let i = 1; i < pts.length; i++) cum.push(cum[i - 1] + pts[i].distanceTo(pts[i - 1]));
       const sAt = Math.max(0, Math.min(cum[cum.length - 1] - 30, fromS ?? 0));
-      walk = { pts, cum, len: cum[cum.length - 1], s: sAt, sTo: sAt, yaw: 0, yawTo: 0, pitch: 0.02, v: 0 };
+      // A tall phone screen looks a little up, so the street fills it rather than the paving.
+      const pitch = el.clientWidth < el.clientHeight ? 0.12 : 0.02;
+      walk = { pts, cum, len: cum[cum.length - 1], s: sAt, sTo: sAt, yaw: 0, yawTo: 0, pitch, v: 0 };
       const end = walkPose(walk);
       setMode(id);
       // Down from where we are, in an arc, to eye height.
@@ -199,24 +220,166 @@ export default function CityWalk({ venues, startVenue, lang, onClose, s }: { ven
     // ── Build the city ─────────────────────────────────────────────────────
     const toXZ = (lat: number, lng: number, d: Scene) => new THREE.Vector3((lng - d.origin[1]) * d.k[0], 0, (d.origin[0] - lat) * d.k[1]);
 
-    function windowTexture() {
+    // Facades, each a 4 × 4 block of bays so a few windows can be lit warm.
+    // Seeded, so the city is the same every visit.
+    let seed = 7;
+    const rnd = () => ((seed = (seed * 16807) % 2147483647) / 2147483647);
+    const LIT = ["#f1cf8c", "#e9b871", "#f4dca8"];
+    function facade(kind: "panel" | "brise" | "glass") {
       const c = document.createElement("canvas");
-      c.width = c.height = 64;
+      c.width = c.height = 256;
       const g = c.getContext("2d")!;
-      g.fillStyle = "#ffffff";
-      g.fillRect(0, 0, 64, 64);
-      g.fillStyle = "#8d8378";
-      g.fillRect(16, 14, 32, 34);
-      g.fillStyle = "#c9c0b3";
-      g.fillRect(31, 14, 2, 34);
-      g.fillRect(16, 29, 32, 2);
-      g.fillStyle = "#e9e2d6";
-      g.fillRect(14, 48, 36, 3);
-      const t = new THREE.CanvasTexture(c);
-      t.wrapS = t.wrapT = THREE.RepeatWrapping;
-      t.colorSpace = THREE.SRGBColorSpace;
-      t.anisotropy = 4;
-      t.magFilter = THREE.LinearFilter;
+      if (kind === "glass") {
+        // Today's towers: tinted glass in a fine grid, the sky's light on top.
+        const grad = g.createLinearGradient(0, 0, 0, 256);
+        grad.addColorStop(0, "#e3ecee");
+        grad.addColorStop(1, "#9db1b9");
+        g.fillStyle = grad;
+        g.fillRect(0, 0, 256, 256);
+        for (let r = 0; r < 8; r++)
+          for (let k = 0; k < 8; k++) {
+            if (rnd() < 0.1) {
+              g.fillStyle = "rgba(241,207,140,0.55)";
+              g.fillRect(k * 32, r * 32, 32, 32);
+            }
+          }
+        g.fillStyle = "#f4f7f8";
+        for (let k = 0; k < 8; k++) g.fillRect(k * 32, 0, 2, 256);
+        g.fillStyle = "#6f8189";
+        for (let r = 0; r < 8; r++) g.fillRect(0, r * 32 + 29, 256, 3);
+      } else {
+        g.fillStyle = "#ffffff";
+        g.fillRect(0, 0, 256, 256);
+        for (let r = 0; r < 4; r++)
+          for (let k = 0; k < 4; k++) {
+            const x = k * 64, y = r * 64;
+            const lit = rnd() < 0.14 ? LIT[Math.floor(rnd() * 3)] : null;
+            if (kind === "panel") {
+              g.fillStyle = lit ?? (rnd() < 0.2 ? "#9a8370" : "#8d8378");
+              g.fillRect(x + 16, y + 14, 32, 34);
+              g.fillStyle = "#c9c0b3";
+              g.fillRect(x + 31, y + 14, 2, 34);
+              g.fillRect(x + 16, y + 29, 32, 2);
+              g.fillStyle = "#e9e2d6";
+              g.fillRect(x + 14, y + 48, 36, 3);
+            } else {
+              // Alma-Ata's sun-breakers: a deep concrete cell, two fins, the window far back.
+              g.fillStyle = "#7d7266";
+              g.fillRect(x + 6, y + 6, 52, 52);
+              g.fillStyle = lit ?? "#5d554d";
+              g.fillRect(x + 12, y + 14, 40, 40);
+              g.fillStyle = "rgba(40,30,24,0.35)";
+              g.fillRect(x + 6, y + 6, 52, 7);
+              g.fillRect(x + 6, y + 6, 5, 52);
+              g.fillStyle = "#ffffff";
+              g.fillRect(x + 23, y + 6, 5, 52);
+              g.fillRect(x + 37, y + 6, 5, 52);
+            }
+          }
+      }
+      return tex(c);
+    }
+
+    // Smalt mosaics of the 70s–80s, drawn small and laid in tiles with grout:
+    // 0 the apple (Alma-Ata, «father of apples») under the sun and peaks,
+    // 1 poplars before the snowy range, 2 the ram's horn, қошқар мүйіз.
+    function mosaic(design: number, aspect: number) {
+      const W = 44, H = Math.max(14, Math.min(60, Math.round(W / aspect)));
+      const lo = document.createElement("canvas");
+      lo.width = W;
+      lo.height = H;
+      const g = lo.getContext("2d")!;
+      const sky = (a: string, b: string) => {
+        const gr = g.createLinearGradient(0, 0, 0, H);
+        gr.addColorStop(0, a);
+        gr.addColorStop(1, b);
+        g.fillStyle = gr;
+        g.fillRect(0, 0, W, H);
+      };
+      const disc = (x: number, y: number, r: number, c: string) => {
+        g.fillStyle = c;
+        g.beginPath();
+        g.arc(x, y, r, 0, Math.PI * 2);
+        g.fill();
+      };
+      const range = (y: number, c: string) => {
+        g.fillStyle = c;
+        g.beginPath();
+        g.moveTo(0, H);
+        g.lineTo(0, y + H * 0.12);
+        const peaks = [[0.22, -0.2], [0.4, 0.04], [0.6, -0.26], [0.8, 0.02], [1, -0.08]];
+        for (const [px, py] of peaks) g.lineTo(px * W, y + py * H);
+        g.lineTo(W, H);
+        g.fill();
+        g.fillStyle = "#f4ead6";
+        for (const [px, py] of peaks) if (py < -0.1) { g.beginPath(); g.moveTo(px * W, y + py * H); g.lineTo(px * W - H * 0.08, y + (py + 0.08) * H); g.lineTo(px * W + H * 0.08, y + (py + 0.08) * H); g.fill(); }
+      };
+      if (design === 0) {
+        sky("#e9b866", "#f4dfb6");
+        disc(W * 0.22, H * 0.28, H * 0.15, "#d9532e");
+        range(H * 0.62, "#5f7d8c");
+        disc(W * 0.66, H * 0.5, H * 0.24, "#c23b22");
+        disc(W * 0.6, H * 0.42, H * 0.08, "#e8735a");
+        g.fillStyle = "#5b7a3a";
+        g.beginPath();
+        g.ellipse(W * 0.72, H * 0.2, H * 0.1, H * 0.05, -0.5, 0, Math.PI * 2);
+        g.fill();
+        g.fillStyle = "#3a2a20";
+        g.fillRect(W * 0.66 - 0.5, H * 0.18, 1, H * 0.1);
+      } else if (design === 1) {
+        sky("#8fb0b8", "#efd3a4");
+        disc(W * 0.78, H * 0.22, H * 0.12, "#e9b866");
+        range(H * 0.5, "#6d8a96");
+        const cols = ["#c69a3b", "#6f7b3a", "#b08a36", "#7f6f34"];
+        for (let i = 0; i < 9; i++) {
+          g.fillStyle = cols[i % 4];
+          g.beginPath();
+          g.ellipse((i + 0.5) * (W / 9), H * 0.72, W / 30, H * 0.22, 0, 0, Math.PI * 2);
+          g.fill();
+        }
+        g.fillStyle = "#a8ad6c";
+        g.fillRect(0, H * 0.9, W, H * 0.1);
+      } else {
+        g.fillStyle = "#efe5cf";
+        g.fillRect(0, 0, W, H);
+        g.strokeStyle = "#b8553a";
+        g.lineWidth = Math.max(2, H * 0.09);
+        g.lineCap = "round";
+        const cx = W / 2, cy = H * 0.5, R = Math.min(W * 0.2, H * 0.36);
+        for (const sx of [1, -1]) {
+          g.beginPath();
+          g.moveTo(cx, H * 0.88);
+          g.lineTo(cx, cy);
+          for (let t = 0; t <= Math.PI * 2.1; t += 0.12) {
+            const r = R * (1 - t / (Math.PI * 2.7));
+            g.lineTo(cx + sx * (R - r * Math.cos(t)), cy - r * Math.sin(t));
+          }
+          g.stroke();
+        }
+        g.fillStyle = "#c69a3b";
+        for (const x of [W * 0.1, W * 0.9]) { g.beginPath(); g.moveTo(x, H * 0.4); g.lineTo(x + H * 0.08, H * 0.5); g.lineTo(x, H * 0.6); g.lineTo(x - H * 0.08, H * 0.5); g.fill(); }
+        g.fillStyle = "#4f7d78";
+        g.fillRect(0, 0, W, 2);
+        g.fillRect(0, H - 2, W, 2);
+      }
+      const px = g.getImageData(0, 0, W, H).data;
+      const S = 12;
+      const hi = document.createElement("canvas");
+      hi.width = W * S;
+      hi.height = H * S;
+      const h2 = hi.getContext("2d")!;
+      h2.fillStyle = "#d9cdb5";
+      h2.fillRect(0, 0, hi.width, hi.height);
+      for (let y = 0; y < H; y++)
+        for (let x = 0; x < W; x++) {
+          const edge = x === 0 || y === 0 || x === W - 1 || y === H - 1;
+          const i = (y * W + x) * 4, j = (rnd() - 0.5) * 26;
+          const [r, gg, bb] = edge ? [138, 74, 50] : [px[i], px[i + 1], px[i + 2]];
+          h2.fillStyle = `rgb(${Math.max(0, Math.min(255, r + j))},${Math.max(0, Math.min(255, gg + j))},${Math.max(0, Math.min(255, bb + j))})`;
+          h2.fillRect(x * S + 1, y * S + 1, S - 2, S - 2);
+        }
+      const t = tex(hi);
+      t.wrapS = t.wrapT = THREE.ClampToEdgeWrapping;
       return t;
     }
 
@@ -300,6 +463,20 @@ export default function CityWalk({ venues, startVenue, lang, onClose, s }: { ven
       return t;
     }
 
+    const part = (geo: THREE.BufferGeometry, x: number, y: number, z: number, rx = 0, rz = 0) => {
+      geo.rotateX(rx);
+      geo.rotateZ(rz);
+      geo.translate(x, y, z);
+      return geo;
+    };
+    // A boxy 80s saloon: enamel body, a glasshouse, chrome bumpers, four wheels.
+    const carParts = () => [
+      { geo: mergeGeometries([part(new THREE.BoxGeometry(1.62, 0.62, 4.1), 0, 0.6, 0), part(new THREE.BoxGeometry(1.4, 0.07, 1.85), 0, 1.34, -0.2)]), color: "#ffffff", tint: CARS },
+      { geo: part(new THREE.BoxGeometry(1.38, 0.46, 1.95), 0, 1.1, -0.2), color: "#4a5658" },
+      { geo: mergeGeometries([part(new THREE.BoxGeometry(1.66, 0.14, 0.12), 0, 0.42, 2.08), part(new THREE.BoxGeometry(1.66, 0.14, 0.12), 0, 0.42, -2.08)]), color: "#d6d0c4" },
+      { geo: mergeGeometries([-1, 1].flatMap((sx) => [-1, 1].map((sz) => part(new THREE.CylinderGeometry(0.3, 0.3, 0.2, 10), sx * 0.72, 0.3, sz * 1.3, 0, Math.PI / 2)))), color: "#2b2420" },
+    ];
+
     function build(d: Scene) {
       const pal = d.pal.map((c) => new THREE.Color(c));
       // Ground: warm earth; the mountains rise from the same plane outside the centre.
@@ -323,9 +500,9 @@ export default function CityWalk({ venues, startVenue, lang, onClose, s }: { ven
         const tint = (y: number, slope: number, n: number) => {
           if (y > 1650 + n * 140) return c.set("#f6f1e7");
           if (y > 1350) return c.set(slope > 0.7 ? "#9a8f97" : "#a99c8f");
-          if (y > 520) return c.set(slope > 0.6 ? "#6e6a4e" : "#5d6a48");
-          if (y > 90) return c.set("#a79964");
-          return c.set("#c9b486");
+          if (y > 520) return c.set(slope > 0.6 ? "#66684a" : "#536343");
+          if (y > 90) return c.set(slope > 0.5 ? "#8c8a5c" : "#7f8a55");
+          return c.set("#b9ac7c");
         };
         for (let j = 0; j < h - 1; j++)
           for (let i = 0; i < w - 1; i++) {
@@ -401,7 +578,7 @@ export default function CityWalk({ venues, startVenue, lang, onClose, s }: { ven
           ribbon(line, ROAD_W[r[0]], byCls[r[0]]);
         }
         // The walking line is always paved, also where it crosses a park.
-        for (const r of d.routes) ribbon(r.p, 6, byCls[4]);
+        for (const r of d.routes) ribbon(r.p, r.id === "dostyk" ? 5 : 11, byCls[4]);
         const tiles = paving(), asphalt = grain(0.1);
         flatMesh(side, "#e3d1aa", 2, tiles, 2);
         byCls.forEach((tris, i) => (i === 4 ? flatMesh(tris, ROAD[4], 4, tiles, 1.6) : flatMesh(tris, ROAD[i], 3, asphalt, 3)));
@@ -412,7 +589,8 @@ export default function CityWalk({ venues, startVenue, lang, onClose, s }: { ven
 
       // Buildings: walls with window rows, roofs, an ink outline.
       {
-        const wall: number[] = [], wallUv: number[] = [], wallCol: number[] = [], wallN: number[] = [];
+        // Three facades: the 70s–80s panel blocks, the sun-breaker grids, today's glass towers.
+        const walls = [0, 1, 2].map(() => ({ pos: [] as number[], uv: [] as number[], col: [] as number[], n: [] as number[] }));
         const roof: number[] = [], roofCol: number[] = [];
         const edges: number[] = [];
         const c = new THREE.Color();
@@ -432,7 +610,10 @@ export default function CityWalk({ venues, startVenue, lang, onClose, s }: { ven
           for (let i = 4; i < b.length; i += 2) ring.push(new THREE.Vector2(b[i], b[i + 1]));
           if (ring.length < 3) continue;
           if (THREE.ShapeUtils.isClockWise(ring)) ring.reverse();
-          const base = flag === 2 ? new THREE.Color("#f1dca0") : pal[ci];
+          const glassy = h > 55 && !flag;
+          const kind = glassy ? 2 : h >= 14 && !flag && (Math.abs(Math.round(b[4] * 5 + b[5] * 3)) % 3 === 0) ? 1 : 0;
+          const W = walls[kind];
+          const base = glassy ? new THREE.Color("#c8d6da") : flag === 2 ? new THREE.Color("#f1dca0") : pal[ci];
           const onWalk = h > 6 && mh < 1 && !flag && ring.some((p) => near.has(`${Math.floor(p.x / 40)},${Math.floor(p.y / 40)}`));
           const row = Math.abs(Math.round(b[4] * 3 + b[5] * 7)) % 3;
           const jitter = ((b[4] * 13.1 + b[5] * 7.7) % 1 + 1) % 1;
@@ -442,15 +623,16 @@ export default function CityWalk({ venues, startVenue, lang, onClose, s }: { ven
             const a = ring[i], q = ring[(i + 1) % ring.length];
             const L = a.distanceTo(q);
             const nx = (q.y - a.y) / (L || 1), nz = -(q.x - a.x) / (L || 1);
-            const u0 = per / 3.6, u1 = (per + L) / 3.6, v0 = mh / 3.2, v1 = h / 3.2;
+            const bay = kind === 2 ? 25.6 : 14.4, storey = kind === 2 ? 25.6 : 12.8;
+            const u0 = per / bay, u1 = (per + L) / bay, v0 = mh / storey, v1 = h / storey;
             per += L;
             // Wound so the face looks out of the building (the ring is counter-clockwise in x/z).
             const quad = [[a.x, mh, a.y, u0, v0], [q.x, h, q.y, u1, v1], [q.x, mh, q.y, u1, v0], [a.x, mh, a.y, u0, v0], [a.x, h, a.y, u0, v1], [q.x, h, q.y, u1, v1]];
             for (const [x, y, z, u, v] of quad) {
-              wall.push(x, y, z);
-              wallUv.push(u, v);
-              wallCol.push(c.r, c.g, c.b);
-              wallN.push(nx, 0, nz);
+              W.pos.push(x, y, z);
+              W.uv.push(u, v);
+              W.col.push(c.r, c.g, c.b);
+              W.n.push(nx, 0, nz);
             }
             edges.push(a.x, h, a.y, q.x, h, q.y);
             if (h > 7) edges.push(a.x, mh, a.y, a.x, h, a.y);
@@ -479,14 +661,18 @@ export default function CityWalk({ venues, startVenue, lang, onClose, s }: { ven
           if (flag === 1) crowns.push({ x: cx, z: cz, h, ring });
           if (flag === 2) domes.push({ x: cx, z: cz, h });
         }
-        const gw = new THREE.BufferGeometry();
-        gw.setAttribute("position", new THREE.Float32BufferAttribute(wall, 3));
-        gw.setAttribute("normal", new THREE.Float32BufferAttribute(wallN, 3));
-        gw.setAttribute("uv", new THREE.Float32BufferAttribute(wallUv, 2));
-        gw.setAttribute("color", new THREE.Float32BufferAttribute(wallCol, 3));
-        const tex = windowTexture();
-        const mw = new THREE.MeshLambertMaterial({ vertexColors: true, map: tex });
-        scene.add(new THREE.Mesh(gw, mw));
+        (["panel", "brise", "glass"] as const).forEach((kind, i) => {
+          const W = walls[i];
+          if (!W.pos.length) return;
+          const gw = new THREE.BufferGeometry();
+          gw.setAttribute("position", new THREE.Float32BufferAttribute(W.pos, 3));
+          gw.setAttribute("normal", new THREE.Float32BufferAttribute(W.n, 3));
+          gw.setAttribute("uv", new THREE.Float32BufferAttribute(W.uv, 2));
+          gw.setAttribute("color", new THREE.Float32BufferAttribute(W.col, 3));
+          const mw = new THREE.MeshLambertMaterial({ vertexColors: true, map: facade(kind) });
+          scene.add(new THREE.Mesh(gw, mw));
+          disposables.push(gw, mw);
+        });
         const gr = new THREE.BufferGeometry();
         gr.setAttribute("position", new THREE.Float32BufferAttribute(roof, 3));
         gr.setAttribute("color", new THREE.Float32BufferAttribute(roofCol, 3));
@@ -497,7 +683,7 @@ export default function CityWalk({ venues, startVenue, lang, onClose, s }: { ven
         ge.setAttribute("position", new THREE.Float32BufferAttribute(edges, 3));
         const me = new THREE.LineBasicMaterial({ color: INK, transparent: true, opacity: 0.42 });
         scene.add(new THREE.LineSegments(ge, me));
-        disposables.push(gw, mw, tex, gr, mr, ge, me);
+        disposables.push(gr, mr, ge, me);
         if (shop.length) {
           const gs = new THREE.BufferGeometry();
           gs.setAttribute("position", new THREE.Float32BufferAttribute(shop, 3));
@@ -606,36 +792,41 @@ export default function CityWalk({ venues, startVenue, lang, onClose, s }: { ven
         disposables.push(mat, red, g1, g2);
         const t = new THREE.Mesh(g1, mat);
         t.position.set(x, gy + 186, z);
-        const edges = new THREE.LineSegments(new THREE.EdgesGeometry(g1), new THREE.LineBasicMaterial({ color: INK }));
+        const edges = new THREE.LineSegments(new THREE.EdgesGeometry(g1), new THREE.LineBasicMaterial({ color: INK, transparent: true, opacity: 0.35 }));
         edges.position.copy(t.position);
         const deck = new THREE.Mesh(g2, red);
         deck.position.set(x, gy + 150, z);
         scene.add(t, edges, deck);
       }
 
-      // A trolleybus up and down Dostyk.
+      // Dostyk: a trolleybus under its wires, cars in pastel enamel.
       const dostyk = d.routes.find((r) => r.id === "dostyk");
       if (dostyk) {
         const path: THREE.Vector3[] = [];
         for (let i = 0; i < dostyk.p.length; i += 2) path.push(new THREE.Vector3(dostyk.p[i], 0, dostyk.p[i + 1]));
-        // From the sidewalk back to the road's near lane.
-        const shifted = path.map((p, i) => {
-          const a = path[Math.max(0, i - 1)], b = path[Math.min(path.length - 1, i + 1)];
-          const dir = b.clone().sub(a).normalize();
-          return p.clone().add(new THREE.Vector3(-dir.z, 0, dir.x).multiplyScalar(-11));
-        });
-        const g = new THREE.Group();
-        const box = (w: number, h: number, l: number, color: string, y: number) => {
+        const side = dostyk.road ?? -1; // the carriageway's hand, +1 left of the walker
+        const lane = (off: number) => {
+          const out = path.map((p, i) => {
+            const a = path[Math.max(0, i - 1)], b = path[Math.min(path.length - 1, i + 1)];
+            const dir = b.clone().sub(a).normalize();
+            return p.clone().add(new THREE.Vector3(-dir.z, 0, dir.x).multiplyScalar(side * off));
+          });
+          const cum = [0];
+          for (let i = 1; i < out.length; i++) cum.push(cum[i - 1] + out[i].distanceTo(out[i - 1]));
+          return { path: out, cum };
+        };
+        const box = (g: THREE.Group, w: number, h: number, l: number, color: string, y: number, z = 0) => {
           const geo = new THREE.BoxGeometry(w, h, l), mat = new THREE.MeshLambertMaterial({ color });
           disposables.push(geo, mat);
           const m = new THREE.Mesh(geo, mat);
-          m.position.y = y;
+          m.position.set(0, y, z);
           g.add(m);
-          return m;
         };
-        box(2.5, 1.3, 11.5, "#b8402c", 1.15);
-        box(2.5, 1.5, 11.5, "#efe3c6", 2.55);
-        box(2.52, 0.6, 9.5, "#5a6a74", 2.3);
+        const near = lane(11);
+        const bus = new THREE.Group();
+        box(bus, 2.5, 1.3, 11.5, "#b8402c", 1.15);
+        box(bus, 2.5, 1.5, 11.5, "#efe3c6", 2.55);
+        box(bus, 2.52, 0.6, 9.5, "#5a6a74", 2.3);
         const pole = new THREE.CylinderGeometry(0.05, 0.05, 6.5, 4);
         const pm = new THREE.MeshLambertMaterial({ color: "#2b2420" });
         disposables.push(pole, pm);
@@ -643,12 +834,250 @@ export default function CityWalk({ venues, startVenue, lang, onClose, s }: { ven
           const p = new THREE.Mesh(pole, pm);
           p.position.set(ox, 4.8, -1.5);
           p.rotation.x = -1.05;
-          g.add(p);
+          bus.add(p);
         }
-        scene.add(g);
-        let len = 0;
-        for (let i = 1; i < shifted.length; i++) len += shifted[i].distanceTo(shifted[i - 1]);
-        tram = { mesh: g, path: shifted, len, s: 0, dir: 1 };
+        scene.add(bus);
+        movers.push({ mesh: bus, ...near, s: 40, dir: 1, speed: 9, loop: false });
+        // The overhead wires, a pair over the trolleybus lane.
+        const wires: number[] = [];
+        for (const dx of [-0.5, 0.5]) {
+          const w = lane(11 + dx).path;
+          for (let i = 1; i < w.length; i++) wires.push(w[i - 1].x, 6.3, w[i - 1].z, w[i].x, 6.3, w[i].z);
+        }
+        const gw = new THREE.BufferGeometry();
+        gw.setAttribute("position", new THREE.Float32BufferAttribute(wires, 3));
+        const mw = new THREE.LineBasicMaterial({ color: INK, transparent: true, opacity: 0.55 });
+        scene.add(new THREE.LineSegments(gw, mw));
+        disposables.push(gw, mw);
+        // Zhigulis and Volgas: boxy, enamel-bright, one way up the far lanes, one way down the near.
+        const far = lane(18.5), mid = lane(7.5);
+        const driving = carParts();
+        disposables.push(...driving.map((p) => p.geo));
+        for (let k = 0; k < 6; k++) {
+          const car = new THREE.Group();
+          for (const { geo, color, tint } of driving) {
+            const mat = new THREE.MeshLambertMaterial({ color: tint ? CARS[(k * 3 + 1) % CARS.length] : color });
+            disposables.push(mat);
+            car.add(new THREE.Mesh(geo, mat));
+          }
+          scene.add(car);
+          const L = k % 2 ? far : mid;
+          movers.push({ mesh: car, ...L, s: (k * 337) % Math.max(1, L.cum[L.cum.length - 1]), dir: k % 2 ? -1 : 1, speed: 11 + (k % 3) * 2, loop: true });
+        }
+      }
+
+      // ── The street's furniture: the 80s and today, side by side ──────────
+      const words = [...(d.words ?? []), "КВАС"];
+      const wordCache = new Map<string, { mat: THREE.Material; aspect: number }>();
+      const word = (w: string, color: string, lattice = false) => {
+        const key = `${w}|${color}|${lattice}`;
+        const hit = wordCache.get(key);
+        if (hit) return hit;
+        const c = document.createElement("canvas");
+        const g0 = c.getContext("2d")!;
+        g0.font = `800 96px ${FONT}`;
+        const wPx = Math.ceil(g0.measureText(w).width) + 48;
+        c.width = wPx;
+        c.height = lattice ? 184 : 128;
+        const g = c.getContext("2d")!;
+        if (lattice) {
+          // The truss the rooftop letters stand on.
+          g.strokeStyle = "#3a2a20";
+          g.lineWidth = 4;
+          g.beginPath();
+          g.moveTo(12, 130);
+          g.lineTo(wPx - 12, 130);
+          g.moveTo(12, 180);
+          g.lineTo(wPx - 12, 180);
+          for (let x = 12; x < wPx - 40; x += 36) {
+            g.moveTo(x, 130);
+            g.lineTo(x + 18, 180);
+            g.lineTo(x + 36, 130);
+          }
+          g.stroke();
+        }
+        g.font = `800 96px ${FONT}`;
+        g.textAlign = "center";
+        g.textBaseline = "middle";
+        g.lineJoin = "round";
+        g.lineWidth = 10;
+        g.strokeStyle = "rgba(58,42,32,0.5)";
+        g.strokeText(w, wPx / 2, 68);
+        g.fillStyle = color;
+        g.fillText(w, wPx / 2, 68);
+        const mat = new THREE.MeshBasicMaterial({ map: tex(c), transparent: true, alphaTest: 0.2, color: "#f6ecdc" });
+        disposables.push(mat);
+        const out = { mat, aspect: wPx / c.height };
+        wordCache.set(key, out);
+        return out;
+      };
+      const wallPlane = (x0: number, z0: number, x1: number, z1: number, w: number, h: number, y: number, mat: THREE.Material, out = 0.12) => {
+        const L = Math.hypot(x1 - x0, z1 - z0) || 1;
+        const nx = (z1 - z0) / L, nz = -(x1 - x0) / L;
+        const geo = new THREE.PlaneGeometry(w, h);
+        disposables.push(geo);
+        const m = new THREE.Mesh(geo, mat);
+        m.position.set((x0 + x1) / 2 + nx * out, y, (z0 + z1) / 2 + nz * out);
+        m.rotation.y = Math.atan2(nx, nz);
+        scene.add(m);
+      };
+      // Shop lettering in red over the awnings: КНИГИ, ГАСТРОНОМ, ЦВЕТЫ…
+      for (const [x0, z0, x1, z1, wi] of d.signs ?? []) {
+        const { mat, aspect } = word(words[wi] ?? "КАФЕ", "#c8402a");
+        const L = Math.hypot(x1 - x0, z1 - z0);
+        const h = Math.min(0.95, L / aspect);
+        wallPlane(x0, z0, x1, z1, h * aspect, h, 4.35, mat);
+      }
+      // Mosaic panels high on the end walls: the apple, the poplars, the ram's horn.
+      for (const [x0, z0, x1, z1, y0, y1, design] of d.mosaics ?? []) {
+        const w = Math.hypot(x1 - x0, z1 - z0), h = y1 - y0;
+        const mat = new THREE.MeshLambertMaterial({ map: mosaic(design, w / h) });
+        disposables.push(mat);
+        wallPlane(x0, z0, x1, z1, w, h, (y0 + y1) / 2, mat, 0.08);
+      }
+      // Rooftop letters on a truss, as the city's roofs had them.
+      for (const [x, z, hb, yaw, w, wi] of d.roofSigns ?? []) {
+        const { mat, aspect } = word((d.roofWords ?? [])[wi] ?? "АЛМА-АТА", "#d2462e", true);
+        const h = w / aspect;
+        const geo = new THREE.PlaneGeometry(w, h);
+        disposables.push(geo);
+        const m = new THREE.Mesh(geo, mat);
+        m.position.set(x, hb + 0.2 + h / 2, z);
+        m.rotation.y = yaw;
+        scene.add(m);
+      }
+
+      // Instanced furniture: each kind is a few merged parts, one material each.
+      {
+        const props = d.props ?? [];
+        const kinds: Record<number, { geo: THREE.BufferGeometry; color: string; tint?: string[] }[]> = {
+          // Today's café terraces: a parasol, a table, two chairs.
+          0: [
+            { geo: part(new THREE.ConeGeometry(1.5, 0.55, 12, 1, true), 0, 2.35, 0), color: "#ffffff", tint: AWNINGS },
+            { geo: mergeGeometries([part(new THREE.CylinderGeometry(0.035, 0.035, 2.3, 5), 0, 1.15, 0), part(new THREE.CylinderGeometry(0.04, 0.12, 0.72, 6), 0, 0.36, 0)]), color: "#2f3a33" },
+            { geo: part(new THREE.CylinderGeometry(0.42, 0.42, 0.04, 14), 0, 0.74, 0), color: "#efe6d2" },
+            { geo: mergeGeometries([part(new THREE.BoxGeometry(0.42, 0.05, 0.42), 0.75, 0.45, 0), part(new THREE.BoxGeometry(0.05, 0.45, 0.42), 0.98, 0.68, 0), part(new THREE.BoxGeometry(0.42, 0.05, 0.42), -0.75, 0.45, 0), part(new THREE.BoxGeometry(0.05, 0.45, 0.42), -0.98, 0.68, 0)]), color: "#a4673f" },
+          ],
+          // Parked Zhigulis and Volgas.
+          1: carParts(),
+          // Park benches: wooden slats on cast iron.
+          3: [
+            { geo: mergeGeometries([part(new THREE.BoxGeometry(1.8, 0.07, 0.44), 0, 0.46, 0), part(new THREE.BoxGeometry(1.8, 0.34, 0.05), 0, 0.76, -0.2)]), color: "#a4673f" },
+            { geo: mergeGeometries([part(new THREE.BoxGeometry(0.07, 0.46, 0.44), 0.75, 0.23, 0), part(new THREE.BoxGeometry(0.07, 0.46, 0.44), -0.75, 0.23, 0)]), color: "#2f3a33" },
+          ],
+        };
+        const m4 = new THREE.Matrix4(), rot = new THREE.Matrix4(), col = new THREE.Color();
+        for (const [k, parts] of Object.entries(kinds)) {
+          const list = props.filter((p) => p[0] === Number(k));
+          if (!list.length) continue;
+          for (const { geo, color, tint } of parts) {
+            const mat = new THREE.MeshLambertMaterial({ color, side: Number(k) === 0 ? THREE.DoubleSide : THREE.FrontSide });
+            const inst = new THREE.InstancedMesh(geo, mat, list.length);
+            list.forEach(([, x, z, yaw], i) => {
+              inst.setMatrixAt(i, m4.makeTranslation(x, 0, z).multiply(rot.makeRotationY(yaw)));
+              if (tint) inst.setColorAt(i, col.set(tint[Math.abs(Math.round(x * 7 + z * 3)) % tint.length]));
+            });
+            scene.add(inst);
+            disposables.push(geo, mat);
+          }
+        }
+        // A kvass barrel on Arbat, yellow, on two wheels.
+        for (const [, x, z, yaw] of props.filter((p) => p[0] === 2)) {
+          const g = new THREE.Group();
+          const tank = new THREE.Mesh(part(new THREE.CylinderGeometry(0.72, 0.72, 2.3, 18), 0, 1.15, 0, Math.PI / 2), new THREE.MeshLambertMaterial({ color: "#e0b23a" }));
+          const wheels = new THREE.Mesh(mergeGeometries([part(new THREE.CylinderGeometry(0.32, 0.32, 0.14, 10), 0.78, 0.32, 0, 0, Math.PI / 2), part(new THREE.CylinderGeometry(0.32, 0.32, 0.14, 10), -0.78, 0.32, 0, 0, Math.PI / 2)]), new THREE.MeshLambertMaterial({ color: "#2b2420" }));
+          g.add(tank, wheels);
+          const { mat, aspect } = word("КВАС", "#c8402a");
+          for (const sx of [1, -1]) {
+            const sg = new THREE.PlaneGeometry(0.42 * aspect, 0.42);
+            const sm = new THREE.Mesh(sg, mat);
+            sm.position.set(sx * 0.74, 1.2, 0);
+            sm.rotation.y = (sx * Math.PI) / 2;
+            g.add(sm);
+            disposables.push(sg);
+          }
+          g.position.set(x, 0, z);
+          g.rotation.y = yaw;
+          scene.add(g);
+          disposables.push(tank.geometry, tank.material as THREE.Material, wheels.geometry, wheels.material as THREE.Material);
+        }
+        // A fountain: a stone basin, a bowl, jets that rise and fall.
+        for (const [, x, z] of props.filter((p) => p[0] === 4)) {
+          const stone = new THREE.MeshLambertMaterial({ color: "#e9dcc0" });
+          const water = new THREE.MeshLambertMaterial({ color: "#8fb3c0" });
+          const spray = new THREE.MeshBasicMaterial({ color: "#eef4f2", transparent: true, opacity: 0.7 });
+          const basin = mergeGeometries([part(new THREE.CylinderGeometry(3.1, 3.2, 0.55, 36), 0, 0.27, 0), part(new THREE.CylinderGeometry(0.35, 0.5, 1.2, 12), 0, 1.0, 0), part(new THREE.CylinderGeometry(1.0, 0.6, 0.3, 18), 0, 1.7, 0)]);
+          const pool = part(new THREE.CylinderGeometry(2.85, 2.85, 0.06, 36), 0, 0.52, 0);
+          const g = new THREE.Group();
+          g.add(new THREE.Mesh(basin, stone), new THREE.Mesh(pool, water));
+          const jet = new THREE.ConeGeometry(0.16, 2.2, 8);
+          jet.translate(0, 1.1, 0);
+          const small = new THREE.ConeGeometry(0.07, 1.1, 6);
+          small.translate(0, 0.55, 0);
+          const c0 = new THREE.Mesh(jet, spray);
+          c0.position.y = 1.85;
+          g.add(c0);
+          jets.push(c0);
+          for (let i = 0; i < 10; i++) {
+            const a = (i / 10) * Math.PI * 2;
+            const j = new THREE.Mesh(small, spray);
+            j.position.set(Math.sin(a) * 2.2, 0.55, Math.cos(a) * 2.2);
+            j.rotation.set(Math.cos(a) * -0.45, 0, Math.sin(a) * 0.45);
+            g.add(j);
+            jets.push(j);
+          }
+          g.position.set(x, 0, z);
+          scene.add(g);
+          disposables.push(stone, water, spray, basin, pool, jet, small);
+        }
+      }
+
+      // Festoon lights over the two pedestrian streets, lamp to lamp across.
+      if (d.lamps?.length) {
+        const bulbs: number[] = [], wire: number[] = [];
+        for (const r of d.routes) {
+          if (r.id === "dostyk") continue;
+          const pts: THREE.Vector2[] = [];
+          for (let i = 0; i < r.p.length; i += 2) pts.push(new THREE.Vector2(r.p[i], r.p[i + 1]));
+          const hung: { s: number; side: number; x: number; z: number }[] = [];
+          for (let i = 0; i < d.lamps.length; i += 2) {
+            const lx = d.lamps[i], lz = d.lamps[i + 1];
+            let best = -1, bd = 1e9;
+            pts.forEach((p, k) => {
+              const dd = (p.x - lx) ** 2 + (p.y - lz) ** 2;
+              if (dd < bd) { bd = dd; best = k; }
+            });
+            if (bd > 6.5 * 6.5) continue;
+            const a = pts[Math.max(0, best - 1)], b = pts[Math.min(pts.length - 1, best + 1)];
+            const side = Math.sign((b.x - a.x) * (lz - a.y) - (b.y - a.y) * (lx - a.x));
+            hung.push({ s: best, side, x: lx, z: lz });
+          }
+          hung.sort((p, q) => p.s - q.s);
+          for (let i = 1; i < hung.length; i++) {
+            const a = hung[i - 1], b = hung[i];
+            if (a.side === b.side || Math.hypot(a.x - b.x, a.z - b.z) > 16) continue;
+            const n = Math.max(6, Math.round(Math.hypot(a.x - b.x, a.z - b.z) / 0.8));
+            let px = a.x, py = 5.05, pz = a.z;
+            for (let k = 1; k <= n; k++) {
+              const t = k / n, x = a.x + (b.x - a.x) * t, z = a.z + (b.z - a.z) * t, y = 5.05 - 0.7 * 4 * t * (1 - t);
+              wire.push(px, py, pz, x, y, z);
+              if (k < n) bulbs.push(x, y - 0.08, z);
+              px = x; py = y; pz = z;
+            }
+          }
+        }
+        if (bulbs.length) {
+          const bg = new THREE.SphereGeometry(0.07, 8, 6);
+          const bm = new THREE.MeshBasicMaterial({ color: "#ffd38a" });
+          const inst = new THREE.InstancedMesh(bg, bm, bulbs.length / 3);
+          const m4 = new THREE.Matrix4();
+          for (let i = 0; i < bulbs.length / 3; i++) inst.setMatrixAt(i, m4.makeTranslation(bulbs[i * 3], bulbs[i * 3 + 1], bulbs[i * 3 + 2]));
+          const wg = new THREE.BufferGeometry();
+          wg.setAttribute("position", new THREE.Float32BufferAttribute(wire, 3));
+          const wm = new THREE.LineBasicMaterial({ color: "#2b2420", transparent: true, opacity: 0.6 });
+          scene.add(inst, new THREE.LineSegments(wg, wm));
+          disposables.push(bg, bm, wg, wm);
+        }
       }
 
       // Anchors for the places' signs.
@@ -660,6 +1089,12 @@ export default function CityWalk({ venues, startVenue, lang, onClose, s }: { ven
 
     fetch("/maps/almaty/walk.json")
       .then((r) => (r.ok ? r.json() : Promise.reject(new Error(String(r.status)))))
+      .then(async (d: Scene) => {
+        // The lettering is drawn in the site's face, Kazakh letters included.
+        const text = [...(d.words ?? []), ...(d.roofWords ?? []), "КВАС"].join(" ");
+        await document.fonts.load(`800 96px ${FONT}`, text).catch(() => undefined);
+        return d;
+      })
       .then((d: Scene) => {
         if (disposed) return;
         data = d;
@@ -795,15 +1230,24 @@ export default function CityWalk({ venues, startVenue, lang, onClose, s }: { ven
       camera.lookAt(cur.look);
       sky.position.copy(camera.position);
 
-      if (tram && !reduce) {
-        tram.s += tram.dir * 9 * dt;
-        if (tram.s > tram.len - 5 || tram.s < 5) tram.dir *= -1;
-        let acc = 0, i = 1;
-        while (i < tram.path.length - 1 && acc + tram.path[i].distanceTo(tram.path[i - 1]) < tram.s) { acc += tram.path[i].distanceTo(tram.path[i - 1]); i++; }
-        const a = tram.path[i - 1], b = tram.path[i];
-        const f = (tram.s - acc) / Math.max(0.01, a.distanceTo(b));
-        tram.mesh.position.lerpVectors(a, b, Math.min(1, Math.max(0, f)));
-        tram.mesh.lookAt(v3.copy(tram.mesh.position).add(b.clone().sub(a).multiplyScalar(tram.dir)));
+      if (!reduce) {
+        for (const m of movers) {
+          const len = m.cum[m.cum.length - 1];
+          m.s += m.dir * m.speed * dt;
+          if (m.loop) m.s = ((m.s % len) + len) % len;
+          else if (m.s > len - 5 || m.s < 5) {
+            m.dir *= -1;
+            m.s = Math.min(len - 5, Math.max(5, m.s));
+          }
+          let i = 1;
+          while (i < m.cum.length - 1 && m.cum[i] < m.s) i++;
+          const a = m.path[i - 1], b = m.path[i];
+          const f = (m.s - m.cum[i - 1]) / Math.max(0.01, m.cum[i] - m.cum[i - 1]);
+          m.mesh.position.lerpVectors(a, b, Math.min(1, Math.max(0, f)));
+          m.mesh.lookAt(v3.copy(m.mesh.position).add(b.clone().sub(a).multiplyScalar(m.dir)));
+        }
+        const t = now / 1000;
+        jets.forEach((j, i) => (j.scale.y = 0.85 + 0.15 * Math.sin(t * 2.6 + i * 0.7)));
       }
 
       // Signs: projected each frame, kept at one size, hidden far away or behind.
