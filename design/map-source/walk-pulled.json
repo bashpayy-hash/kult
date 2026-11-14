@@ -1,0 +1,5 @@
+{
+ "pulledAt": "2026-11-14",
+ "note": "The walkable centre's buildings (with heights) and trees, pulled by scripts/fetch-map-raw.mjs on a Netlify build and turned into public/maps/almaty/walk.json by scripts/build-walk-scene.py. The raw files (walk-buildings.json, walk-trees.json) are not committed; delete this file to pull them again on the next Netlify build.",
+ "sources": ["© OpenStreetMap contributors, ODbL", "AWS Terrain Tiles (Terrarium), public domain"]
+}

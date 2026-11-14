@@ -94,6 +94,9 @@ export default async function Overview({ searchParams }: { searchParams: Promise
           n: i + 1,
           name: v.name,
           category: t.categories[v.category],
+          kind: v.category,
+          lat: v.lat!,
+          lng: v.lng!,
           href: `/v/${v.slug}`,
           slot: f ? { label: clock(f.slots[0]), day: (f.day === "today" ? t.booking.today : t.booking.tomorrow).toLowerCase(), href: `/v/${v.slug}?d=${f.date}&t=${f.slots[0]}#book` } : undefined,
           left: at.left,
@@ -189,9 +192,11 @@ export default async function Overview({ searchParams }: { searchParams: Promise
           <CityMap
             title={C.mapTitle}
             cities={mapCities}
+            lang={lang}
             s={{
               soonText: C.mapSoonText, soonCta: C.mapSoonCta, credit: C.mapCredit, km: C.mapKm, countryAlt: C.mapCountryAlt, countryCredit: C.mapCountryCredit, showOnMap: C.mapShow,
-              camera: { zoomIn: C.mapZoomIn, zoomOut: C.mapZoomOut, whole: C.mapWhole, aria: C.mapAria, close: C.mapClose, open: C.mapOpen, north: C.mapNorth, m: C.mapM, km: C.mapKm, hint: C.mapHint },
+              camera: { zoomIn: C.mapZoomIn, zoomOut: C.mapZoomOut, whole: C.mapWhole, aria: C.mapAria, close: C.mapClose, open: C.mapOpen, north: C.mapNorth, m: C.mapM, km: C.mapKm, hint: C.mapHint, walk: C.walkCta, walkHere: C.walkHere },
+              walk: { title: C.walkTitle, air: C.walkAir, hint: C.walkHint, hintTouch: C.walkHintTouch, forward: C.walkForward, back: C.walkBack, go: C.walkGo, stop: C.walkStop, loading: C.walkLoading, close: C.walkClose, open: C.mapOpen, routes: C.walkRoutes, fail: C.walkFail },
             }}
           />
         </section>

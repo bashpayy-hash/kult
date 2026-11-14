@@ -1,13 +1,23 @@
 "use client";
 
 import Link from "next/link";
+import dynamic from "next/dynamic";
 import { useRef, useState } from "react";
+import { CategoryMark } from "./CategoryMark";
+import type { WalkStrings } from "./CityWalk";
 import { PlanCamera, type CameraStrings, type PlanLayers } from "./PlanCamera";
+
+// The 3D walk (three.js, its scene ~400 KB) loads only when someone opens it.
+const CityWalk = dynamic(() => import("./CityWalk"), { ssr: false });
 
 export type MapVenue = {
   n: number;
   name: string;
   category: string;
+  /** Category key, for the pictogram. */
+  kind: string;
+  lat: number;
+  lng: number;
   href: string;
   /** Nearest free time, as on the catalog card; opens the booking. */
   slot?: { label: string; day: string; href: string };
@@ -37,7 +47,7 @@ export type MapCity = {
   venues: MapVenue[];
 };
 
-type Strings = { soonText: string; soonCta: string; credit: string; km: string; countryAlt: string; countryCredit: string; camera: CameraStrings; showOnMap: string };
+type Strings = { soonText: string; soonCta: string; credit: string; km: string; countryAlt: string; countryCredit: string; camera: CameraStrings; showOnMap: string; walk: WalkStrings };
 
 const GRID = "rgba(109, 76, 46, 0.2)"; // paper-ink-3 at 20%: the survey grid on the paper
 
@@ -51,10 +61,11 @@ const GRID = "rgba(109, 76, 46, 0.2)"; // paper-ink-3 at 20%: the survey grid on
  * numbers. A city with no places shows its plate with an invitation for
  * venues: the map tells where the project is going without inventing places.
  */
-export function CityMap({ title, cities, s }: { title: string; cities: MapCity[]; s: Strings }) {
+export function CityMap({ title, cities, s, lang = "ru" }: { title: string; cities: MapCity[]; s: Strings; lang?: "ru" | "kk" }) {
   const [key, setKey] = useState(cities[0]?.key);
   const [active, setActive] = useState<number | null>(null);
   const [focus, setFocus] = useState<number | null>(null);
+  const [walking, setWalking] = useState<{ venue?: number } | null>(null);
   const plate = useRef<HTMLDivElement>(null);
   const city = cities.find((c) => c.key === key) ?? cities[0];
   if (!city) return null;
@@ -83,7 +94,7 @@ export function CityMap({ title, cities, s }: { title: string; cities: MapCity[]
       <div className="mt-8 grid gap-8 md:grid-cols-[7fr_5fr] md:gap-12">
         <div ref={plate} className="min-w-0 scroll-mt-6">
         {city.layers ? (
-          <PlanCamera key={city.key} city={city} layers={city.layers} active={active} setActive={setActive} focus={focus} setFocus={setFocus} s={s.camera} />
+          <PlanCamera key={city.key} city={city} layers={city.layers} active={active} setActive={setActive} focus={focus} setFocus={setFocus} onWalk={city.key === "almaty" ? (n) => setWalking({ venue: n }) : undefined} s={s.camera} />
         ) : (
         <figure className="min-w-0">
           <div className="bg-paper p-2 sm:p-2.5">
@@ -199,7 +210,7 @@ export function CityMap({ title, cities, s }: { title: string; cities: MapCity[]
                       aria-label={`${s.showOnMap}: ${v.name}`}
                       className="-m-2.5 grid h-11 w-11 shrink-0 place-items-center"
                     >
-                      <span className={`num grid h-6 min-w-6 place-items-center px-1 text-[12px] ${active === v.n || focus === v.n ? "bg-accent text-paper-ink" : "bg-paper text-paper-ink"}`}>{v.n}</span>
+                      <span className={`grid h-8 w-8 place-items-center rounded-full transition-colors duration-150 ${active === v.n || focus === v.n ? "bg-accent text-paper-ink" : "bg-paper text-paper-ink"}`}><CategoryMark kind={v.kind} className="h-[18px] w-[18px]" /></span>
                     </button>
                   ) : (
                   <span aria-hidden="true" className={`num grid h-6 min-w-6 shrink-0 place-items-center px-1 text-[12px] text-paper ${active === v.n ? "bg-navy" : "bg-oxblood"}`}>
@@ -222,6 +233,15 @@ export function CityMap({ title, cities, s }: { title: string; cities: MapCity[]
           ) : null}
         </div>
       </div>
+      {walking ? (
+        <CityWalk
+          venues={(cities.find((c) => c.key === "almaty")?.venues ?? []).map((v) => ({ n: v.n, name: v.name, category: v.category, kind: v.kind, href: v.href, lat: v.lat, lng: v.lng, slot: v.slot }))}
+          startVenue={walking.venue}
+          lang={lang}
+          onClose={() => setWalking(null)}
+          s={s.walk}
+        />
+      ) : null}
     </>
   );
 }
