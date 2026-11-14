@@ -1,0 +1,205 @@
+{
+ "date": "2026-11-14",
+ "request": "Владелец: «ты чуть-чуть переборщил… должен быть только subtle намек, только вот один элемент того, что она казашка. Но в целом это должно быть очень модерно, не должно быть average казашный мейкап… это всё сделай в дизайне, имплементни».",
+ "supersedes": "chick-takiya-2026-11-14.json (тақия, перо үкі, кесе — слишком много национального)",
+ "model": "Higgsfield gpt_image_2_6, quality high",
+ "character": {
+  "name": "Чик",
+  "technique": "вырезанная цветная бумага, как плашки сайта (Рэнд 1954): плоские формы, зерно бумаги, без контуров, минимальное лицо",
+  "constant": [
+   "острое чёрное каре до подбородка, заправлено за правое ухо",
+   "оверсайз чёрный пиджак поверх белой футболки",
+   "прямые голубые джинсы и белые кеды (в полный рост)",
+   "естественный макияж: светлые губы нюд-роуз, мягкие брови"
+  ],
+  "theOneDetail": "одна маленькая золотая серьга в форме қошқар мүйіз в правом ухе — единственная казахская деталь",
+  "never": [
+   "тақия, сәукеле, перо, шапан, орнамент на одежде или в интерьере",
+   "красная помада, контуринг, тяжёлые ресницы, «тойский» макияж",
+   "кальян, дым, бокал алкоголя в руке",
+   "3D, плюш, аниме"
+  ]
+ },
+ "process": "Раунд 1 — четыре портрета (A–D) с референсами: вариант 5 (cba1b4f0…, только техника и лицо) и плашка «Кафе» (e09d9d89…, бумага). Выбран A. Раунд 2 — весь набор с референсом A; плашка клуба ещё и с референсом старой плашки-конверта (919e47c9…).",
+ "site": {
+  "files": [
+   "public/plates/chick-club-480.webp",
+   "public/plates/chick-club-900.webp",
+   "public/plates/chick-404-480.webp",
+   "public/plates/chick-404-900.webp"
+  ],
+  "processing": "WebP q82, 480/900, без обрезки (у генераций нет бумажного поля)",
+  "bg": {
+   "chick-club": "#e52e01",
+   "chick-404": "#c4882b"
+  },
+  "masters": [
+   "design/plates/source/chick-club.webp",
+   "design/plates/source/chick-404.webp"
+  ]
+ },
+ "deckFix": "Светлые фоны сцен сдвинуты к #f4ece6 (ночь — к #261412) с весом exp(-(d/45)^2) от цвета фона; фон листа настроений меряется по краю кадра (по углу попадало лицо). Результат — modern/deck/*.webp.",
+ "items": [
+  {
+   "n": 11,
+   "file": "design/mascot/chick/modern/A-bob.webp",
+   "use": "вариант A — выбран: основа персонажа",
+   "job": "c795f99c-0102-4614-87aa-19b9fc973283",
+   "aspect": "4:5",
+   "resolution": "1k",
+   "references": [
+    "cba1b4f0-d8cf-4a79-8c1f-330f772137c9",
+    "e09d9d89-5a48-4879-98e4-2e02919724c1"
+   ],
+   "prompt": "Mascot portrait for a women's dining club in Almaty. Same cut-paper collage technique as the references (flat shapes of cut coloured paper, visible paper grain, no outlines, minimal face). Use the references only for technique and drawing style, not for clothing or accessories. A contemporary young Kazakh woman in her twenties, very modern and understated, editorial fashion illustration, half-length: a sharp blunt chin-length black bob tucked behind her right ear, an oversized black blazer over a plain white t-shirt, holding a phone loosely in one hand, calm confident half-smile. Natural minimal makeup: bare skin, soft natural brows, a light nude-rose lip; no red lipstick, no contour, no heavy lashes, no dramatic arched brows. She wears no cap, no hat, no feather, no traditional clothing, no ornament on her clothes. The only hint of her heritage: one single gold earring in her right ear shaped like a small Kazakh koshkar-muiz ram's-horn curl, subtle, the only ornament in the picture. Flat pale periwinkle gouache ground (#879ad9). Few large shapes, generous empty space. Not plush, not 3D, not anime. No text, no letters, no numbers, no logo, no frame."
+  },
+  {
+   "n": 12,
+   "file": "design/mascot/chick/modern/B-long.webp",
+   "use": "вариант B: длинные волосы, кофе",
+   "job": "35e0a753-b842-4efa-9c5f-019058d8100c",
+   "aspect": "4:5",
+   "resolution": "1k",
+   "references": [
+    "cba1b4f0-d8cf-4a79-8c1f-330f772137c9",
+    "e09d9d89-5a48-4879-98e4-2e02919724c1"
+   ],
+   "prompt": "Mascot portrait for a women's dining club in Almaty. Same cut-paper collage technique as the references (flat shapes of cut coloured paper, visible paper grain, no outlines, minimal face). Use the references only for technique and drawing style, not for clothing or accessories. A contemporary young Kazakh woman in her twenties, very modern and understated, editorial fashion illustration, half-length: long straight black hair with a middle part, one side tucked behind her ear, a cream fine-knit sweater, holding a modern ceramic coffee cup, relaxed smile. Natural minimal makeup: bare skin, soft natural brows, a light nude-rose lip; no red lipstick, no contour, no heavy lashes, no dramatic arched brows. She wears no cap, no hat, no feather, no traditional clothing, no ornament on her clothes. The only hint of her heritage: one single gold earring shaped like a small Kazakh koshkar-muiz ram's-horn curl in the ear that shows, subtle, the only ornament in the picture. Flat warm ochre gouache ground (#cd831b). Few large shapes, generous empty space. Not plush, not 3D, not anime. No text, no letters, no numbers, no logo, no frame."
+  },
+  {
+   "n": 13,
+   "file": "design/mascot/chick/modern/C-bun.webp",
+   "use": "вариант C: пучок, водолазка",
+   "job": "5388f746-e1f7-46f6-a318-c4ae5a7c1bd9",
+   "aspect": "4:5",
+   "resolution": "1k",
+   "references": [
+    "cba1b4f0-d8cf-4a79-8c1f-330f772137c9",
+    "e09d9d89-5a48-4879-98e4-2e02919724c1"
+   ],
+   "prompt": "Mascot portrait for a women's dining club in Almaty. Same cut-paper collage technique as the references (flat shapes of cut coloured paper, visible paper grain, no outlines, minimal face). Use the references only for technique and drawing style, not for clothing or accessories. A contemporary young Kazakh woman in her twenties, very modern and understated, editorial fashion illustration, half-length in three-quarter view: black hair pulled back into a sleek low bun, a slim black turtleneck, chin slightly raised, quiet confident look. Natural minimal makeup: bare skin, soft natural brows, a light nude-rose lip; no red lipstick, no contour, no heavy lashes, no dramatic arched brows. She wears no cap, no hat, no feather, no traditional clothing, no ornament on her clothes. The only hint of her heritage: one single gold earring shaped like a small Kazakh koshkar-muiz ram's-horn curl, subtle, the only ornament in the picture. Flat deep oxblood gouache ground (#871310). Few large shapes, generous empty space. Not plush, not 3D, not anime. No text, no letters, no numbers, no logo, no frame."
+  },
+  {
+   "n": 14,
+   "file": "design/mascot/chick/modern/D-shag.webp",
+   "use": "вариант D: шторка, белая рубашка",
+   "job": "501ad009-1349-4a11-8f18-c36767319bda",
+   "aspect": "4:5",
+   "resolution": "1k",
+   "references": [
+    "cba1b4f0-d8cf-4a79-8c1f-330f772137c9",
+    "e09d9d89-5a48-4879-98e4-2e02919724c1"
+   ],
+   "prompt": "Mascot portrait for a women's dining club in Almaty. Same cut-paper collage technique as the references (flat shapes of cut coloured paper, visible paper grain, no outlines, minimal face). Use the references only for technique and drawing style, not for clothing or accessories. A contemporary young Kazakh woman in her twenties, very modern and understated, editorial fashion illustration, half-length: shoulder-length black hair with soft curtain bangs, an oversized crisp white shirt with rolled sleeves, one hand in her hair, playful smile. Natural minimal makeup: bare skin, soft natural brows, a light nude-rose lip; no red lipstick, no contour, no heavy lashes, no dramatic arched brows. She wears no cap, no hat, no feather, no traditional clothing, no ornament on her clothes. The only hint of her heritage: one single gold earring shaped like a small Kazakh koshkar-muiz ram's-horn curl, subtle, the only ornament in the picture. Flat deep midnight navy gouache ground (#102041). Few large shapes, generous empty space. Not plush, not 3D, not anime. No text, no letters, no numbers, no logo, no frame."
+  },
+  {
+   "n": 21,
+   "file": "design/mascot/chick/modern/21-club.webp",
+   "use": "сайт: плашка клуба (главная и /join) → public/plates/chick-club-*.webp",
+   "job": "3b391f9f-1bf2-4e3b-b7b9-d7a4d796147c",
+   "aspect": "4:5",
+   "resolution": "1k",
+   "references": [
+    "c795f99c-0102-4614-87aa-19b9fc973283",
+    "919e47c9-bbcf-4177-93a5-7644b240f9dd"
+   ],
+   "prompt": "Same character as the first reference image, same cut-paper collage technique: 'Chick', a contemporary young Kazakh woman — sharp blunt chin-length black bob tucked behind her right ear, oversized black blazer over a plain white t-shirt, natural minimal makeup (light nude-rose lip, soft natural brows), one single small gold earring shaped like a koshkar-muiz ram's-horn curl in her right ear, the only cultural detail. No cap, no hat, no feather, no traditional clothing, no ornament. Scene, half-length: she holds up a cream paper envelope like the one in the second reference — its flap is a white snowy mountain peak, an invitation — and looks at the viewer with a calm knowing half-smile. Flat vivid red-orange gouache ground (#e33409), visible paper grain. Few large flat shapes, generous empty space, no outlines. Not plush, not 3D, not anime. No text, no letters, no numbers, no logo, no frame."
+  },
+  {
+   "n": 22,
+   "file": "design/mascot/chick/modern/22-404.webp",
+   "use": "сайт: 404 → public/plates/chick-404-*.webp",
+   "job": "03bb6908-fc39-49d3-aa3a-424794d9b7c5",
+   "aspect": "4:5",
+   "resolution": "1k",
+   "references": [
+    "c795f99c-0102-4614-87aa-19b9fc973283"
+   ],
+   "prompt": "Same character as the reference image, same cut-paper collage technique: 'Chick', a contemporary young Kazakh woman — sharp blunt chin-length black bob tucked behind her right ear, oversized black blazer over a plain white t-shirt, natural minimal makeup, one single small gold earring shaped like a koshkar-muiz ram's-horn curl in her right ear, the only cultural detail. No cap, no hat, no feather, no traditional clothing, no ornament. Scene, half-length: she looks down at her phone with raised brows and a small puzzled pout, the other hand lifted palm up as if asking 'where is it?', a little lost but amused. Flat muted mustard gouache ground (#bd8f37), visible paper grain. Few large flat shapes, generous empty space, no outlines. Not plush, not 3D, not anime. No text, no letters, no numbers, no logo, no frame, no readable screen."
+  },
+  {
+   "n": 23,
+   "file": "design/mascot/chick/modern/23-cover.webp",
+   "use": "питч: обложка",
+   "job": "ea07ce1a-9eb3-489c-bacc-2dfddb264d06",
+   "aspect": "4:3",
+   "resolution": "2k",
+   "references": [
+    "c795f99c-0102-4614-87aa-19b9fc973283"
+   ],
+   "prompt": "Illustration for a pitch deck cover. Same character as the reference image, same cut-paper collage technique: 'Chick', a contemporary young Kazakh woman — sharp blunt chin-length black bob tucked behind her right ear, oversized black blazer over a plain white t-shirt, natural minimal makeup, one single small gold earring shaped like a koshkar-muiz ram's-horn curl, the only cultural detail. No cap, no hat, no feather, no traditional clothing, no ornament anywhere. Scene: evening in a modern Almaty restaurant; she sits at a small round marble table by a large window, raising a tall glass of sparkling water with a lemon slice in a toast, a phone face down on the table, a small candle; outside the window, a deep navy dusk sky and flat cut-paper silhouettes of snowy mountains. The vignette sits in the lower right two thirds of the frame and the plain flat warm paper ground (#f4ece6) fills the left side and top, leaving a large empty area on the left for a title. Palette: warm paper, black, white, navy, a little gold and red-orange. Visible paper grain, flat shapes, no outlines, no glow effects. Not plush, not 3D, not anime. No text, no letters, no numbers, no logo, no signs."
+  },
+  {
+   "n": 24,
+   "file": "design/mascot/chick/modern/24-story.webp",
+   "use": "питч: «Как это работает»",
+   "job": "488bb7b1-118b-4cd7-bf01-4d7248d37eca",
+   "aspect": "4:3",
+   "resolution": "2k",
+   "references": [
+    "c795f99c-0102-4614-87aa-19b9fc973283"
+   ],
+   "prompt": "Illustration for a pitch deck. Same character as the reference image, same cut-paper collage technique: 'Chick', a contemporary young Kazakh woman — sharp blunt chin-length black bob tucked behind her right ear, oversized black blazer over a plain white t-shirt, straight light-blue jeans, white sneakers, natural minimal makeup, one single small gold earring shaped like a koshkar-muiz ram's-horn curl, the only cultural detail. No cap, no hat, no feather, no traditional clothing, no ornament anywhere. Scene: at the entrance of a modern restaurant in the evening she holds up her phone to film a story of the room; behind her two young women friends walk in through an open door, smiling — one with long hair in a camel coat, one with a high ponytail in a grey coat. A cut-paper doorway with a warm amber interior and a few flat paper pendant lamps. The vignette sits in the lower right two thirds of the frame and the plain flat warm paper ground (#f4ece6) fills the left side and top with empty space. Palette: warm paper, black, white, camel, grey, amber, a little red-orange. Visible paper grain, flat shapes, no outlines, no glow effects. Not plush, not 3D, not anime. No text, no letters, no numbers, no logo, no signs, no readable screens."
+  },
+  {
+   "n": 25,
+   "file": "design/mascot/chick/modern/25-night.webp",
+   "use": "питч: тёмный слайд «2»",
+   "job": "ea5eaaab-5b58-46e0-9c78-016249cab180",
+   "aspect": "4:3",
+   "resolution": "2k",
+   "references": [
+    "c795f99c-0102-4614-87aa-19b9fc973283"
+   ],
+   "prompt": "Night illustration for a pitch deck. Same character as the reference image, same cut-paper collage technique: 'Chick', a contemporary young Kazakh woman — sharp blunt chin-length black bob tucked behind her right ear, oversized black blazer over a plain white t-shirt, natural minimal makeup, one single small gold earring shaped like a koshkar-muiz ram's-horn curl, the only cultural detail. No cap, no hat, no feather, no traditional clothing, no ornament anywhere. Scene: night on a restaurant rooftop terrace; she leans on a simple railing with a phone in her hand, looking over the city — small flat gold paper squares for the lights of Almaty and cut-paper silhouettes of dark mountains with snowy peaks. The vignette sits in the lower right two thirds of the frame and the plain flat deep warm brown paper ground (#261412) fills the left side and top, leaving a large empty area on the left for a big number. Palette: deep brown, black, white, gold. Visible paper grain, flat shapes, no outlines, no glow effects. Not plush, not 3D, not anime. No text, no letters, no numbers, no logo."
+  },
+  {
+   "n": 26,
+   "file": "design/mascot/chick/modern/26-road.webp",
+   "use": "питч: «Что дальше»",
+   "job": "e181e6e0-2e07-41b2-9e1b-f785c1bf28b1",
+   "aspect": "4:3",
+   "resolution": "2k",
+   "references": [
+    "c795f99c-0102-4614-87aa-19b9fc973283"
+   ],
+   "prompt": "Illustration for a pitch deck. Same character as the reference image, same cut-paper collage technique: 'Chick', a contemporary young Kazakh woman — sharp blunt chin-length black bob tucked behind her right ear, oversized black blazer over a plain white t-shirt, straight light-blue jeans, white sneakers, natural minimal makeup, one single small gold earring shaped like a koshkar-muiz ram's-horn curl, the only cultural detail. No cap, no hat, no feather, no traditional clothing, no ornament anywhere. Scene: she walks confidently along a road pulling a small black suitcase, from cut-paper snowy mountains of Almaty on the left towards a distant flat city skyline on the right with a tall golden tower topped by a sphere (Astana's Baiterek). The vignette sits in the lower right two thirds of the frame and the plain flat warm paper ground (#f4ece6) fills the left side and top with empty space. Palette: warm paper, black, white, light blue, ochre, gold, soft periwinkle sky (#879ad9). Visible paper grain, flat shapes, no outlines. Not plush, not 3D, not anime. No text, no letters, no numbers, no logo, no signs."
+  },
+  {
+   "n": 27,
+   "file": "design/mascot/chick/modern/27-expressions.webp",
+   "use": "питч: слайд «Чик», четыре настроения",
+   "job": "06ad001d-e8fa-47b4-bc2e-e62d881cc49d",
+   "aspect": "1:1",
+   "resolution": "1k",
+   "references": [
+    "c795f99c-0102-4614-87aa-19b9fc973283"
+   ],
+   "prompt": "Expression sheet. Same character as the reference image, same cut-paper collage technique: 'Chick', a contemporary young Kazakh woman — sharp blunt chin-length black bob tucked behind her right ear, black blazer collar over a white t-shirt, natural minimal makeup, one single small gold koshkar-muiz ram's-horn earring, the only cultural detail. No cap, no hat, no feather, no ornament. Her head and shoulders shown four times in a neat 2 by 2 grid on a plain flat warm paper ground (#f4ece6): laughing with eyes closed; winking with a sly smile; surprised with raised brows and a small round mouth; calm half-smile looking aside. Each expression made by changing only a few paper shapes. Visible paper grain, flat shapes, no outlines. Not plush, not 3D, not anime. No text, no letters, no numbers, no labels, no logo, no frame lines."
+  },
+  {
+   "n": 28,
+   "file": "design/mascot/chick/modern/28-avatar.webp",
+   "use": "аватар",
+   "job": "c05b888e-f134-46b5-95d4-23a1da0efeda",
+   "aspect": "1:1",
+   "resolution": "1k",
+   "references": [
+    "c795f99c-0102-4614-87aa-19b9fc973283"
+   ],
+   "prompt": "Profile avatar icon. Same character as the reference image, same cut-paper collage technique: 'Chick', a contemporary young Kazakh woman — sharp blunt chin-length black bob tucked behind her right ear, black blazer collar over a white t-shirt, one single small gold koshkar-muiz ram's-horn earring, light nude-rose lip. Head and shoulders centred inside a flat pale periwinkle blue (#879ad9) circle of cut paper on a plain warm paper ground (#f4ece6). Simplified to the fewest possible shapes so it still reads at 48 pixels: the bob silhouette, the face, the white t-shirt and the gold earring. Bold silhouette, generous margin. Visible paper grain, no outlines. Not plush, not 3D, not anime. No text, no letters, no numbers, no logo."
+  },
+  {
+   "n": 29,
+   "file": "design/mascot/chick/modern/29-turnaround.webp",
+   "use": "разворот в три вида",
+   "job": "99423cc0-25be-4782-89b6-21b8e3501735",
+   "aspect": "16:9",
+   "resolution": "2k",
+   "references": [
+    "c795f99c-0102-4614-87aa-19b9fc973283"
+   ],
+   "prompt": "Character turnaround sheet. Same character as the reference image, same cut-paper collage technique: 'Chick', a contemporary young Kazakh woman — sharp blunt chin-length black bob, oversized black blazer over a plain white t-shirt, straight light-blue jeans, white sneakers, a small black shoulder bag, natural minimal makeup, one single small gold koshkar-muiz ram's-horn earring in her right ear, the only cultural detail. No cap, no hat, no feather, no traditional clothing, no ornament. She is shown three times side by side at the same scale, full figure, standing relaxed: front view, three-quarter view, side profile. Plain flat warm paper ground (#f4ece6) with visible paper grain, one soft contact shadow under each figure. Flat shapes, no outlines, minimal face. Not plush, not 3D, not anime. No text, no letters, no numbers, no labels, no logo, no frame."
+  }
+ ]
+}

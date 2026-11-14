@@ -37,8 +37,18 @@ export function coverFor(category: Category): Cover {
   return plate(p.file, p.bg, p.focus);
 }
 
-/** The club: an envelope whose flap is a snowy peak (an invitation). */
-export const CLUB_COVER = plate("club", "#e33409");
+/**
+ * The club: Chick, the mascot, holds up the invitation — the envelope whose
+ * flap is a snowy peak, kept from the earlier club plate on the same red.
+ * Chick is a modern Almaty girl (bob, oversized blazer, white tee) with one
+ * Kazakh detail only, a single gold koshkar-muiz earring: 14 Nov 2026,
+ * «должен быть только subtle намек, только один элемент… очень модерно».
+ * Manifest: design/mascot/chick/chick-modern-2026-11-14.json.
+ */
+export const CLUB_COVER = plate("chick-club", "#e52e01");
+
+/** 404: Chick looks at her phone, a little lost. Same set as CLUB_COVER. */
+export const NOT_FOUND_COVER = plate("chick-404", "#c4882b");
 
 /**
  * Heublein 1970: two silhouettes, a lake of gold. Portrait (3:4).
