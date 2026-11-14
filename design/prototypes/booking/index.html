@@ -1,0 +1,703 @@
+<title>Бронь бөлек</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@300;400;500;600;700;800&display=swap">
+<style>
+/* Layout: the product's own dark canvas; five places across the top, one
+   working phone in the middle, the reasons beside it, the research below.
+   One typeface (Inter Tight) in its weights, square print corners, colours
+   from the site's category plates — the brand as it ships. Single look by
+   choice: the site is dark-first, so this page is too. */
+:root {
+  color-scheme: dark;
+  --canvas: #231917;
+  --tile: #2b201b;
+  --line: #4a382e;
+  --ink: #f3ead6;
+  --ink-2: #e9d7b5;
+  --ink-3: #c9b48f;
+  --gold: #d1b475;
+  --paper: #e9d7b5;
+  --paper-ink: #231917;
+  --font: "Inter Tight", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --ease: cubic-bezier(0.22, 1, 0.36, 1);
+  --dur: 520ms;
+}
+* { box-sizing: border-box; }
+body { background: var(--canvas); color: var(--ink); font-family: var(--font); font-size: 16px; line-height: 1.45; letter-spacing: -0.011em; -webkit-font-smoothing: antialiased; }
+.page { max-width: 1240px; margin: 0 auto; padding-block: 28px 64px; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); display: flex; flex-direction: column; gap: 32px; }
+a { color: var(--gold); }
+button { font: inherit; color: inherit; letter-spacing: inherit; }
+:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
+
+/* Head */
+.top { display: grid; gap: 14px; max-width: 760px; }
+.brand { display: flex; align-items: center; gap: 10px; font-weight: 700; font-size: 20px; letter-spacing: -0.03em; }
+.brand svg { width: 22px; height: 22px; }
+.eyebrow { font-size: 13px; font-weight: 600; letter-spacing: 0.02em; color: var(--ink-3); }
+h1 { margin: 0; font-size: clamp(34px, 5vw, 56px); font-weight: 600; letter-spacing: -0.035em; line-height: 1.04; text-wrap: balance; }
+.lead { margin: 0; font-size: 18px; color: var(--ink-2); max-width: 62ch; }
+.lead a { white-space: nowrap; }
+
+/* Category picker: five plates, the same plates the catalogue shows. */
+.cats { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 12px; }
+.cat { display: grid; grid-template-columns: 56px 1fr; gap: 12px; align-items: center; padding: 8px; text-align: left; background: transparent; border: 1px solid var(--line); cursor: pointer; transition: border-color 200ms var(--ease), background-color 200ms var(--ease); }
+.cat img { width: 56px; height: 70px; object-fit: cover; display: block; background: var(--tile); }
+.cat b { display: block; font-size: 16px; font-weight: 600; }
+.cat span { display: block; font-size: 13px; color: var(--ink-3); line-height: 1.3; }
+.cat[aria-selected="true"] { border-color: var(--gold); background: var(--tile); }
+.cat:hover { border-color: var(--ink-3); }
+@media (max-width: 980px) {
+  .cats { display: flex; overflow-x: auto; scroll-snap-type: x mandatory; padding-bottom: 4px; }
+  .cat { flex: 0 0 210px; scroll-snap-align: start; }
+}
+
+/* Stage: phone + reasons */
+.stage { display: grid; grid-template-columns: 402px minmax(0, 1fr); gap: 40px; align-items: start; }
+.device { border: 6px solid #120c0a; border-radius: 44px; background: #120c0a; box-shadow: 0 0 0 1px var(--line); overflow: hidden; }
+.why { display: grid; gap: 22px; padding-top: 6px; min-width: 0; }
+.why h2 { margin: 0; font-size: 28px; font-weight: 600; letter-spacing: -0.03em; line-height: 1.1; text-wrap: balance; }
+.why .flow { margin: 0; font-size: 16px; color: var(--ink-2); }
+.why ul { margin: 0; padding: 0; list-style: none; display: grid; gap: 12px; }
+.why li { padding: 14px 0 0; border-top: 1px solid var(--line); display: grid; gap: 4px; }
+.why li b { font-weight: 600; color: var(--ink); }
+.why li span { color: var(--ink-3); font-size: 15px; }
+.why .src { font-size: 13px; color: var(--ink-3); }
+.why .now { font-size: 13px; font-weight: 600; color: var(--gold); letter-spacing: 0.02em; }
+@media (max-width: 860px) {
+  .stage { grid-template-columns: minmax(0, 1fr); gap: 28px; }
+  .device { border: 0; border-radius: 0; box-shadow: none; background: transparent; margin-inline: calc(-1 * max(16px, env(safe-area-inset-left, 0px))); }
+}
+
+/* ---------- The phone: every colour comes from its category ---------- */
+.phone { --bg: #f6f3ec; --ink-p: #191c40; --ink-p2: #3b3f63; --ink-p3: #5d6180; --line-p: #d5d3cf; --surf: #fffdf8; --acc: #2b3f86; --acc-ink: #ffffff; --soft: #e4e8f5;
+  --t-free: #fffdf8; --t-free-s: #191c40; --t-busy: #dedbd3; --t-busy-s: #b9b5ab; --t-sel: #2b3f86; --t-sel-ink: #ffffff; --chair: #b9b5ab; --floor: #efebe2; --decor: #c9c3b6;
+  background: var(--bg); color: var(--ink-p); height: 800px; overflow-y: auto; overscroll-behavior: contain; position: relative; display: flex; flex-direction: column; scrollbar-width: thin; }
+@media (max-width: 860px) { .phone { height: auto; overflow: visible; } }
+.phone[data-cat="cafe"] { --bg: #f3e6cf; --ink-p: #2b1d12; --ink-p2: #4f3a26; --ink-p3: #6d5236; --line-p: #dcc6a3; --surf: #fbf3e4; --acc: #cd831b; --acc-ink: #231917; --soft: #f0d7ad;
+  --t-free: #fbf3e4; --t-free-s: #6d5236; --t-busy: #e6d3b3; --t-busy-s: #cdb48c; --t-sel: #cd831b; --t-sel-ink: #231917; --chair: #cdb48c; --floor: #efdfc3; --decor: #c7a979; }
+.phone[data-cat="bar"] { --bg: #0e1330; --ink-p: #f3ead6; --ink-p2: #d9cdb2; --ink-p3: #a9a08c; --line-p: #2c3566; --surf: #161d45; --acc: #d1b475; --acc-ink: #14100c; --soft: #232c5e;
+  --t-free: #1d2552; --t-free-s: #d9cdb2; --t-busy: #141a3c; --t-busy-s: #343d70; --t-sel: #d1b475; --t-sel-ink: #14100c; --chair: #3a4478; --floor: #111737; --decor: #4a5590; }
+.phone[data-cat="beauty"] { --bg: #eceff9; --ink-p: #1f2140; --ink-p2: #3c3f64; --ink-p3: #5b5f84; --line-p: #cdd2ea; --surf: #fbfbff; --acc: #b3261e; --acc-ink: #ffffff; --soft: #dfe3f6; }
+.phone[data-cat="wellness"] { --bg: #f1e9da; --ink-p: #2c2418; --ink-p2: #4c3f2b; --ink-p3: #6b5a40; --line-p: #dccdb1; --surf: #faf5ea; --acc: #bd8f37; --acc-ink: #231917; --soft: #ead9b5;
+  --t-free: #faf5ea; --t-free-s: #6b5a40; --t-busy: #e5dccb; --t-busy-s: #cdbf9f; --t-sel: #bd8f37; --t-sel-ink: #231917; --floor: #ece2cf; --decor: #c7b48c; }
+
+.ph-hero { position: relative; height: 168px; flex: none; overflow: hidden; background: var(--soft); }
+.ph-hero img { width: 100%; height: 100%; object-fit: cover; object-position: 50% 38%; display: block; }
+.ph-hero .cap { position: absolute; inset: auto 0 0 0; padding: 40px 18px 14px; background: linear-gradient(to top, rgba(10, 8, 6, 0.72), rgba(10, 8, 6, 0)); color: #fbf6ea; }
+.ph-hero .cap b { display: block; font-size: 22px; font-weight: 600; letter-spacing: -0.03em; line-height: 1.1; }
+.ph-hero .cap span { font-size: 13px; opacity: 0.9; }
+.ph-hero .demo { position: absolute; top: 12px; right: 12px; font-size: 11px; font-weight: 600; letter-spacing: 0.04em; padding: 3px 7px; background: rgba(10, 8, 6, 0.6); color: #fbf6ea; }
+
+.ref { margin: 14px 18px 0; padding: 11px 13px; background: var(--soft); display: grid; grid-template-columns: 34px 1fr; gap: 10px; align-items: center; font-size: 14px; line-height: 1.35; color: var(--ink-p); }
+.ref .av { width: 34px; height: 34px; border-radius: 50%; background: var(--acc); color: var(--acc-ink); display: grid; place-items: center; font-weight: 700; font-size: 14px; }
+.ref small { display: block; color: var(--ink-p3); font-size: 12.5px; }
+
+.steps { display: flex; gap: 6px; margin: 16px 18px 0; padding: 0; list-style: none; }
+.steps li { flex: 1; font-size: 12px; font-weight: 600; color: var(--ink-p3); padding-top: 7px; border-top: 3px solid var(--line-p); line-height: 1.25; }
+.steps li.done { color: var(--ink-p2); border-top-color: var(--ink-p3); }
+.steps li.on { color: var(--ink-p); border-top-color: var(--acc); }
+
+.body { padding: 18px 18px 24px; display: grid; gap: 22px; flex: 1; align-content: start; }
+.body.enter { animation: stepIn var(--dur) var(--ease) both; }
+@keyframes stepIn { from { opacity: 0; transform: translateY(10px); } }
+.back { justify-self: start; background: none; border: 0; padding: 0; font-size: 14px; color: var(--ink-p3); cursor: pointer; }
+.group { display: grid; gap: 10px; }
+.group > .lab { font-size: 13px; font-weight: 600; color: var(--ink-p2); letter-spacing: 0.01em; display: flex; justify-content: space-between; gap: 8px; }
+.group > .lab em { font-style: normal; font-weight: 500; color: var(--ink-p3); }
+.h { margin: 0; font-size: 22px; font-weight: 600; letter-spacing: -0.03em; line-height: 1.15; }
+
+.chips { display: flex; gap: 8px; overflow-x: auto; scrollbar-width: none; margin-inline: -18px; padding-inline: 18px; }
+.chips::-webkit-scrollbar { display: none; }
+.chips.wrap { flex-wrap: wrap; overflow: visible; margin-inline: 0; padding-inline: 0; }
+.chip { flex: none; min-height: 44px; padding: 8px 13px; background: var(--surf); border: 1px solid var(--line-p); color: var(--ink-p); cursor: pointer; text-align: center; line-height: 1.15; font-variant-numeric: tabular-nums; transition: background-color 180ms var(--ease), border-color 180ms var(--ease), color 180ms var(--ease); }
+.chip small { display: block; font-size: 11.5px; color: var(--ink-p3); margin-top: 2px; }
+.chip[aria-pressed="true"] { background: var(--acc); border-color: var(--acc); color: var(--acc-ink); }
+.chip[aria-pressed="true"] small { color: var(--acc-ink); opacity: 0.85; }
+.chip:disabled { cursor: default; color: var(--ink-p3); background: transparent; border-style: dashed; text-decoration: line-through; text-decoration-thickness: 1px; }
+.times { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; }
+.times .chip { padding: 8px 4px; font-size: 15px; font-weight: 500; }
+
+.stepper { display: grid; grid-template-columns: 48px 1fr 48px; align-items: center; border: 1px solid var(--line-p); background: var(--surf); max-width: 220px; }
+.stepper button { height: 46px; background: none; border: 0; font-size: 22px; cursor: pointer; color: var(--ink-p); }
+.stepper button:disabled { color: var(--line-p); cursor: default; }
+.stepper output { text-align: center; font-weight: 600; font-variant-numeric: tabular-nums; }
+
+.tabs { display: flex; border-bottom: 1px solid var(--line-p); gap: 4px; overflow-x: auto; scrollbar-width: none; }
+.tab { flex: none; background: none; border: 0; border-bottom: 3px solid transparent; padding: 8px 4px 9px; margin-right: 10px; cursor: pointer; color: var(--ink-p3); font-weight: 600; font-size: 15px; text-align: left; }
+.tab small { display: block; font-weight: 500; font-size: 12px; }
+.tab[aria-selected="true"] { color: var(--ink-p); border-bottom-color: var(--acc); }
+
+.plan { background: var(--floor); border: 1px solid var(--line-p); }
+.plan svg { display: block; width: 100%; height: auto; }
+.plan .t { cursor: pointer; }
+.plan .t .body-shape { fill: var(--t-free); stroke: var(--t-free-s); stroke-width: 0.45; transition: fill 160ms var(--ease); }
+.plan .t text { fill: var(--ink-p); font-family: var(--font); font-weight: 600; }
+.plan .t .ch { fill: var(--chair); }
+.plan .t.busy { cursor: default; }
+.plan .t.busy .body-shape { fill: var(--t-busy); stroke: var(--t-busy-s); }
+.plan .t.busy text { fill: var(--ink-p3); }
+.plan .t.busy .x { stroke: var(--t-busy-s); stroke-width: 0.45; }
+.plan .t.unfit { cursor: default; }
+.plan .t.unfit .body-shape { fill: transparent; stroke: var(--t-busy-s); stroke-dasharray: 1 0.8; }
+.plan .t.unfit text { fill: var(--ink-p3); }
+.plan .t.sel .body-shape { fill: var(--t-sel); stroke: var(--t-sel); }
+.plan .t.sel text { fill: var(--t-sel-ink); }
+.plan .t.sel .ch { fill: var(--t-sel); }
+.plan .t:focus-visible { outline: none; }
+.plan .t:focus-visible .body-shape { stroke: var(--acc); stroke-width: 1.1; }
+.plan .decor rect, .plan .decor path { fill: none; stroke: var(--decor); stroke-width: 0.4; stroke-dasharray: 1.2 1; }
+.plan .decor text { fill: var(--ink-p3); font-family: var(--font); font-size: 2.7px; }
+.plan .zone { fill: transparent; stroke: none; transition: fill 200ms var(--ease); }
+.plan .zone.on { fill: var(--acc); fill-opacity: 0.2; }
+.plan .zone-l { fill: var(--ink-p2); font-family: var(--font); font-size: 3px; font-weight: 600; }
+.legend { display: flex; flex-wrap: wrap; gap: 6px 14px; font-size: 12.5px; color: var(--ink-p3); }
+.legend i { display: inline-block; width: 12px; height: 12px; vertical-align: -2px; margin-right: 5px; border: 1px solid var(--t-free-s); background: var(--t-free); }
+.legend i.b { background: var(--t-busy); border-color: var(--t-busy-s); }
+.legend i.u { background: transparent; border: 1px dashed var(--t-busy-s); }
+.legend i.s { background: var(--t-sel); border-color: var(--t-sel); }
+.pick { padding: 12px 14px; background: var(--surf); border: 1px solid var(--line-p); display: grid; gap: 2px; font-size: 14px; }
+.pick b { font-size: 16px; font-weight: 600; }
+.pick span { color: var(--ink-p3); }
+
+.cards { display: grid; gap: 8px; }
+.card { display: grid; grid-template-columns: 1fr auto; gap: 2px 12px; align-items: center; padding: 13px 14px; background: var(--surf); border: 1px solid var(--line-p); text-align: left; cursor: pointer; transition: border-color 180ms var(--ease), background-color 180ms var(--ease); }
+.card b { font-weight: 600; font-size: 16px; }
+.card span { color: var(--ink-p3); font-size: 13.5px; grid-column: 1; }
+.card .price { grid-row: 1 / span 2; grid-column: 2; font-weight: 600; font-variant-numeric: tabular-nums; }
+.card[aria-pressed="true"] { border-color: var(--acc); box-shadow: inset 0 0 0 1px var(--acc); background: var(--soft); }
+
+.masters { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; }
+.master { display: grid; justify-items: center; gap: 6px; padding: 10px 4px; background: var(--surf); border: 1px solid var(--line-p); cursor: pointer; font-size: 13px; line-height: 1.2; text-align: center; }
+.master .av { width: 44px; height: 44px; border-radius: 50%; display: grid; place-items: center; font-weight: 700; background: var(--soft); color: var(--ink-p); }
+.master small { color: var(--ink-p3); font-size: 11.5px; }
+.master[aria-pressed="true"] { border-color: var(--acc); box-shadow: inset 0 0 0 1px var(--acc); }
+.master[aria-pressed="true"] .av { background: var(--acc); color: var(--acc-ink); }
+
+.field { display: grid; gap: 6px; }
+.field label { font-size: 13px; font-weight: 600; color: var(--ink-p2); }
+.field input, .field textarea { font: inherit; font-size: 17px; color: var(--ink-p); background: var(--surf); border: 1px solid var(--line-p); padding: 12px 13px; min-height: 50px; width: 100%; border-radius: 0; font-variant-numeric: tabular-nums; }
+.field input:focus, .field textarea:focus { outline: none; border-color: var(--acc); box-shadow: inset 0 0 0 1px var(--acc); }
+.field .err { font-size: 13px; color: var(--acc); font-weight: 600; }
+.phone[data-cat="cafe"] .field .err, .phone[data-cat="wellness"] .field .err { color: #9a3322; }
+.phone[data-cat="bar"] .field .err { color: #f0a58f; }
+.field input[aria-invalid="true"] { border-color: #9a3322; }
+.hint { font-size: 13px; color: var(--ink-p3); margin: 0; }
+.switch { display: grid; grid-template-columns: 1fr auto; gap: 12px; align-items: center; background: none; border: 0; padding: 0; text-align: left; cursor: pointer; font-size: 15px; }
+.switch small { display: block; font-size: 12.5px; color: var(--ink-p3); }
+.switch .knob { width: 46px; height: 28px; background: var(--line-p); position: relative; transition: background-color 180ms var(--ease); }
+.switch .knob::after { content: ""; position: absolute; top: 3px; left: 3px; width: 22px; height: 22px; background: var(--surf); transition: transform 220ms var(--ease); }
+.switch[aria-checked="true"] .knob { background: var(--acc); }
+.switch[aria-checked="true"] .knob::after { transform: translateX(18px); }
+details.note summary { cursor: pointer; font-size: 14px; color: var(--ink-p2); font-weight: 600; list-style: none; }
+details.note summary::before { content: "+ "; }
+details.note[open] summary::before { content: "− "; }
+details.note textarea { margin-top: 8px; min-height: 80px; resize: vertical; }
+.sum { display: grid; gap: 0; border-top: 1px solid var(--line-p); }
+.sum div { display: grid; grid-template-columns: 96px 1fr; gap: 10px; padding: 9px 0; border-bottom: 1px solid var(--line-p); font-size: 14.5px; }
+.sum dt { color: var(--ink-p3); }
+.sum dd { margin: 0; font-weight: 500; }
+.perk { padding: 12px 14px; border: 1px dashed var(--acc); font-size: 14px; line-height: 1.4; }
+.perk b { font-weight: 600; }
+
+.bar { position: sticky; bottom: 0; flex: none; background: var(--bg); border-top: 1px solid var(--line-p); padding: 10px 18px calc(14px + env(safe-area-inset-bottom, 0px)); display: grid; gap: 6px; z-index: 2; }
+.bar .line { font-size: 13px; color: var(--ink-p3); font-variant-numeric: tabular-nums; min-height: 18px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.cta { width: 100%; min-height: 54px; background: var(--acc); color: var(--acc-ink); border: 0; font-weight: 600; font-size: 17px; cursor: pointer; transition: transform 120ms var(--ease); }
+.cta:active { transform: scale(0.985); }
+
+.done { padding: 22px 18px 28px; display: grid; gap: 18px; }
+.done .art { width: 132px; aspect-ratio: 4 / 5; background: #e52e01; border: 6px solid var(--paper); justify-self: start; animation: pop 620ms var(--ease) both; }
+.done .art img { width: 100%; height: 100%; object-fit: cover; display: block; }
+@keyframes pop { from { opacity: 0; transform: translateY(14px) scale(0.96); } }
+.done h3 { margin: 0; font-size: 28px; font-weight: 600; letter-spacing: -0.035em; line-height: 1.08; }
+.done .row { display: flex; flex-wrap: wrap; gap: 8px; }
+.ghost { min-height: 46px; padding: 10px 14px; background: transparent; border: 1px solid var(--line-p); color: var(--ink-p); cursor: pointer; font-weight: 500; }
+.toast { padding: 10px 12px; background: var(--ink-p); color: var(--bg); font-size: 14px; line-height: 1.35; animation: pop 320ms var(--ease) both; }
+.sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+
+/* Research */
+.research { display: grid; gap: 22px; border-top: 1px solid var(--line); padding-top: 28px; }
+.research h2 { margin: 0; font-size: clamp(26px, 3.4vw, 38px); font-weight: 600; letter-spacing: -0.035em; line-height: 1.08; text-wrap: balance; }
+.research > p { margin: 0; color: var(--ink-2); max-width: 70ch; font-size: 17px; }
+.facts { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 0 28px; }
+.fact { padding: 16px 0; border-top: 1px solid var(--line); display: grid; gap: 6px; align-content: start; }
+.fact .n { font-size: 34px; font-weight: 300; letter-spacing: -0.03em; line-height: 1; color: var(--gold); font-variant-numeric: tabular-nums; }
+.fact b { font-weight: 600; }
+.fact span { color: var(--ink-3); font-size: 14.5px; }
+.fact .s { font-size: 12.5px; color: var(--ink-3); }
+.rules { margin: 0; padding: 0; list-style: none; display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 0 28px; counter-reset: r; }
+.rules li { counter-increment: r; padding: 12px 0 12px 34px; border-top: 1px solid var(--line); position: relative; font-size: 15px; color: var(--ink-2); }
+.rules li::before { content: counter(r); position: absolute; left: 0; top: 12px; font-weight: 600; color: var(--gold); font-variant-numeric: tabular-nums; }
+.srcs { font-size: 13px; color: var(--ink-3); display: grid; gap: 4px; }
+.srcs a { color: var(--ink-3); word-break: break-word; }
+footer { font-size: 13px; color: var(--ink-3); border-top: 1px solid var(--line); padding-top: 16px; }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation: none !important; transition: none !important; }
+}
+</style>
+
+<div class="page">
+  <header class="top">
+    <div class="brand" aria-label="бөлек">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2 11 A10 10 0 0 1 22 11 Z" fill="#f3ead6"/><path d="M2 13 A10 10 0 0 0 22 13 Z" fill="#f3ead6"/></svg>
+      бөлек
+    </div>
+    <p class="eyebrow">Прототип брони · демо-данные</p>
+    <h1>Бронь за три касания</h1>
+    <p class="lead">Гость приходит по ссылке участницы из сторис, на телефоне. Время уже выбрано, место можно не выбирать, контактов два. У каждого вида мест — свой способ выбрать: стол в зале, стул у стойки, мастер или кабина. Живой сайт — <a href="https://bolek-almaty.netlify.app" target="_blank" rel="noopener">bolek-almaty.netlify.app</a>.</p>
+  </header>
+
+  <nav class="cats" role="tablist" aria-label="Вид места" id="cats"></nav>
+
+  <section class="stage">
+    <div class="device"><div class="phone" id="phone" data-cat="restaurant"></div></div>
+    <aside class="why" id="why" aria-label="Почему так"></aside>
+  </section>
+
+  <section class="research" id="research" aria-labelledby="research-h" hidden>
+    <p class="eyebrow">Ресерч</p>
+    <h2 id="research-h">Что подталкивает дойти до брони</h2>
+    <div id="research-body"></div>
+  </section>
+
+  <footer>Все места, мастера, цены и занятость — демо, чтобы показать поведение. Ничего не отправляется: кнопки работают внутри страницы.</footer>
+</div>
+
+<script>
+(() => {
+  const MEMBER = "Аружан";
+  const WD = ["вс", "пн", "вт", "ср", "чт", "пт", "сб"];
+  const MON = ["января", "февраля", "марта", "апреля", "мая", "июня", "июля", "августа", "сентября", "октября", "ноября", "декабря"];
+
+  const now = new Date();
+  const nowMin = now.getHours() * 60 + now.getMinutes();
+  const DAYS = Array.from({ length: 7 }, (_, i) => {
+    const d = new Date(now.getFullYear(), now.getMonth(), now.getDate() + i);
+    return { i, d, short: i === 0 ? "Сегодня" : i === 1 ? "Завтра" : `${WD[d.getDay()][0].toUpperCase()}${WD[d.getDay()].slice(1)}, ${d.getDate()}`, long: `${WD[d.getDay()]}, ${d.getDate()} ${MON[d.getMonth()]}` };
+  });
+
+  const hm = (m) => `${String(Math.floor(m / 60) % 24).padStart(2, "0")}:${String(m % 60).padStart(2, "0")}`;
+  const hash = (s) => { let h = 2166136261; for (let k = 0; k < s.length; k++) { h ^= s.charCodeAt(k); h = Math.imul(h, 16777619); } return h >>> 0; };
+  const busyAt = (key, d, m, base) => { const evening = m >= 18 * 60 && m <= 21 * 60 + 30; const p = base + (evening ? 22 : 0) + (d === 4 || d === 5 ? 8 : 0); return hash(`${key}|${d}|${Math.floor(m / 90)}`) % 100 < p; };
+  const guestsWord = (n) => `${n} ${n % 10 === 1 && n % 100 !== 11 ? "гость" : n % 10 >= 2 && n % 10 <= 4 && (n % 100 < 10 || n % 100 >= 20) ? "гостя" : "гостей"}`;
+  const seatsWord = (n) => `${n} ${n % 10 === 1 && n % 100 !== 11 ? "место" : n % 10 >= 2 && n % 10 <= 4 && (n % 100 < 10 || n % 100 >= 20) ? "места" : "мест"}`;
+  const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]);
+
+  /* ---------- Places ---------- */
+  const T = (id, x, y, w, h, shape, seats, tags = []) => ({ id, x, y, w, h, shape, seats, tags });
+  const CATS = {
+    cafe: {
+      tab: "Кафе", how: "время, гости и зона — один экран", img: "img/cafe.webp", venue: "Кафе «Дала»", sub: "Кофе и завтраки весь день",
+      perk: "десерт к кофе", steps: ["Когда и где", "Контакты"], flow: ["when", "contact"], open: 8 * 60, close: 21 * 60 + 30, prefer: null, base: 10, maxG: 6,
+      zones: [{ id: "any", name: "Куда удобно", note: "посадим сами" }, { id: "window", name: "У окна" }, { id: "hall", name: "Зал" }, { id: "terrace", name: "Терраса" }],
+      cafeTables: [[12, 9], [30, 9], [48, 9], [66, 9], [16, 31], [36, 31], [56, 31], [86, 14], [86, 34], [86, 52], [16, 50], [40, 50]],
+    },
+    restaurant: {
+      tab: "Ресторан", how: "зал и стол на плане", img: "img/restaurant.webp", venue: "Ресторан «Тау»", sub: "Ужины и обеды · три зала",
+      perk: "десерт от шефа", steps: ["Когда", "Стол", "Контакты"], flow: ["when", "where", "contact"], open: 12 * 60, close: 22 * 60 + 30, prefer: 19 * 60 + 30, base: 22, maxG: 10,
+      halls: [
+        { id: "main", name: "Основной зал", w: 100, h: 74, decor: [{ x: 3, y: 1, w: 94, h: 3.2, label: "окна" }, { x: 70, y: 54, w: 27, h: 16, label: "бар" }, { x: 2, y: 62, w: 14, h: 10, label: "вход" }],
+          tables: [T("1", 6, 11, 13, 9, "rect", 4, ["у окна"]), T("2", 26, 11, 10, 10, "round", 2, ["у окна"]), T("3", 43, 11, 13, 9, "rect", 4, ["у окна"]), T("4", 63, 11, 10, 10, "round", 2, ["у окна"]), T("5", 79, 11, 17, 9, "rect", 6, ["у окна", "большой"]),
+            T("6", 7, 33, 11, 11, "round", 4), T("7", 26, 34, 13, 9, "rect", 4), T("8", 46, 34, 17, 9, "rect", 6, ["диван"]), T("9", 71, 34, 10, 10, "round", 2, ["тихо"]),
+            T("10", 24, 55, 13, 9, "rect", 4, ["у бара"]), T("11", 46, 55, 10, 10, "round", 2, ["у бара"])] },
+        { id: "veranda", name: "Веранда", w: 100, h: 56, decor: [{ x: 3, y: 1, w: 94, h: 3.2, label: "вид на горы" }, { x: 2, y: 44, w: 16, h: 10, label: "выход" }],
+          tables: [T("21", 8, 11, 10, 10, "round", 2, ["вид на горы"]), T("22", 26, 11, 10, 10, "round", 2, ["вид на горы"]), T("23", 44, 11, 13, 9, "rect", 4, ["вид на горы"]), T("24", 65, 11, 13, 9, "rect", 4, ["вид на горы"]),
+            T("25", 30, 32, 17, 9, "rect", 6), T("26", 58, 32, 13, 9, "rect", 4), T("27", 82, 31, 10, 10, "round", 2, ["угол"])] },
+        { id: "room", name: "Кабинет", w: 100, h: 56, decor: [{ x: 2, y: 42, w: 14, h: 12, label: "дверь" }, { x: 80, y: 6, w: 17, h: 30, label: "экран" }],
+          tables: [T("К", 22, 18, 50, 16, "rect", 10, ["отдельная комната"])] },
+      ],
+    },
+    bar: {
+      tab: "Бар", how: "стойка, стол или диван", img: "img/bar.webp", venue: "Бар «Түн»", sub: "Коктейли и музыка до 02:00",
+      perk: "закуска к столу", steps: ["Когда", "Место", "Контакты"], flow: ["when", "where", "contact"], open: 18 * 60, close: 25 * 60, prefer: 20 * 60 + 30, base: 26, maxG: 8,
+    },
+    beauty: {
+      tab: "Салон красоты", how: "услуга, мастер, время", img: "img/beauty.webp", venue: "Студия «Лак»", sub: "Ногти, брови, укладки",
+      perk: "уход для рук в подарок", steps: ["Услуга", "Мастер и время", "Контакты"], flow: ["service", "slot", "contact"], open: 10 * 60, close: 20 * 60, base: 34,
+      services: [{ id: "mani", name: "Маникюр с покрытием", min: 90, price: "9 000 ₸" }, { id: "pedi", name: "Педикюр с покрытием", min: 90, price: "12 000 ₸" }, { id: "brow", name: "Брови: форма и окрашивание", min: 45, price: "6 000 ₸" }, { id: "hair", name: "Укладка", min: 60, price: "8 000 ₸" }],
+      masters: [{ id: "any", name: "Любой", av: "★" }, { id: "a", name: "Айгерим", av: "А" }, { id: "d", name: "Дана", av: "Д" }, { id: "m", name: "Мадина", av: "М" }],
+    },
+    wellness: {
+      tab: "Wellness", how: "ритуал, время, кабина", img: "img/wellness.webp", venue: "Хаммам «Бу»", sub: "Хаммам, массаж, SPA",
+      perk: "чайная пауза после", steps: ["Ритуал", "Время и кабина", "Контакты"], flow: ["service", "slot", "contact"], open: 10 * 60, close: 21 * 60, base: 30,
+      services: [{ id: "hammam", name: "Хаммам с пилингом", min: 90, price: "15 000 ₸", rooms: ["h"] }, { id: "massage", name: "Массаж спины", min: 60, price: "12 000 ₸", rooms: ["c1", "c2", "c3"] }, { id: "duo", name: "SPA для двоих", min: 120, price: "38 000 ₸", rooms: ["duo"] }],
+      rooms: [{ id: "c1", name: "Кабина 1", x: 4, y: 6, w: 28, h: 22 }, { id: "c2", name: "Кабина 2", x: 36, y: 6, w: 28, h: 22 }, { id: "c3", name: "Кабина 3", x: 68, y: 6, w: 28, h: 22 }, { id: "duo", name: "Для двоих", x: 4, y: 34, w: 44, h: 24 }, { id: "h", name: "Хаммам", x: 52, y: 34, w: 44, h: 24 }],
+    },
+  };
+
+  /* Bar: the counter is an arc of stools; then high tables and two sofas. */
+  (() => {
+    const stools = [];
+    for (let k = 0; k < 10; k++) { const a = (Math.PI / 180) * (24 + k * (132 / 9)); stools.push({ id: `S${k + 1}`, n: k + 1, x: 50 + 44 * Math.cos(a), y: -8 + 44 * Math.sin(a) }); }
+    CATS.bar.stools = stools;
+    CATS.bar.tables = [T("Т1", 10, 44, 10, 10, "round", 2, ["высокий"]), T("Т2", 30, 46, 10, 10, "round", 4, ["высокий"]), T("Т3", 60, 46, 10, 10, "round", 4, ["высокий"]), T("Т4", 80, 44, 10, 10, "round", 2, ["высокий"]),
+      T("Д1", 6, 64, 30, 10, "rect", 6, ["диван", "лаунж"]), T("Д2", 64, 64, 30, 10, "rect", 8, ["диван", "лаунж"])];
+  })();
+
+  /* ---------- State ---------- */
+  const firstFree = (cat, d, fits) => { const c = CATS[cat]; for (let m = c.open; m <= c.close; m += 30) { if (d === 0 && m < nowMin + 30) continue; if (fits(m)) return m; } return null; };
+  const S = {};
+  function fresh(cat) {
+    const c = CATS[cat];
+    const s = { step: 0, d: 0, g: 2, m: null, hall: "main", table: "any", zone: "any", stools: [], service: null, master: "any", room: "any", name: "", phone: "", remind: true, note: "", done: false, tried: false };
+    if (c.flow[0] === "when") { s.m = defaultTime(cat, s); if (s.m === null) { s.d = 1; s.m = defaultTime(cat, s); } }
+    return s;
+  }
+  function defaultTime(cat, s) {
+    const c = CATS[cat];
+    const ok = (m) => timeOpen(cat, s, s.d, m);
+    if (c.prefer) { const list = []; for (let m = c.open; m <= c.close; m += 30) if (!(s.d === 0 && m < nowMin + 30) && ok(m)) list.push(m); if (!list.length) return null; return list.reduce((a, b) => Math.abs(b - c.prefer) < Math.abs(a - c.prefer) ? b : a); }
+    return firstFree(cat, s.d, ok);
+  }
+  const fitsSeats = (t, g) => g <= t.seats && (t.seats <= g + 3 || t.seats <= 4);
+  const tableBusy = (cat, t, d, m) => busyAt(`${cat}${t.id}`, d, m, CATS[cat].base);
+  function allTables(cat) { const c = CATS[cat]; return cat === "restaurant" ? c.halls.flatMap((h) => h.tables) : cat === "bar" ? c.tables : []; }
+  function freeStoolRun(d, m, g) { const st = CATS.bar.stools; let run = 0; for (const x of st) { run = stoolBusy(x, d, m) ? 0 : run + 1; if (run >= g) return true; } return false; }
+  const stoolBusy = (x, d, m) => busyAt(`bar${x.id}`, d, m, 30);
+  function timeOpen(cat, s, d, m) {
+    const c = CATS[cat];
+    if (cat === "cafe") return !busyAt("cafe-all", d, m, 8);
+    if (cat === "restaurant") return allTables(cat).some((t) => fitsSeats(t, s.g) && !tableBusy(cat, t, d, m));
+    if (cat === "bar") return allTables(cat).some((t) => fitsSeats(t, s.g) && !tableBusy(cat, t, d, m)) || (s.g <= 4 && freeStoolRun(d, m, s.g));
+    if (cat === "beauty") return (s.master === "any" ? c.masters.slice(1) : c.masters.filter((x) => x.id === s.master)).some((x) => !busyAt(`b${x.id}${s.service}`, d, m, c.base));
+    if (cat === "wellness") { const sv = c.services.find((x) => x.id === s.service); const rooms = sv ? sv.rooms : []; return rooms.some((r) => (s.room === "any" || s.room === r) && !busyAt(`w${r}`, d, m, c.base)); }
+    return true;
+  }
+
+  let cat = "restaurant";
+  let animate = false;
+  const $cats = document.getElementById("cats");
+  const $phone = document.getElementById("phone");
+  const $why = document.getElementById("why");
+
+  /* ---------- Category picker ---------- */
+  $cats.innerHTML = Object.entries(CATS).map(([id, c]) => `<button class="cat" role="tab" id="tab-${id}" aria-selected="${id === cat}" aria-controls="phone" data-cat="${id}"><img src="${c.img}" alt="" loading="lazy"><span><b>${c.tab}</b><span>${c.how}</span></span></button>`).join("");
+  $cats.addEventListener("click", (e) => { const b = e.target.closest(".cat"); if (!b) return; switchCat(b.dataset.cat); });
+  $cats.addEventListener("keydown", (e) => {
+    const ids = Object.keys(CATS); const i = ids.indexOf(cat);
+    if (e.key === "ArrowRight" || e.key === "ArrowLeft") { e.preventDefault(); const n = ids[(i + (e.key === "ArrowRight" ? 1 : ids.length - 1)) % ids.length]; switchCat(n); document.getElementById(`tab-${n}`).focus(); }
+  });
+  function switchCat(id) {
+    cat = id; if (!S[cat]) S[cat] = fresh(cat);
+    $cats.querySelectorAll(".cat").forEach((b) => b.setAttribute("aria-selected", String(b.dataset.cat === cat)));
+    $phone.dataset.cat = cat; $phone.scrollTop = 0; animate = true; render();
+    try { localStorage.setItem("bolek-proto-cat", cat); } catch (_) {}
+  }
+
+  /* ---------- Rendering ---------- */
+  function render() {
+    const c = CATS[cat], s = S[cat];
+    if (s.done) { $phone.innerHTML = doneView(); renderWhy(); return; }
+    const stepId = c.flow[s.step];
+    $phone.innerHTML = `
+      <div class="ph-hero"><img src="${c.img}" alt=""><span class="demo">ДЕМО</span><div class="cap"><b>${c.venue}</b><span>${c.sub} · Алматы</span></div></div>
+      <div class="ref"><span class="av" aria-hidden="true">${MEMBER[0]}</span><span>Вы от <b>${MEMBER}</b><small>Бонус по её ссылке: ${c.perk}</small></span></div>
+      <ol class="steps" aria-label="Шаги">${c.steps.map((n, i) => `<li class="${i < s.step ? "done" : i === s.step ? "on" : ""}" ${i === s.step ? 'aria-current="step"' : ""}>${i + 1}. ${n}</li>`).join("")}</ol>
+      <div class="body${animate ? " enter" : ""}" id="body">${s.step > 0 ? `<button class="back" data-act="back">← Назад</button>` : ""}${views[stepId]()}</div>
+      <div class="bar"><div class="line" id="line">${esc(summaryLine())}</div><button class="cta" id="cta" data-act="next">${esc(ctaLabel())}</button></div>`;
+    animate = false;
+    if (stepId === "contact") wireContact();
+    renderWhy();
+  }
+
+  const dateChips = (s) => `<div class="group"><div class="lab">Дата</div><div class="chips" role="group" aria-label="Дата">${DAYS.map((x) => `<button class="chip" data-act="day" data-v="${x.i}" aria-pressed="${s.d === x.i}">${x.short}</button>`).join("")}</div></div>`;
+  function timeGrid(s, label = "Время", note = "") {
+    const c = CATS[cat]; const out = [];
+    for (let m = c.open; m <= c.close; m += 30) {
+      const past = s.d === 0 && m < nowMin + 30; if (past) continue;
+      const open = timeOpen(cat, s, s.d, m);
+      out.push(`<button class="chip" data-act="time" data-v="${m}" aria-pressed="${s.m === m}" ${open ? "" : `disabled aria-label="${hm(m)}, мест нет"`}>${hm(m)}</button>`);
+    }
+    return `<div class="group"><div class="lab">${label}${note ? `<em>${note}</em>` : ""}</div>${out.length ? `<div class="times" role="group" aria-label="${label}">${out.join("")}</div>` : `<p class="hint">На сегодня записи больше нет — выберите другой день.</p>`}</div>`;
+  }
+  const guests = (s, max) => `<div class="group"><div class="lab">Гостей</div><div class="stepper"><button data-act="g-" aria-label="Меньше гостей" ${s.g <= 1 ? "disabled" : ""}>−</button><output aria-live="polite">${guestsWord(s.g)}</output><button data-act="g+" aria-label="Больше гостей" ${s.g >= max ? "disabled" : ""}>+</button></div></div>`;
+
+  const views = {
+    when() {
+      const c = CATS[cat], s = S[cat];
+      let extra = "";
+      if (cat === "cafe") extra = `<div class="group"><div class="lab">Где сесть<em>можно не выбирать</em></div><div class="chips wrap" role="group" aria-label="Зона">${c.zones.map((z) => `<button class="chip" data-act="zone" data-v="${z.id}" aria-pressed="${s.zone === z.id}">${z.name}${z.note ? `<small>${z.note}</small>` : ""}</button>`).join("")}</div><div class="plan">${cafePlan(s)}</div></div>`;
+      return `<h2 class="h">${cat === "bar" ? "Когда придёте?" : cat === "cafe" ? "Когда заглянете?" : "Когда вас ждать?"}</h2>${dateChips(s)}${guests(s, c.maxG)}${timeGrid(s, "Время", s.m !== null ? "ближайшее удобное уже выбрано" : "")}${extra}`;
+    },
+    where() {
+      const c = CATS[cat], s = S[cat];
+      if (cat === "restaurant") {
+        const hall = c.halls.find((h) => h.id === s.hall);
+        const tabs = c.halls.map((h) => { const n = h.tables.filter((t) => fitsSeats(t, s.g) && !tableBusy(cat, t, s.d, s.m)).length; return `<button class="tab" role="tab" data-act="hall" data-v="${h.id}" aria-selected="${h.id === s.hall}">${h.name}<small>${n ? `${n} свободно` : "нет мест"}</small></button>`; }).join("");
+        return `<h2 class="h">Где сядете?</h2>
+          <div class="chips wrap"><button class="chip" data-act="table" data-v="any" aria-pressed="${s.table === "any"}">Любой подходящий<small>хостес посадит за лучший</small></button></div>
+          <div class="group"><div class="tabs" role="tablist" aria-label="Залы">${tabs}</div><div class="plan">${planSVG(hall, s)}</div>${legend()}</div>${pickInfo(s)}`;
+      }
+      if (cat === "bar") {
+        return `<h2 class="h">Где хотите сидеть?</h2>
+          <div class="chips wrap"><button class="chip" data-act="table" data-v="any" aria-pressed="${s.table === "any" && !s.stools.length}">Любое место<small>решим на входе</small></button></div>
+          <div class="group"><div class="lab">Стойка, столы и диваны<em>${s.g <= 4 ? `касание ставит ${seatsWord(s.g)} рядом` : "стойка — до 4 человек"}</em></div><div class="plan">${barPlan(s)}</div>${legend()}</div>${pickInfo(s)}`;
+      }
+      return "";
+    },
+    service() {
+      const c = CATS[cat], s = S[cat];
+      return `<h2 class="h">${cat === "beauty" ? "Что делаем?" : "Какой ритуал?"}</h2><div class="cards" role="group" aria-label="Услуга">${c.services.map((x) => `<button class="card" data-act="service" data-v="${x.id}" aria-pressed="${s.service === x.id}"><b>${x.name}</b><span>${x.min} мин${x.id === "duo" ? " · для двоих" : ""}</span><span class="price">${x.price}</span></button>`).join("")}</div><p class="hint">Цены — демо. Оплата на месте.</p>`;
+    },
+    slot() {
+      const c = CATS[cat], s = S[cat];
+      if (cat === "beauty") {
+        const ms = c.masters.map((x) => { const probe = { ...s, master: x.id }; const first = firstFree(cat, s.d, (m) => timeOpen(cat, probe, s.d, m)); return `<button class="master" data-act="master" data-v="${x.id}" aria-pressed="${s.master === x.id}"><span class="av" aria-hidden="true">${x.av}</span>${x.name}<small>${first !== null ? `с ${hm(first)}` : "нет окон"}</small></button>`; }).join("");
+        return `<h2 class="h">Когда и к кому?</h2>${dateChips(s)}<div class="group"><div class="lab">Мастер<em>«любой» — раньше всего</em></div><div class="masters" role="group" aria-label="Мастер">${ms}</div></div>${timeGrid(s, "Время")}`;
+      }
+      const sv = c.services.find((x) => x.id === s.service);
+      return `<h2 class="h">Когда придёте?</h2>${dateChips(s)}${timeGrid(s, "Время")}<div class="group"><div class="lab">Кабина<em>${sv.id === "duo" ? "только парная" : sv.id === "hammam" ? "только хаммам" : "одна из трёх"}</em></div><div class="chips wrap"><button class="chip" data-act="room" data-v="any" aria-pressed="${s.room === "any"}">Любая свободная</button></div><div class="plan">${roomsPlan(s, sv)}</div>${legend()}</div>${pickInfo(s)}`;
+    },
+    contact() {
+      const c = CATS[cat], s = S[cat];
+      return `<h2 class="h">Кому оставить бронь?</h2>
+        <div class="field"><label for="f-name">Имя</label><input id="f-name" name="name" autocomplete="given-name" enterkeyhint="next" value="${esc(s.name)}" placeholder="Как к вам обращаться"><span class="err" id="e-name" hidden>Напишите имя — хостес встретит по нему</span></div>
+        <div class="field"><label for="f-phone">Телефон</label><input id="f-phone" name="tel" type="tel" inputmode="tel" autocomplete="tel" enterkeyhint="done" value="${esc(s.phone)}" placeholder="+7 (7__) ___-__-__"><span class="err" id="e-phone" hidden>Нужно 10 цифр после +7</span><p class="hint">Номер видит только ${cat === "beauty" || cat === "wellness" ? "студия" : "заведение"}. Без регистрации и пароля.</p></div>
+        <button class="switch" role="switch" data-act="remind" aria-checked="${s.remind}"><span>Напомнить в WhatsApp<small>за 2 часа, с кнопкой «отменить»</small></span><span class="knob" aria-hidden="true"></span></button>
+        <details class="note"${s.note ? " open" : ""}><summary>Добавить пожелание</summary><div class="field"><label for="f-note" class="sr">Пожелание</label><textarea id="f-note" placeholder="${cat === "restaurant" || cat === "cafe" ? "Детский стул, аллергия, повод" : "Что важно знать мастеру"}">${esc(s.note)}</textarea></div></details>
+        <dl class="sum">${summaryRows().map(([k, v]) => `<div><dt>${k}</dt><dd>${esc(v)}</dd></div>`).join("")}</dl>
+        <p class="perk">На входе скажите: <b>«я от ${MEMBER}»</b> — ${c.perk}.</p>`;
+    },
+  };
+
+  /* ---------- Plans ---------- */
+  function chairs(t) {
+    const out = [];
+    if (t.shape === "round") { const r = t.w / 2, cx = t.x + r, cy = t.y + t.h / 2; for (let k = 0; k < t.seats; k++) { const a = (Math.PI * 2 * k) / t.seats - Math.PI / 2; out.push(`<circle class="ch" cx="${(cx + (r + 2.2) * Math.cos(a)).toFixed(2)}" cy="${(cy + (r + 2.2) * Math.sin(a)).toFixed(2)}" r="1.25"/>`); } }
+    else { const top = Math.ceil(t.seats / 2), bot = Math.floor(t.seats / 2); const row = (n, y) => { for (let k = 0; k < n; k++) out.push(`<rect class="ch" x="${(t.x + (t.w * (k + 1)) / (n + 1) - 1.6).toFixed(2)}" y="${y}" width="3.2" height="1.8"/>`); }; row(top, t.y - 2.6); row(bot, t.y + t.h + 0.8); }
+    return out.join("");
+  }
+  function tableG(t, state, label) {
+    const cx = t.x + t.w / 2, cy = t.y + t.h / 2;
+    const shape = t.shape === "round" ? `<ellipse class="body-shape" cx="${cx}" cy="${cy}" rx="${t.w / 2}" ry="${t.h / 2}"/>` : `<rect class="body-shape" x="${t.x}" y="${t.y}" width="${t.w}" height="${t.h}"/>`;
+    const x = state === "busy" ? `<line class="x" x1="${t.x + 1}" y1="${t.y + t.h - 1}" x2="${t.x + t.w - 1}" y2="${t.y + 1}"/>` : "";
+    const interactive = state === "free" || state === "sel";
+    return `<g class="t ${state}" data-act="table" data-v="${t.id}" role="button" tabindex="${interactive ? 0 : -1}" aria-pressed="${state === "sel"}" aria-disabled="${!interactive}" aria-label="${esc(label)}">${chairs(t)}${shape}${x}<text x="${cx}" y="${cy}" text-anchor="middle" dominant-baseline="central" font-size="${Math.min(4, Math.max(2.8, Math.min(t.w, t.h) * 0.36))}">${t.id}</text></g>`;
+  }
+  function tState(t, s) { if (tableBusy(cat, t, s.d, s.m)) return "busy"; if (!fitsSeats(t, s.g)) return "unfit"; return s.table === t.id ? "sel" : "free"; }
+  const stLabel = { free: "свободен", busy: "занят", unfit: "не по числу гостей", sel: "выбран" };
+  function decor(list) { return `<g class="decor" aria-hidden="true">${list.map((d) => `<rect x="${d.x}" y="${d.y}" width="${d.w}" height="${d.h}"/><text x="${d.x + d.w / 2}" y="${d.y + d.h / 2}" text-anchor="middle" dominant-baseline="central">${d.label}</text>`).join("")}</g>`; }
+  function planSVG(hall, s) {
+    return `<svg viewBox="-2 -2 ${hall.w + 4} ${hall.h + 4}" role="group" aria-label="${hall.name}: план">${decor(hall.decor)}${hall.tables.map((t) => { const st = tState(t, s); return tableG(t, st, `Стол ${t.id}, ${seatsWord(t.seats)}${t.tags.length ? ", " + t.tags.join(", ") : ""} — ${stLabel[st]}`); }).join("")}</svg>`;
+  }
+  function barPlan(s) {
+    const c = CATS.bar;
+    const arc = (r) => { const a0 = (Math.PI / 180) * 18, a1 = (Math.PI / 180) * 162; return `M ${(50 + r * Math.cos(a0)).toFixed(2)} ${(-8 + r * Math.sin(a0)).toFixed(2)} A ${r} ${r} 0 0 1 ${(50 + r * Math.cos(a1)).toFixed(2)} ${(-8 + r * Math.sin(a1)).toFixed(2)}`; };
+    const counter = `<g class="decor" aria-hidden="true"><path d="${arc(36)}"/><path d="${arc(39)}"/><text x="50" y="26" text-anchor="middle">барная стойка</text></g>`;
+    const stools = c.stools.map((x) => {
+      const busy = stoolBusy(x, s.d, s.m), unfit = s.g > 4, sel = s.stools.includes(x.id);
+      const st = busy ? "busy" : unfit ? "unfit" : sel ? "sel" : "free";
+      const interactive = st === "free" || st === "sel";
+      return `<g class="t ${st}" data-act="stool" data-v="${x.id}" role="button" tabindex="${interactive ? 0 : -1}" aria-pressed="${sel}" aria-disabled="${!interactive}" aria-label="Стул ${x.n} у стойки — ${stLabel[st]}"><circle class="body-shape" cx="${x.x.toFixed(2)}" cy="${x.y.toFixed(2)}" r="3.1"/>${busy ? `<line class="x" x1="${(x.x - 2).toFixed(2)}" y1="${(x.y + 2).toFixed(2)}" x2="${(x.x + 2).toFixed(2)}" y2="${(x.y - 2).toFixed(2)}"/>` : ""}<text x="${x.x.toFixed(2)}" y="${x.y.toFixed(2)}" text-anchor="middle" dominant-baseline="central" font-size="2.7">${x.n}</text></g>`;
+    }).join("");
+    const tables = c.tables.map((t) => { const st = tState(t, s); const g = tableG(t, st, `${t.tags.includes("диван") ? "Диван" : "Стол"} ${t.id}, ${seatsWord(t.seats)}${t.tags.length ? ", " + t.tags.join(", ") : ""} — ${stLabel[st]}`); return g; }).join("");
+    const sofas = `<g class="decor" aria-hidden="true"><rect x="6" y="75.5" width="30" height="2"/><rect x="64" y="75.5" width="30" height="2"/><rect x="40" y="62" width="20" height="14"/><text x="50" y="69" text-anchor="middle">диджей</text></g>`;
+    return `<svg viewBox="-2 -2 104 82" role="group" aria-label="Бар: стойка, высокие столы и диваны">${counter}${sofas}${stools}${tables}</svg>`;
+  }
+  function cafePlan(s) {
+    const z = (id, x, y, w, h, l) => `<rect class="zone ${s.zone === id ? "on" : ""}" x="${x}" y="${y}" width="${w}" height="${h}"/><text class="zone-l" x="${x + 2}" y="${y + 4.2}">${l}</text>`;
+    const tables = CATS.cafe.cafeTables.map(([x, y]) => `<g aria-hidden="true"><circle cx="${x}" cy="${y + 5}" r="4" fill="var(--t-free)" stroke="var(--t-free-s)" stroke-width="0.4"/><circle cx="${x - 6}" cy="${y + 5}" r="1.3" fill="var(--chair)"/><circle cx="${x + 6}" cy="${y + 5}" r="1.3" fill="var(--chair)"/></g>`).join("");
+    return `<svg viewBox="-2 -2 104 68" role="img" aria-label="План кафе: у окна, зал и терраса">${z("window", 0, 0, 74, 20, "У окна")}${z("hall", 0, 22, 74, 42, "Зал")}${z("terrace", 77, 0, 23, 64, "Терраса")}<g class="decor" aria-hidden="true"><rect x="0" y="0" width="74" height="64"/><rect x="77" y="0" width="23" height="64"/></g>${tables}</svg>`;
+  }
+  function roomsPlan(s, sv) {
+    const c = CATS.wellness;
+    const rooms = c.rooms.map((r) => {
+      const fits = sv.rooms.includes(r.id), busy = s.m !== null && busyAt(`w${r.id}`, s.d, s.m, c.base), sel = s.room === r.id;
+      const st = !fits ? "unfit" : busy ? "busy" : sel ? "sel" : "free"; const interactive = st === "free" || st === "sel";
+      return `<g class="t ${st}" data-act="room" data-v="${r.id}" role="button" tabindex="${interactive ? 0 : -1}" aria-pressed="${sel}" aria-disabled="${!interactive}" aria-label="${r.name} — ${!fits ? "не для этого ритуала" : stLabel[st]}"><rect class="body-shape" x="${r.x}" y="${r.y}" width="${r.w}" height="${r.h}"/>${busy && fits ? `<line class="x" x1="${r.x + 2}" y1="${r.y + r.h - 2}" x2="${r.x + r.w - 2}" y2="${r.y + 2}"/>` : ""}<text x="${r.x + r.w / 2}" y="${r.y + r.h / 2}" text-anchor="middle" dominant-baseline="central" font-size="3.4">${r.name}</text></g>`;
+    }).join("");
+    return `<svg viewBox="0 0 100 62" role="group" aria-label="Кабины">${rooms}</svg>`;
+  }
+  const legend = () => `<div class="legend" aria-hidden="true"><span><i></i>свободно</span><span><i class="b"></i>занято</span><span><i class="u"></i>не подходит</span><span><i class="s"></i>ваше</span></div>`;
+  function pickInfo(s) {
+    if (cat === "bar" && s.stools.length) { const n = s.stools.map((id) => +id.slice(1)); return `<div class="pick"><b>Стойка, ${n.length > 1 ? `места ${Math.min(...n)}–${Math.max(...n)}` : `место ${n[0]}`}</b><span>Рядом с барменом, ${seatsWord(n.length)}</span></div>`; }
+    if (cat === "wellness") { if (s.room === "any") return `<div class="pick"><b>Любая свободная кабина</b><span>Администратор подготовит ближайшую</span></div>`; const r = CATS.wellness.rooms.find((x) => x.id === s.room); return `<div class="pick"><b>${r.name}</b><span>Закреплена за вами на ${CATS.wellness.services.find((x) => x.id === s.service).min} мин</span></div>`; }
+    if (s.table === "any") return cat === "bar" ? `<div class="pick"><b>Любое место</b><span>Посадим, где свободно: стойка, стол или диван</span></div>` : `<div class="pick"><b>Любой подходящий стол</b><span>Хостес посадит за лучший свободный на ${guestsWord(s.g)}</span></div>`;
+    const t = allTables(cat).find((x) => x.id === s.table); if (!t) return "";
+    const hall = cat === "restaurant" ? CATS.restaurant.halls.find((h) => h.tables.includes(t)).name + ", " : "";
+    return `<div class="pick"><b>${t.tags.includes("диван") ? "Диван" : "Стол"} ${t.id}</b><span>${hall}${seatsWord(t.seats)}${t.tags.length ? " · " + t.tags.join(", ") : ""}</span></div>`;
+  }
+
+  /* ---------- Summary & CTA ---------- */
+  function placeText(s) {
+    if (cat === "cafe") return CATS.cafe.zones.find((z) => z.id === s.zone).name.replace("Куда удобно", "Любое место");
+    if (cat === "bar" && s.stools.length) { const n = s.stools.map((id) => +id.slice(1)); return n.length > 1 ? `Стойка, ${Math.min(...n)}–${Math.max(...n)}` : `Стойка, ${n[0]}`; }
+    if (cat === "beauty") { const m = CATS.beauty.masters.find((x) => x.id === s.master); return m.id === "any" ? "Любой мастер" : m.name; }
+    if (cat === "wellness") return s.room === "any" ? "Любая кабина" : CATS.wellness.rooms.find((x) => x.id === s.room).name;
+    if (s.table === "any") return cat === "bar" ? "Любое место" : "Любой стол";
+    const t = allTables(cat).find((x) => x.id === s.table); return t ? `${t.tags.includes("диван") ? "Диван" : "Стол"} ${t.id}` : "";
+  }
+  function summaryRows() {
+    const c = CATS[cat], s = S[cat]; const day = DAYS[s.d];
+    const rows = [];
+    if (c.services) { const sv = c.services.find((x) => x.id === s.service); if (sv) rows.push(["Услуга", `${sv.name}, ${sv.min} мин`]); }
+    rows.push(["Когда", `${day.long}, ${s.m !== null ? hm(s.m) : "—"}`]);
+    if (!c.services) rows.push(["Гости", guestsWord(s.g)]);
+    rows.push([cat === "beauty" ? "Мастер" : cat === "wellness" ? "Кабина" : "Место", placeText(s)]);
+    if (c.services) { const sv = c.services.find((x) => x.id === s.service); if (sv) rows.push(["Цена", `${sv.price}, на месте`]); }
+    return rows;
+  }
+  function summaryLine() {
+    const c = CATS[cat], s = S[cat]; const parts = [];
+    if (c.services) { const sv = c.services.find((x) => x.id === s.service); if (!sv) return "Выберите, что хотите сделать"; parts.push(sv.name); }
+    if (s.m !== null && c.flow[s.step] !== "service") parts.push(`${DAYS[s.d].short}, ${hm(s.m)}`);
+    if (!c.services) parts.push(guestsWord(s.g));
+    if (s.step > 0 || cat === "cafe") parts.push(placeText(s));
+    return parts.join(" · ");
+  }
+  function ctaLabel() {
+    const c = CATS[cat], s = S[cat]; const stepId = c.flow[s.step]; const next = c.flow[s.step + 1];
+    if (stepId === "contact") return `Забронировать · ${DAYS[s.d].short.toLowerCase()}, ${hm(s.m)}`;
+    if (stepId === "service") return s.service ? (cat === "beauty" ? "Дальше: мастер и время" : "Дальше: время и кабина") : "Выберите услугу";
+    if (s.m === null) return "Выберите время";
+    if (next === "where") return cat === "bar" ? "Дальше: выбрать место" : "Дальше: выбрать стол";
+    return "Дальше: имя и телефон";
+  }
+
+  /* ---------- Actions ---------- */
+  $phone.addEventListener("click", (e) => {
+    const el = e.target.closest("[data-act]"); if (!el || el.disabled || el.getAttribute("aria-disabled") === "true") return;
+    act(el.dataset.act, el.dataset.v);
+  });
+  $phone.addEventListener("keydown", (e) => {
+    const el = e.target.closest('g[role="button"]'); if (!el) return;
+    if (e.key === "Enter" || e.key === " ") { e.preventDefault(); if (el.getAttribute("aria-disabled") !== "true") act(el.dataset.act, el.dataset.v, true); }
+  });
+  function act(a, v, keep) {
+    const c = CATS[cat], s = S[cat]; const stepId = c.flow[s.step];
+    const keepFocus = keep ? `[data-act="${a}"][data-v="${v}"]` : null;
+    switch (a) {
+      case "day": s.d = +v; s.stools = []; s.table = "any"; s.room = "any"; if (s.m === null || !timeOpen(cat, s, s.d, s.m) || (s.d === 0 && s.m < nowMin + 30)) s.m = c.flow[0] === "when" ? defaultTime(cat, s) : firstFree(cat, s.d, (m) => timeOpen(cat, s, s.d, m)); break;
+      case "time": s.m = +v; s.stools = []; if (s.table !== "any") { const t = allTables(cat).find((x) => x.id === s.table); if (t && tableBusy(cat, t, s.d, s.m)) s.table = "any"; } if (s.room !== "any" && busyAt(`w${s.room}`, s.d, s.m, c.base)) s.room = "any"; break;
+      case "g-": case "g+": s.g = Math.max(1, Math.min(c.maxG, s.g + (a === "g+" ? 1 : -1))); s.stools = []; s.table = "any"; if (s.m !== null && !timeOpen(cat, s, s.d, s.m)) s.m = defaultTime(cat, s); break;
+      case "zone": s.zone = v; break;
+      case "hall": s.hall = v; break;
+      case "table": s.table = v; s.stools = []; break;
+      case "stool": {
+        const st = c.stools; const i = st.findIndex((x) => x.id === v); const g = s.g; let pick = null;
+        for (let start = i; start > i - g && !pick; start--) { if (start < 0 || start + g > st.length) continue; const run = st.slice(start, start + g); if (run.every((x) => !stoolBusy(x, s.d, s.m))) pick = run.map((x) => x.id); }
+        if (pick) { s.stools = pick; s.table = "any"; } else toast(`Рядом нет ${seatsWord(g).replace(/^\d+ /, g + " свободных ")} — выберите другой стул или стол`);
+        break;
+      }
+      case "service": s.service = v; s.room = "any"; s.master = "any"; s.m = firstFree(cat, s.d, (m) => timeOpen(cat, s, s.d, m)); if (s.m === null) { s.d = 1; s.m = firstFree(cat, 1, (m) => timeOpen(cat, s, 1, m)); } break;
+      case "master": s.master = v; if (s.m === null || !timeOpen(cat, s, s.d, s.m)) s.m = firstFree(cat, s.d, (m) => timeOpen(cat, s, s.d, m)); break;
+      case "room": s.room = v; break;
+      case "remind": s.remind = !s.remind; break;
+      case "back": s.step = Math.max(0, s.step - 1); animate = true; $phone.scrollTop = 0; break;
+      case "next": return next();
+      case "restart": S[cat] = fresh(cat); animate = true; $phone.scrollTop = 0; break;
+      case "calendar": return toast("В прототипе календарь не подключён");
+      case "edit": s.done = false; s.step = c.flow.length - 1; animate = true; break;
+    }
+    if (stepId === "contact" && (a === "remind")) { const b = $phone.querySelector('[data-act="remind"]'); b.setAttribute("aria-checked", String(s.remind)); return; }
+    render();
+    if (keepFocus) { const f = $phone.querySelector(keepFocus); if (f) f.focus(); }
+  }
+  function next() {
+    const c = CATS[cat], s = S[cat]; const stepId = c.flow[s.step];
+    if (stepId === "service" && !s.service) return toast("Сначала выберите услугу");
+    if ((stepId === "when" || stepId === "slot") && s.m === null) return toast("Выберите время");
+    if (stepId === "contact") {
+      readContact(); s.tried = true; const ok = validate(true); if (!ok) return;
+      s.done = true; animate = true; $phone.scrollTop = 0; render(); return;
+    }
+    s.step++; animate = true; $phone.scrollTop = 0; render();
+    if (c.flow[s.step] === "contact") { const f = document.getElementById("f-name"); if (f && !s.name && window.matchMedia("(min-width: 861px)").matches) f.focus({ preventScroll: true }); }
+  }
+
+  /* ---------- Contact: mask and validation without re-rendering ---------- */
+  /* Kazakh numbers: +7 then 10 digits that start with 7. A typed 8 (trunk
+     prefix) or a repeated country 7 is dropped, so «8 701…», «+7 701…» and
+     «7701…» all end up as +7 (701) …. */
+  function national(raw) { let d = raw.replace(/\D/g, ""); if (raw.trim().startsWith("+7")) d = d.slice(1); while (d.length && (d[0] === "8" || (d.length > 10 && d[0] === "7"))) d = d.slice(1); return d.slice(0, 10); }
+  function fmtPhone(raw) {
+    const d = national(raw);
+    if (!d.length) return "";
+    let out = "+7 (" + d.slice(0, 3); if (d.length >= 3) out += ")"; if (d.length > 3) out += " " + d.slice(3, 6); if (d.length > 6) out += "-" + d.slice(6, 8); if (d.length > 8) out += "-" + d.slice(8, 10);
+    return out;
+  }
+  const digits = (p) => national(p);
+  function readContact() { const s = S[cat]; const n = document.getElementById("f-name"), p = document.getElementById("f-phone"), t = document.getElementById("f-note"); if (n) s.name = n.value; if (p) s.phone = p.value; if (t) s.note = t.value; }
+  function validate(focus) {
+    const s = S[cat]; const n = document.getElementById("f-name"), p = document.getElementById("f-phone");
+    const nameOk = s.name.trim().length > 0, phoneOk = digits(s.phone).length === 10;
+    const en = document.getElementById("e-name"), ep = document.getElementById("e-phone");
+    en.hidden = nameOk || !s.tried; ep.hidden = phoneOk || !(s.tried || s.phoneBlur);
+    n.setAttribute("aria-invalid", String(!nameOk && s.tried)); p.setAttribute("aria-invalid", String(!phoneOk && (s.tried || s.phoneBlur)));
+    if (focus && !nameOk) n.focus(); else if (focus && !phoneOk) p.focus();
+    return nameOk && phoneOk;
+  }
+  function wireContact() {
+    const s = S[cat]; const p = document.getElementById("f-phone"), n = document.getElementById("f-name"), t = document.getElementById("f-note");
+    p.addEventListener("input", () => { const f = fmtPhone(p.value); p.value = f; s.phone = f; if (s.tried || s.phoneBlur) validate(false); });
+    p.addEventListener("focus", () => { if (!p.value) { p.value = "+7 ("; s.phone = p.value; } });
+    p.addEventListener("blur", () => { if (digits(p.value).length === 0) { p.value = ""; s.phone = ""; } else { s.phoneBlur = true; validate(false); } });
+    n.addEventListener("input", () => { s.name = n.value; if (s.tried) validate(false); });
+    n.addEventListener("keydown", (e) => { if (e.key === "Enter") { e.preventDefault(); p.focus(); } });
+    p.addEventListener("keydown", (e) => { if (e.key === "Enter") { e.preventDefault(); next(); } });
+    t.addEventListener("input", () => { s.note = t.value; });
+  }
+
+  function doneView() {
+    const c = CATS[cat], s = S[cat]; const first = s.name.trim().split(/\s+/)[0];
+    return `<div class="done body enter">
+      <div class="art"><img src="img/chick-club.webp" alt=""></div>
+      <h3>${first ? esc(first) + ", ждём вас" : "Ждём вас"}</h3>
+      <dl class="sum">${[["Где", c.venue], ...summaryRows()].map(([k, v]) => `<div><dt>${k}</dt><dd>${esc(v)}</dd></div>`).join("")}</dl>
+      <p class="perk">На входе скажите: <b>«я от ${MEMBER}»</b> — ${c.perk}. Хостес уже видит вашу бронь.</p>
+      <p class="hint">${s.remind ? `Подтверждение и напоминание за 2 часа придут в WhatsApp на ${esc(s.phone)}.` : `Подтверждение придёт SMS на ${esc(s.phone)}.`} Отменить можно в один клик из сообщения.</p>
+      <div class="row"><button class="ghost" data-act="calendar">Добавить в календарь</button><button class="ghost" data-act="edit">Изменить</button><button class="ghost" data-act="restart">Новая бронь</button></div>
+    </div>`;
+  }
+
+  let toastTimer;
+  function toast(msg) {
+    const old = $phone.querySelector(".toast"); if (old) old.remove();
+    const el = document.createElement("div"); el.className = "toast"; el.setAttribute("role", "status"); el.textContent = msg; const bar = $phone.querySelector(".bar"); if (bar) bar.prepend(el); else ($phone.querySelector(".done .row") || $phone).after(el);
+    clearTimeout(toastTimer); toastTimer = setTimeout(() => el.remove(), 2600);
+  }
+
+  /* ---------- Why panel ---------- */
+  const WHY = {
+    common: {
+      when: [["Время уже выбрано", "Ближайшее свободное (в ресторане — ближе к 19:30, в баре — к 20:30). Гость меняет, только если нужно; не нужно — жмёт «Дальше»."],
+        ["Занятые слоты видны, но погашены", "Зачёркнуты и не нажимаются. Место выглядит живым без выдуманного «осталось 2 стола»."],
+        ["Гостей — кнопки ± вместо списка", "Одно касание большим пальцем; при смене числа гостей время и столы пересчитываются сами."]],
+      contact: [["Два поля: имя и телефон", "Без почты, регистрации и пароля. Маска +7 сама ставит скобки и дефисы, клавиатура цифровая."],
+        ["Кнопка говорит, что случится", "«Забронировать · пт, 19:30», а не «Отправить». Ошибки — под полем и только после попытки."],
+        ["Напоминание в WhatsApp включено", "С кнопкой «отменить»: гость, который не придёт, освобождает стол сам."],
+        ["Бонус участницы повторён", "Сверху и у кнопки: «я от Аружан — десерт от шефа». Это причина довести бронь до конца и сказать фразу на входе."]],
+    },
+    cafe: { title: "Кафе: всё на одном экране", flow: "Когда и где → Контакты. Два шага: в кафе заходят спонтанно, стол выбирать не нужно.",
+      when: [["Зона вместо стола", "«Куда удобно» выбрано по умолчанию. «У окна» или «Терраса» — для тех, кому важно; план подсвечивает зону, а не конкретный стол."]] },
+    restaurant: { title: "Ресторан: залы и все столы", flow: "Когда → Стол → Контакты. План — у тех, кому важно окно или диван; остальные берут «любой подходящий».",
+      where: [["«Любой подходящий» стоит первым и выбран", "Решение можно не принимать: хостес посадит за лучший. Выбор стола — бонус, а не обязательный шаг."],
+        ["Залы — вкладки со счётчиком", "«Веранда · 3 свободно»: видно, куда идти, ещё до плана."],
+        ["Каждый стол с местами и метками", "Стулья нарисованы, номер крупно, «у окна», «диван». Не по размеру — пунктир, занят — зачёркнут. Цвет не единственный признак."]] },
+    bar: { title: "Бар: стойка, столы, диваны", flow: "Когда → Место → Контакты. Вечерние слоты до 01:00; тёмный зал, золото — как сам бар.",
+      where: [["Стойка — стулья рядом", "Касание ставит столько стульев подряд, сколько гостей. Если рядом не хватает — подсказка, а не ошибка."],
+        ["Компания больше 4 — на диваны", "Стойка гаснет сама, остаются высокие столы и лаунж."]] },
+    beauty: { title: "Салон: услуга → мастер → время", flow: "Услуга → Мастер и время → Контакты. Стола нет: выбирают человека и окно.",
+      service: [["Сначала услуга", "От неё зависят длительность, цена и свободные мастера. Цена видна сразу, без сюрприза на месте."]],
+      slot: [["«Любой мастер» первым", "Показывает самое раннее окно. У каждого мастера — «с 12:30»: видно, к кому быстрее."],
+        ["Время пересчитывается под мастера", "Сменили мастера — время подставилось его ближайшее."]] },
+    wellness: { title: "Wellness: ритуал задаёт кабину", flow: "Ритуал → Время и кабина → Контакты. Спокойные цвета и больше воздуха.",
+      service: [["Ритуал, а не процедура из прайса", "Три понятные карточки с длительностью и ценой."]],
+      slot: [["Лишнего выбора нет", "Для двоих — только парная, хаммам — только хаммам; остальные кабины видны пунктиром и не нажимаются."]] },
+  };
+  function renderWhy() {
+    const c = CATS[cat], s = S[cat], w = WHY[cat];
+    const stepId = s.done ? "done" : c.flow[s.step];
+    const items = s.done ? [["Подтверждение сразу", "Что, где, когда, фраза на входе и как отменить. Маскот Чик держит приглашение — тот же знак, что в клубе."], ["Один клик до отмены", "Отменить проще, чем не прийти: заведение получает стол обратно."]] : [...(w[stepId] || []), ...(WHY.common[stepId] || [])];
+    $why.innerHTML = `<p class="now">${s.done ? "Готово" : `Шаг ${s.step + 1} из ${c.flow.length}: ${c.steps[s.step]}`}</p><h2>${w.title}</h2><p class="flow">${w.flow}</p><ul>${items.map(([b, t]) => `<li><b>${b}</b><span>${t}</span></li>`).join("")}</ul>`;
+  }
+
+  /* ---------- Boot ---------- */
+  let start = "restaurant";
+  try { const saved = localStorage.getItem("bolek-proto-cat"); if (saved && CATS[saved]) start = saved; } catch (_) {}
+  for (const id of Object.keys(CATS)) S[id] = fresh(id);
+  switchCat(start);
+})();
+</script>
