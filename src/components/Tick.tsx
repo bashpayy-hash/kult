@@ -5,7 +5,9 @@
  */
 export function Tick({ text, delay = 0, className = "" }: { text: string; delay?: number; className?: string }) {
   return (
-    <span className={`tick ${className}`} aria-label={text} style={{ ["--t0" as string]: `${delay}ms` }}>
+    <span className={`tick ${className}`} style={{ ["--t0" as string]: `${delay}ms` }}>
+      {/* The time in plain text for screen readers (aria-label is not allowed on a plain span). */}
+      <span className="sr-only">{text}</span>
       {[...text].map((ch, i) => (
         <span key={i} aria-hidden="true" style={{ ["--d" as string]: i }}>
           {ch}

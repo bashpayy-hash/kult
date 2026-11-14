@@ -16,3 +16,4 @@ design/map-source/*.json
 !design/map-source/pulled.json
 !design/map-source/walk-pulled.json
 design/map-source/dem/
+.agents/

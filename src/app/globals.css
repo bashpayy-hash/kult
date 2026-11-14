@@ -220,7 +220,7 @@ input[type="file"].field::file-selector-button {
    after another (.tick wraps the time; each digit is a span with --d). */
 @keyframes tick-in { from { transform: translateY(105%); } to { transform: none; } }
 .tick { display: inline-flex; overflow: hidden; vertical-align: bottom; }
-.tick > span {
+.tick > span:not(.sr-only) {
   display: inline-block;
   animation: tick-in var(--dur-enter) var(--ease-out) both;
   animation-delay: calc(var(--t0, 0ms) + var(--d, 0) * 30ms);

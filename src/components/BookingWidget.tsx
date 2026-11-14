@@ -216,7 +216,8 @@ function Flow({ lang, venueId, hours, halls, items, today, linkId, phrase, initi
               const minWidth = Math.min(960, Math.ceil(((h.width + 4) * 44) / smallest));
               return (
                 <div key={h.id}>
-                  <div className="overflow-x-auto rounded-[var(--radius-inner)] border border-line bg-canvas p-2">
+                  {/* A region the keyboard can reach and scroll, even before a time makes the tables pickable. */}
+                  <div tabIndex={0} role="region" aria-label={`${b.plan}: ${(lang === "kk" && h.name_kk) || h.name}`} className="overflow-x-auto rounded-[var(--radius-inner)] border border-line bg-canvas p-2 outline-none focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--color-accent)]">
                     <div style={{ minWidth }}>
                       <FloorPlan hall={h} items={items} stateOf={stateOf} describe={describe} onSelect={chosenSlot === null ? undefined : (x) => setTableId(chosenTable?.id === x.id ? null : x.id)} />
                     </div>

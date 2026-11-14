@@ -134,8 +134,9 @@ export default async function Overview({ searchParams }: { searchParams: Promise
             <p className="enter mt-4 max-w-[34rem] text-[17px] text-ink-2" style={{ ["--i" as string]: 3 }}>{C.count(total)}</p>
             {nearest.length ? (
               <>
-                <h2 className="enter label mt-10" style={{ ["--i" as string]: 4 }}>{C.nearestTitle}</h2>
-                <ul className="mt-2 border-t border-line">
+                {/* A small label over the list, not a section heading: the list is named by it. */}
+                <p id="nearest-title" className="enter label mt-10" style={{ ["--i" as string]: 4 }}>{C.nearestTitle}</p>
+                <ul aria-labelledby="nearest-title" className="mt-2 border-t border-line">
                   {nearest.map(({ v, f, at }, k) => (
                     <li key={v.id} className="enter border-b border-line" style={{ ["--i" as string]: 5 + k }}>
                       <Link href={`/v/${v.slug}?d=${f.date}&t=${at}#book`} className="group flex min-h-14 items-center justify-between gap-4 py-2.5">
