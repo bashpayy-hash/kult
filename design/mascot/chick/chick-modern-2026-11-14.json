@@ -31,7 +31,7 @@
   "processing": "WebP q82, 480/900, без обрезки (у генераций нет бумажного поля)",
   "bg": {
    "chick-club": "#e52e01",
-   "chick-404": "#c4882b"
+   "chick-404": "#7ca5ac"
   },
   "masters": [
    "design/plates/source/chick-club.webp",
@@ -201,5 +201,76 @@
    ],
    "prompt": "Character turnaround sheet. Same character as the reference image, same cut-paper collage technique: 'Chick', a contemporary young Kazakh woman — sharp blunt chin-length black bob, oversized black blazer over a plain white t-shirt, straight light-blue jeans, white sneakers, a small black shoulder bag, natural minimal makeup, one single small gold koshkar-muiz ram's-horn earring in her right ear, the only cultural detail. No cap, no hat, no feather, no traditional clothing, no ornament. She is shown three times side by side at the same scale, full figure, standing relaxed: front view, three-quarter view, side profile. Plain flat warm paper ground (#f4ece6) with visible paper grain, one soft contact shadow under each figure. Flat shapes, no outlines, minimal face. Not plush, not 3D, not anime. No text, no letters, no numbers, no labels, no logo, no frame."
   }
- ]
+ ],
+ "retro": {
+  "request": "Владелец (фото: гостиница «Казахстан» с короной на фоне гор, кинотеатр-модернизм 70-х, Зелёный базар, троллейбус): «вот элементы такого ретро вайба казахстана тоже нужно добавить».",
+  "rule": "Чик остаётся современной; ретро — это город вокруг неё: корона гостиницы «Казахстан», красно-кремовый троллейбус, голубая «Волга» ГАЗ-21, стекло и белый камень советского модернизма, выцветшая советская цветная печать 70-х. Фото владельца не копируются, только описаны в промптах.",
+  "replaces": "на сайте 404 (22-404) и в питче сцены 23–26",
+  "items": [
+   {
+    "n": 31,
+    "file": "design/mascot/chick/modern/retro/31-404.webp",
+    "use": "сайт: 404 → public/plates/chick-404-*.webp",
+    "job": "4bb2c64b-1ad8-4bec-ab07-5083dfe05652",
+    "aspect": "4:5",
+    "resolution": "1k",
+    "references": [
+     "c795f99c-0102-4614-87aa-19b9fc973283"
+    ],
+    "prompt": "Same character as the reference image, same cut-paper collage technique: 'Chick', a contemporary young Kazakh woman — sharp blunt chin-length black bob tucked behind her right ear, oversized black blazer over a plain white t-shirt, straight light-blue jeans, white sneakers, natural minimal makeup, one single small gold koshkar-muiz ram's-horn earring, the only cultural detail. No cap, no hat, no feather, no traditional clothing. Scene: she stands at a trolleybus stop on a wide Almaty avenue in the late 1970s, looking down at her phone with raised brows and a small puzzled pout, the other hand lifted palm up as if asking 'where is it?'. Behind her: a red-and-cream Soviet trolleybus with two long roof poles, a pale-blue Volga GAZ-21 car, and far away the tall Hotel Kazakhstan tower with its golden openwork crown in front of snowy mountains. Retro Almaty mood: slightly faded 1970s Soviet colour-print palette — faded teal-blue sky, cream, brick red, mustard, grey asphalt. The modern girl stands out against the retro city. Visible paper grain, flat cut-paper shapes, no outlines. Not plush, not 3D, not anime. No text, no letters, no numbers, no signs, no route numbers, no logo, no frame."
+   },
+   {
+    "n": 32,
+    "file": "design/mascot/chick/modern/retro/32-cover.webp",
+    "use": "питч: обложка",
+    "job": "449cc574-607c-417f-89eb-3cb3f64bc2ad",
+    "aspect": "4:3",
+    "resolution": "2k",
+    "references": [
+     "c795f99c-0102-4614-87aa-19b9fc973283",
+     "ea07ce1a-9eb3-489c-bacc-2dfddb264d06"
+    ],
+    "prompt": "Illustration for a pitch deck cover, same composition as the second reference. Same character as the first reference image, same cut-paper collage technique: 'Chick', a contemporary young Kazakh woman — sharp blunt chin-length black bob tucked behind her right ear, oversized black blazer over a plain white t-shirt, natural minimal makeup, one single small gold koshkar-muiz ram's-horn earring, the only cultural detail. No cap, no feather, no traditional clothing. Scene: evening in an Almaty restaurant; she sits at a small round marble table by a large window, raising a tall glass of sparkling water with a lemon slice; outside the window, at dusk: the tall Hotel Kazakhstan tower with its golden openwork crown standing in front of snowy mountains, a few lit windows. Retro Almaty mood: slightly faded 1970s Soviet colour-print palette for the city outside. The vignette sits in the lower right two thirds of the frame and the plain flat warm paper ground (#f4ece6) fills the left side and top, leaving a large empty area on the left for a title. Visible paper grain, flat shapes, no outlines, no glow effects. Not plush, not 3D, not anime. No text, no letters, no numbers, no logo, no signs."
+   },
+   {
+    "n": 33,
+    "file": "design/mascot/chick/modern/retro/33-story.webp",
+    "use": "питч: «Как это работает»",
+    "job": "6316875f-c892-4bd4-bf3f-ed329d221c21",
+    "aspect": "4:3",
+    "resolution": "2k",
+    "references": [
+     "c795f99c-0102-4614-87aa-19b9fc973283",
+     "488bb7b1-118b-4cd7-bf01-4d7248d37eca"
+    ],
+    "prompt": "Illustration for a pitch deck, composition like the second reference. Same character as the first reference image, same cut-paper collage technique: 'Chick', a contemporary young Kazakh woman — sharp blunt chin-length black bob tucked behind her right ear, oversized black blazer over a plain white t-shirt, straight light-blue jeans, white sneakers, natural minimal makeup, one single small gold koshkar-muiz ram's-horn earring, the only cultural detail. No cap, no feather, no traditional clothing. Scene: she films a story on her phone at the entrance of a restaurant set in a 1970s Soviet-modernist building of Almaty: a big glass curtain wall with a thin dark grid inside a white stone box, warm amber light inside; two young women friends walk in behind her, smiling, one with long hair in a camel coat, one with a high ponytail in a grey coat; a pale-blue vintage Volga GAZ-21 car is parked at the kerb. Retro Almaty mood: slightly faded 1970s Soviet colour-print palette. The vignette sits in the lower right two thirds of the frame and the plain flat warm paper ground (#f4ece6) fills the left side and top with empty space. Visible paper grain, flat shapes, no outlines, no glow effects. Not plush, not 3D, not anime. No text, no letters, no numbers, no logo, no signs, no slogans, no readable screens."
+   },
+   {
+    "n": 34,
+    "file": "design/mascot/chick/modern/retro/34-night.webp",
+    "use": "питч: тёмный слайд «2»",
+    "job": "a435b5d5-55c8-42d7-aa76-89098e97e0b0",
+    "aspect": "4:3",
+    "resolution": "2k",
+    "references": [
+     "c795f99c-0102-4614-87aa-19b9fc973283",
+     "ea5eaaab-5b58-46e0-9c78-016249cab180"
+    ],
+    "prompt": "Night illustration for a pitch deck, composition like the second reference. Same character as the first reference image, same cut-paper collage technique: 'Chick', a contemporary young Kazakh woman — sharp blunt chin-length black bob tucked behind her right ear, oversized black blazer over a plain white t-shirt, natural minimal makeup, one single small gold koshkar-muiz ram's-horn earring, the only cultural detail. No cap, no feather, no traditional clothing. Scene: night on a restaurant rooftop terrace; she leans on a simple railing with a phone in her hand, looking over Almaty: small flat gold paper squares for city lights, the tall Hotel Kazakhstan tower with its golden openwork crown lit up, and dark mountains with snowy peaks behind. The vignette sits in the lower right two thirds of the frame and the plain flat deep warm brown paper ground (#261412) fills the left side and top, leaving a large empty area on the left for a big number. Palette: deep brown, black, white, gold. Visible paper grain, flat shapes, no outlines, no glow effects. Not plush, not 3D, not anime. No text, no letters, no numbers, no logo."
+   },
+   {
+    "n": 35,
+    "file": "design/mascot/chick/modern/retro/35-road.webp",
+    "use": "питч: «Что дальше»",
+    "job": "01a0891e-669e-4c3d-aad7-ef7d07f12539",
+    "aspect": "4:3",
+    "resolution": "2k",
+    "references": [
+     "c795f99c-0102-4614-87aa-19b9fc973283",
+     "e181e6e0-2e07-41b2-9e1b-f785c1bf28b1"
+    ],
+    "prompt": "Illustration for a pitch deck, composition like the second reference. Same character as the first reference image, same cut-paper collage technique: 'Chick', a contemporary young Kazakh woman — sharp blunt chin-length black bob tucked behind her right ear, oversized black blazer over a plain white t-shirt, straight light-blue jeans, white sneakers, natural minimal makeup, one single small gold koshkar-muiz ram's-horn earring, the only cultural detail. No cap, no feather, no traditional clothing. Scene: she walks confidently along a road pulling a small black suitcase. On the left, retro Almaty: snowy mountains, the Hotel Kazakhstan tower with its golden openwork crown and a red-and-cream Soviet trolleybus with long roof poles; on the right, far away, a modern flat city skyline with a tall golden tower topped by a sphere (Astana's Baiterek). The vignette sits in the lower right two thirds of the frame and the plain flat warm paper ground (#f4ece6) fills the left side and top with empty space. Palette: warm paper, black, white, light blue, brick red, cream, gold, soft faded teal sky. Visible paper grain, flat shapes, no outlines. Not plush, not 3D, not anime. No text, no letters, no numbers, no logo, no signs."
+   }
+  ]
+ }
 }

@@ -47,8 +47,14 @@ export function coverFor(category: Category): Cover {
  */
 export const CLUB_COVER = plate("chick-club", "#e52e01");
 
-/** 404: Chick looks at her phone, a little lost. Same set as CLUB_COVER. */
-export const NOT_FOUND_COVER = plate("chick-404", "#c4882b");
+/**
+ * 404: Chick, a little lost at a trolleybus stop in 1970s Alma-Ata — the
+ * red-and-cream trolleybus, a pale-blue Volga, Hotel Kazakhstan's golden
+ * crown before the mountains, faded Soviet colour print. The girl stays
+ * modern, the city is retro: 14 Nov 2026, «вот элементы такого ретро вайба
+ * казахстана тоже нужно добавить».
+ */
+export const NOT_FOUND_COVER = plate("chick-404", "#7ca5ac");
 
 /**
  * Heublein 1970: two silhouettes, a lake of gold. Portrait (3:4).
