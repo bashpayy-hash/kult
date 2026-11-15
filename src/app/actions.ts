@@ -6,7 +6,7 @@ import { dicts } from "@/lib/i18n/dicts";
 import { isLang, LANG_COOKIE, type Lang } from "@/lib/i18n";
 import { bool, int, isUuid, str, strOrNull, values } from "@/lib/forms";
 import { almatyToday, earliestStart, isIsoDate, normalizePhone, instagramHandle, shiftDate } from "@/lib/format";
-import { fits, isFree, LEAD_MINUTES, pickTable, slotList, toCalendar, type PlanItem } from "@/lib/booking";
+import { fits, isFree, isZone, LEAD_MINUTES, pickTable, slotList, toCalendar, type PlanItem } from "@/lib/booking";
 import { loadPlan, loadTaken } from "@/lib/venueData";
 import { getVisitor } from "@/lib/visitor";
 import { CATEGORIES, type Category, type FormState } from "@/lib/types";
@@ -125,6 +125,9 @@ export async function submitBooking(_prev: FormState, fd: FormData): Promise<For
   const slot = int(fd, "slot");
   const party = int(fd, "party_size");
   const tableId = str(fd, "table_id", 40) || null;
+  // «У окна», «у бара»: with no table picked, the server seats the guest there.
+  const zoneRaw = str(fd, "zone", 20);
+  const zone = isZone(zoneRaw) ? zoneRaw : null;
   const comment = strOrNull(fd, "comment", 500);
   const consent = bool(fd, "consent");
 
@@ -177,8 +180,8 @@ export async function submitBooking(_prev: FormState, fd: FormData): Promise<For
         if (!fits(table, party)) return { error: t.errors.tableSize(party), values: keep };
         if (!isFree(table.id, slot, venue.hold_minutes, taken)) return { error: t.errors.tableBusy, values: keep };
       } else {
-        table = pickTable(tables, party, slot, venue.hold_minutes, taken);
-        if (!table) return { error: t.errors.noTables(party), values: keep };
+        table = pickTable(tables, party, slot, venue.hold_minutes, taken, zone && tables.some((x) => x.zone === zone) ? zone : null);
+        if (!table) return { error: zone ? t.errors.zoneBusy : t.errors.noTables(party), values: keep };
       }
     }
 

@@ -1,16 +1,19 @@
 "use client";
 
-import { useActionState, useRef, useState } from "react";
+import { useActionState, useRef, useState, useTransition } from "react";
 import { savePlan } from "../../actions";
+import { draftPlan } from "../../planAi";
+import { ImageInput } from "../../_ui";
 import { FormError, SubmitButton } from "@/components/form";
-import type { PlanHall, PlanItem } from "@/lib/booking";
+import { isZone, ZONES, type PlanHall, type PlanItem } from "@/lib/booking";
+import { dicts } from "@/lib/i18n/dicts";
 import type { FormState } from "@/lib/types";
 
 const PRESETS: { label: string; item: Omit<PlanItem, "id" | "hall_id" | "x" | "y"> }[] = [
-  { label: "Стол на 2", item: { kind: "table", label: "", shape: "round", w: 10, h: 10, seats_min: 1, seats_max: 2 } },
-  { label: "Стол на 4", item: { kind: "table", label: "", shape: "rect", w: 18, h: 12, seats_min: 2, seats_max: 4 } },
-  { label: "Большой стол", item: { kind: "table", label: "", shape: "rect", w: 30, h: 14, seats_min: 4, seats_max: 8 } },
-  { label: "Подпись: бар, вход, окна", item: { kind: "decor", label: "Бар", shape: "rect", w: 26, h: 8, seats_min: 1, seats_max: 1 } },
+  { label: "Стол на 2", item: { kind: "table", label: "", shape: "round", w: 10, h: 10, seats_min: 1, seats_max: 2, zone: null } },
+  { label: "Стол на 4", item: { kind: "table", label: "", shape: "rect", w: 18, h: 12, seats_min: 2, seats_max: 4, zone: null } },
+  { label: "Большой стол", item: { kind: "table", label: "", shape: "rect", w: 30, h: 14, seats_min: 4, seats_max: 8, zone: null } },
+  { label: "Подпись: бар, вход, окна", item: { kind: "decor", label: "Бар", shape: "rect", w: 26, h: 8, seats_min: 1, seats_max: 1, zone: null } },
 ];
 
 const snap = (n: number) => Math.round(n * 2) / 2;
@@ -35,6 +38,16 @@ export function PlanEditor({ venueId, initialHalls, initialItems }: { venueId: s
   const drag = useRef<{ id: string; mode: "move" | "size"; dx: number; dy: number } | null>(null);
 
   const hall = halls.find((h) => h.id === hallId) ?? halls[0];
+  // The assistant's draft replaces what is on screen; one step back is kept.
+  const [before, setBefore] = useState<{ halls: PlanHall[]; items: PlanItem[] } | null>(null);
+  const applyDraft = (p: { halls: PlanHall[]; items: PlanItem[] }) => {
+    setBefore({ halls, items });
+    setHalls(p.halls);
+    setItems(p.items);
+    setHallId(p.halls[0].id);
+    setSel(null);
+    touch();
+  };
   const own = items.filter((i) => i.hall_id === hall.id);
   const selected = items.find((i) => i.id === sel) ?? null;
 
@@ -93,6 +106,14 @@ export function PlanEditor({ venueId, initialHalls, initialItems }: { venueId: s
 
   return (
     <div className="flex flex-col gap-4">
+      <PlanAssistant plan={{ halls, items }} onDraft={applyDraft} canUndo={!!before} onUndo={() => {
+        if (!before) return;
+        setHalls(before.halls);
+        setItems(before.items);
+        setHallId(before.halls[0].id);
+        setBefore(null);
+        setSel(null);
+      }} />
       <div className="flex flex-wrap items-center gap-2">
         {halls.map((h) => (
           <button
@@ -164,6 +185,12 @@ export function PlanEditor({ venueId, initialHalls, initialItems }: { venueId: s
                   <text x={it.x + it.w / 2} y={it.y + it.h / 2} textAnchor="middle" dominantBaseline="central" fill={decor ? "#c9b48f" : "#f3ead6"} fontSize={Math.min(4, Math.max(1.8, Math.min(it.w, it.h) * 0.32))} fontFamily="var(--font-ui)" pointerEvents="none">
                     {decor ? it.label : `${it.label} · ${it.seats_min === it.seats_max ? it.seats_max : `${it.seats_min}–${it.seats_max}`}`}
                   </text>
+                  {/* The zone on a second line where the table is big enough; the side panel always shows it. */}
+                  {!decor && it.zone && Math.min(it.w, it.h) >= 12 ? (
+                    <text x={it.x + it.w / 2} y={it.y + it.h / 2 + Math.min(4, Math.max(1.8, Math.min(it.w, it.h) * 0.32))} textAnchor="middle" dominantBaseline="central" fill="#d1b475" fontSize={2.2} fontFamily="var(--font-ui)" pointerEvents="none">
+                      {ZONE_RU[it.zone].toLowerCase()}
+                    </text>
+                  ) : null}
                   {on ? (
                     <rect x={it.x + it.w - 1.6} y={it.y + it.h - 1.6} width={3.2} height={3.2} rx={0.6} fill="#d1b475" className="cursor-nwse-resize" onPointerDown={(e) => onDown(e, it, "size")} />
                   ) : null}
@@ -193,6 +220,19 @@ export function PlanEditor({ venueId, initialHalls, initialItems }: { venueId: s
                     <input className="field" type="number" min={1} max={50} value={selected.seats_max} onChange={(e) => update(selected.id, { seats_max: Math.max(1, Number(e.target.value) || 1) })} />
                   </label>
                 </div>
+              ) : null}
+              {selected.kind === "table" ? (
+                <label className="flex flex-col gap-1.5 text-[13px] text-ink-3">
+                  Где стоит
+                  <select className="field" value={selected.zone ?? ""} onChange={(e) => update(selected.id, { zone: isZone(e.target.value) ? e.target.value : null })}>
+                    <option value="">Не указано</option>
+                    {ZONES.map((z) => (
+                      <option key={z} value={z}>
+                        {ZONE_RU[z]}
+                      </option>
+                    ))}
+                  </select>
+                </label>
               ) : null}
               <div className="grid grid-cols-2 gap-2">
                 {(["rect", "round"] as const).map((s) => (
@@ -279,6 +319,91 @@ export function PlanEditor({ venueId, initialHalls, initialItems }: { venueId: s
         <SubmitButton className="btn btn-primary btn-sm">Сохранить план</SubmitButton>
         {dirty ? <span className="text-[14px] text-ink-3">Есть несохранённые изменения</span> : state.ok ? <span role="status" className="text-[14px] text-success">{state.message}</span> : null}
         <FormError error={state.error} />
+      </form>
+    </div>
+  );
+}
+
+const ZONE_RU = dicts.ru.booking.zones;
+
+type Msg = { who: "me" | "ai"; text: string };
+
+/**
+ * «Чат ИИ, который будет помогать сделать планировку» (owner, 15 Nov 2026):
+ * the manager describes the hall or sends a photo of a sketch, the draft
+ * lands in the editor below; each next message edits the plan on screen.
+ */
+function PlanAssistant({ plan, onDraft, canUndo, onUndo }: { plan: { halls: PlanHall[]; items: PlanItem[] }; onDraft: (p: { halls: PlanHall[]; items: PlanItem[] }) => void; canUndo: boolean; onUndo: () => void }) {
+  const [log, setLog] = useState<Msg[]>([]);
+  const [error, setError] = useState<string | null>(null);
+  const [pending, start] = useTransition();
+  const form = useRef<HTMLFormElement>(null);
+  const hasTables = plan.items.some((i) => i.kind === "table");
+
+  const send = (fd: FormData) => {
+    const text = String(fd.get("text") || "").trim();
+    const file = fd.get("sketch");
+    const hasSketch = file instanceof File && file.size > 0;
+    if (!text && !hasSketch) return;
+    fd.set("plan", JSON.stringify(plan));
+    setError(null);
+    setLog((l) => [...l, { who: "me", text: [text, hasSketch ? "фото наброска" : ""].filter(Boolean).join(" · ") }]);
+    start(async () => {
+      const r = await draftPlan(fd);
+      if (!r.ok) {
+        setError(r.error);
+        return;
+      }
+      onDraft(r.draft);
+      setLog((l) => [...l, { who: "ai", text: `${r.draft.reply} Проверьте план ниже и нажмите «Сохранить план».` }]);
+      form.current?.reset();
+    });
+  };
+
+  return (
+    <div className="flex flex-col gap-3 rounded-[var(--radius-inner)] border border-line bg-raised p-4">
+      <div>
+        <p className="label">Помощник по плану</p>
+        <p className="mt-1 text-[14px] text-ink-3">
+          Опишите зал словами или приложите фото наброска от руки: помощник нарисует черновик, дальше его можно поправить руками или
+          следующим сообщением («сдвинь бар влево», «добавь два стола у окна»).
+        </p>
+      </div>
+      {log.length ? (
+        <ol className="flex max-h-64 flex-col gap-2 overflow-y-auto" aria-live="polite">
+          {log.map((m, i) => (
+            <li key={i} className={`max-w-[44rem] rounded-[var(--radius-inner)] px-3 py-2 text-[14px] ${m.who === "me" ? "self-end bg-line text-ink" : "self-start bg-canvas text-ink-2"}`}>
+              {m.text}
+            </li>
+          ))}
+          {pending ? <li className="self-start px-3 py-2 text-[14px] text-ink-3">Рисую план… до минуты.</li> : null}
+        </ol>
+      ) : null}
+      <form ref={form} action={send} className="flex flex-col gap-3">
+        <label htmlFor="plan-ai-text" className="sr-only">Описание зала</label>
+        <textarea
+          id="plan-ai-text"
+          name="text"
+          rows={3}
+          maxLength={2000}
+          className="field"
+          placeholder={hasTables ? "Что поменять? Например: добавь большой стол на 8 у дальней стены" : "Например: зал 12 на 8 метров, окна вдоль правой стены, бар слева на 6 мест, 4 стола на двоих у окна, 3 на четверых в центре, вход внизу справа"}
+        />
+        <div className="flex flex-col gap-1.5">
+          <label htmlFor="plan-ai-sketch" className="text-[13px] text-ink-3">Фото наброска, если есть</label>
+          <ImageInput id="plan-ai-sketch" name="sketch" />
+        </div>
+        <div className="flex flex-wrap items-center gap-4">
+          <button type="submit" disabled={pending} className="btn btn-primary btn-sm">
+            {pending ? "Рисую…" : hasTables ? "Поправить план" : "Нарисовать план"}
+          </button>
+          {canUndo ? (
+            <button type="button" onClick={onUndo} className="link-quiet text-[14px]">
+              Вернуть как было
+            </button>
+          ) : null}
+          {error ? <span role="alert" className="text-[14px] text-danger">{error}</span> : null}
+        </div>
       </form>
     </div>
   );

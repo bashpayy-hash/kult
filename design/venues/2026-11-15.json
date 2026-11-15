@@ -1,0 +1,19 @@
+{
+  "date": "2026-11-15",
+  "why": "Venue entry (exterior, interior, hall) for the three fictional demo venues of migration 0005 only. Real venues get their own photos through the admin; generated pictures of a real place would mislead guests.",
+  "generator": "Higgsfield gpt_image_2_6, quality high, 2k, 2:3, no references",
+  "masters": "design/venues/2026-11-15/<slug>-<kind>.webp (full size, q88)",
+  "site": "public/venues/<slug>/<kind>.webp (1000w) and <kind>-640.webp",
+  "jobs": {
+    "nomad-bar-exterior": "343e4e95-f0cf-4f25-bd5a-ecbd3e8b15f2",
+    "nomad-bar-interior": "54636192-499d-4590-90cf-06a934339409",
+    "nomad-bar-hall": "2159fde8-3468-4a9b-86cf-fc8ff2e6fa71",
+    "sora-bistro-exterior": "0ef18af7-ec5f-4272-a9bb-fdce51f0b7d7",
+    "sora-bistro-interior": "192bd60a-d7e5-4143-bd29-77c335b1d782",
+    "sora-bistro-hall": "b20718bf-5ab4-4ad3-b3ae-699867fc5198",
+    "mono-coffee-exterior": "be5a731f-1422-4be8-adfd-21e262e86e7d",
+    "mono-coffee-interior": "c8179b4f-1914-4245-8227-c0ac8f569e44",
+    "mono-coffee-hall": "cf00c5e3-8d14-484b-975d-df88679b9d44"
+  },
+  "style": "editorial architectural/interior photography, warm tungsten or low sun, slight film grain, late-Soviet Almaty buildings (honeycomb sun screens, pink tuff, terrazzo, mosaics) with modern fittings; no people in focus, no readable text or logos"
+}

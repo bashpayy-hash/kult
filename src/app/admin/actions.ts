@@ -10,6 +10,7 @@ import { instagramHandle, isIsoDate, normalizePhone } from "@/lib/format";
 import { isValidSlug, slugify } from "@/lib/slug";
 import { cityByKey, cityKey, placeOnPlan } from "@/lib/cities";
 import { fileFrom, removeImage, uploadImage, UploadError } from "@/lib/storage";
+import { isZone } from "@/lib/booking";
 import { CATEGORIES, type Category, type FormState, type Status } from "@/lib/types";
 
 // Every action starts with requireAdmin(): server actions are reachable by a
@@ -340,6 +341,48 @@ export async function removeVenuePhoto(fd: FormData): Promise<void> {
   revalidatePath(`/admin/venues/${id}`);
 }
 
+const ENTRY_KINDS = ["exterior", "interior", "hall"] as const;
+
+/**
+ * A picture for the venue's entry (15 Nov 2026: «виден экстерьер, виден
+ * интерьер, виден зал»): the street front, the room, or a hall of the plan.
+ */
+export async function uploadEntryPhoto(_prev: FormState, fd: FormData): Promise<FormState> {
+  await requireAdmin();
+  const id = str(fd, "id", 40);
+  const kind = str(fd, "kind", 20) as (typeof ENTRY_KINDS)[number];
+  const hallId = str(fd, "hall_id", 40) || null;
+  const file = fileFrom(fd, "photo");
+  if (!isUuid(id)) return { error: "Нет id." };
+  if (!ENTRY_KINDS.includes(kind)) return { error: "Выберите, что на фото." };
+  if (hallId && !isUuid(hallId)) return { error: "Нет такого зала." };
+  if (!file) return { error: "Выберите фото." };
+  try {
+    const key = await uploadImage("venue-photos", `${id}/entry`, file);
+    await db()`
+      insert into venue_photos (venue_id, kind, hall_id, path, caption, caption_kk, sort)
+      select ${id}, ${kind}, ${kind === "hall" ? hallId : null}, ${key}, ${strOrNull(fd, "caption", 140)}, ${strOrNull(fd, "caption_kk", 140)},
+             coalesce((select max(sort) + 1 from venue_photos where venue_id = ${id} and kind = ${kind}), 0)
+      where exists (select 1 from venues where id = ${id})`;
+  } catch (e) {
+    if (e instanceof UploadError) return { error: e.message };
+    return dbError(e);
+  }
+  revalidatePath(`/admin/venues/${id}`);
+  return { ok: true, message: "Фото добавлено" };
+}
+
+export async function removeEntryPhoto(fd: FormData): Promise<void> {
+  await requireAdmin();
+  const id = str(fd, "id", 40);
+  if (!isUuid(id)) return;
+  const [old] = await db()<{ venue_id: string; path: string }[]>`delete from venue_photos where id = ${id} returning venue_id, path`;
+  if (!old) return;
+  // Demo pictures ("/venues/…") are part of the site, not uploads.
+  if (!old.path.startsWith("/")) await removeImage("venue-photos", old.path);
+  revalidatePath(`/admin/venues/${old.venue_id}`);
+}
+
 export async function uploadVenueLogo(_prev: FormState, fd: FormData): Promise<FormState> {
   await requireAdmin();
   const id = str(fd, "id", 40);
@@ -633,7 +676,7 @@ export async function deleteGuestVisit(fd: FormData): Promise<void> {
 
 type PlanPayload = {
   halls: { id: string; name: string; name_kk: string | null; width: number; height: number }[];
-  items: { id: string; hall_id: string; kind: string; label: string; shape: string; x: number; y: number; w: number; h: number; seats_min: number; seats_max: number }[];
+  items: { id: string; hall_id: string; kind: string; label: string; shape: string; x: number; y: number; w: number; h: number; seats_min: number; seats_max: number; zone?: string | null }[];
 };
 
 const num = (x: unknown, lo: number, hi: number) => {
@@ -681,13 +724,14 @@ export async function savePlan(_prev: FormState, fd: FormData): Promise<FormStat
         const w = num(it.w, 2, hall.width), h = num(it.h, 2, hall.height);
         const x = num(it.x, 0, hall.width - w), y = num(it.y, 0, hall.height - h);
         const smin = Math.round(num(it.seats_min, 1, 50)), smax = Math.max(smin, Math.round(num(it.seats_max, 1, 50)));
+        const zone = kind === "table" && isZone(it.zone) ? it.zone : null;
         await tx`
-          insert into venue_tables (id, venue_id, hall_id, kind, label, shape, x, y, w, h, seats_min, seats_max)
+          insert into venue_tables (id, venue_id, hall_id, kind, label, shape, x, y, w, h, seats_min, seats_max, zone)
           values (${it.id}, ${venueId}, ${it.hall_id}, ${kind}, ${String(it.label || "").trim().slice(0, 24)}, ${shape},
-                  ${x}, ${y}, ${w}, ${h}, ${smin}, ${smax})
+                  ${x}, ${y}, ${w}, ${h}, ${smin}, ${smax}, ${zone})
           on conflict (id) do update set hall_id = excluded.hall_id, kind = excluded.kind, label = excluded.label,
             shape = excluded.shape, x = excluded.x, y = excluded.y, w = excluded.w, h = excluded.h,
-            seats_min = excluded.seats_min, seats_max = excluded.seats_max, active = true
+            seats_min = excluded.seats_min, seats_max = excluded.seats_max, zone = excluded.zone, active = true
           where venue_tables.venue_id = ${venueId}`;
       }
     });

@@ -5,6 +5,11 @@
 
 export type PlanHall = { id: string; name: string; name_kk: string | null; width: number; height: number };
 
+/** Where a table stands, so a guest can ask for a place by the window or at the bar. */
+export const ZONES = ["window", "bar", "kitchen", "terrace", "sofa", "quiet", "private"] as const;
+export type Zone = (typeof ZONES)[number];
+export const isZone = (z: unknown): z is Zone => typeof z === "string" && (ZONES as readonly string[]).includes(z);
+
 export type PlanItem = {
   id: string;
   hall_id: string;
@@ -17,6 +22,7 @@ export type PlanItem = {
   h: number;
   seats_min: number;
   seats_max: number;
+  zone: Zone | null;
 };
 
 /** A live booking on a table, as an interval of service-day minutes. */
@@ -60,10 +66,10 @@ export function isFree(tableId: string, start: number, hold: number, taken: Take
   return !taken.some((x) => x.table_id === tableId && x.from < end && start < x.to);
 }
 
-/** The smallest free table that seats the party, or null. */
-export function pickTable(items: PlanItem[], party: number, start: number, hold: number, taken: Taken[]): PlanItem | null {
+/** The smallest free table that seats the party (in the asked-for zone, if any), or null. */
+export function pickTable(items: PlanItem[], party: number, start: number, hold: number, taken: Taken[], zone?: Zone | null): PlanItem | null {
   const ok = items
-    .filter((t) => fits(t, party) && isFree(t.id, start, hold, taken))
+    .filter((t) => (!zone || t.zone === zone) && fits(t, party) && isFree(t.id, start, hold, taken))
     .sort((a, b) => a.seats_max - b.seats_max || a.label.localeCompare(b.label, "ru", { numeric: true }));
   return ok[0] ?? null;
 }

@@ -327,6 +327,17 @@ input[type="file"].field::file-selector-button {
 @keyframes pulse-ring { from { opacity: 0.55; transform: scale(1); } to { opacity: 0; transform: scale(3.2); } }
 .pulse-ring { animation: pulse-ring 2.4s var(--ease-out) infinite; }
 
+/* A venue's entry: the picture you leave grows and fades, as if you stepped
+   through it; the next one settles in from slightly smaller. */
+.entry-shot {
+  position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover;
+  transition: opacity var(--dur-enter) var(--ease-out), transform 900ms var(--ease-out);
+  -webkit-user-select: none; user-select: none;
+}
+.entry-shot[data-pos="past"] { opacity: 0; transform: scale(1.08); }
+.entry-shot[data-pos="ahead"] { opacity: 0; transform: scale(0.97); }
+.entry-shot[data-pos="here"] { opacity: 1; transform: none; }
+
 @keyframes sheet-in { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
 .sheet-in { animation: sheet-in var(--dur-card) var(--ease-out) both; }
 

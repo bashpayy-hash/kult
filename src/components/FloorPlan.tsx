@@ -2,7 +2,8 @@
 
 import type { PlanHall, PlanItem } from "@/lib/booking";
 
-export type TableState = "idle" | "free" | "busy" | "unfit" | "selected";
+/** «away»: the guest asked for another part of the hall (by the window, at the bar…). */
+export type TableState = "idle" | "free" | "busy" | "unfit" | "away" | "selected";
 
 /**
  * A hall drawn from plan units: tables are tappable boxes or circles, decor
@@ -61,7 +62,7 @@ export function FloorPlan({
           const s = stateOf(t);
           const interactive = !!onSelect && (s === "free" || s === "selected");
           // Every state keeps its number at ≥ 4.5:1 on its own fill; busy adds a
-          // stroke-through, unfit a dashed edge, so colour is never the only cue.
+          // stroke-through, unfit and away a dashed edge, so colour is never the only cue.
           const fill = s === "selected" ? "#d1b475" : s === "free" ? "#3a2c25" : s === "idle" ? "#2e221d" : "#261b17";
           const stroke = s === "selected" ? "#d1b475" : s === "free" ? "#e9d7b5" : s === "idle" ? "#6d4c2e" : "#4a382e";
           const ink = s === "selected" ? "#231917" : s === "free" || s === "idle" ? "#f3ead6" : "#a8916d";
@@ -87,12 +88,12 @@ export function FloorPlan({
               {t.shape === "round" ? (
                 <>
                   <ellipse className="ring opacity-0" cx={cx} cy={cy} rx={t.w / 2 + 1.2} ry={t.h / 2 + 1.2} fill="none" stroke="#d1b475" strokeWidth={0.5} />
-                  <ellipse cx={cx} cy={cy} rx={t.w / 2} ry={t.h / 2} fill={fill} stroke={stroke} strokeWidth={0.45} strokeDasharray={s === "unfit" ? "1 0.8" : undefined} />
+                  <ellipse cx={cx} cy={cy} rx={t.w / 2} ry={t.h / 2} fill={fill} stroke={stroke} strokeWidth={0.45} strokeDasharray={s === "unfit" || s === "away" ? "1 0.8" : undefined} />
                 </>
               ) : (
                 <>
                   <rect className="ring opacity-0" x={t.x - 1.2} y={t.y - 1.2} width={t.w + 2.4} height={t.h + 2.4} rx={2.6} fill="none" stroke="#d1b475" strokeWidth={0.5} />
-                  <rect x={t.x} y={t.y} width={t.w} height={t.h} rx={1.6} fill={fill} stroke={stroke} strokeWidth={0.45} strokeDasharray={s === "unfit" ? "1 0.8" : undefined} />
+                  <rect x={t.x} y={t.y} width={t.w} height={t.h} rx={1.6} fill={fill} stroke={stroke} strokeWidth={0.45} strokeDasharray={s === "unfit" || s === "away" ? "1 0.8" : undefined} />
                 </>
               )}
               {s === "busy" ? (

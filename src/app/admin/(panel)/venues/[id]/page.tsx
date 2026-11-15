@@ -4,17 +4,19 @@ import { db } from "@/lib/db";
 import { isUuid } from "@/lib/forms";
 import { siteUrl } from "@/lib/env";
 import { formatMoney } from "@/lib/format";
-import { publicImageUrl } from "@/lib/storage";
+import { entryPhotoUrl, publicImageUrl } from "@/lib/storage";
 import type { Offer, Venue } from "@/lib/types";
 import {
   createOffer,
   deleteOffer,
   deleteVenue,
   regenerateHostToken,
+  removeEntryPhoto,
   removeVenueLogo,
   removeVenuePhoto,
   updateOffer,
   updateVenue,
+  uploadEntryPhoto,
   uploadVenueLogo,
   uploadVenuePhoto,
 } from "../../../actions";
@@ -23,7 +25,7 @@ import { Empty, PageHead, Person, Section, StatusText } from "../../../_parts";
 import { VenueFields } from "../VenueFields";
 import { OfferFields } from "../OfferFields";
 import { PlanEditor } from "../PlanEditor";
-import { loadPlan } from "@/lib/venueData";
+import { loadEntryPhotos, loadPlan } from "@/lib/venueData";
 import { formatDay, formatPhone, formatTime, almatyToday } from "@/lib/format";
 import { randomUUID } from "node:crypto";
 
@@ -40,8 +42,9 @@ export default async function VenuePage({ params }: { params: Promise<{ id: stri
       from tracking_links tl join members m on m.id = tl.member_id join pair_stats ps on ps.tracking_link_id = tl.id
       where tl.venue_id = ${id} order by m.name`,
   ]);
-  const [plan, upcoming] = await Promise.all([
+  const [plan, entry, upcoming] = await Promise.all([
     loadPlan(id),
+    loadEntryPhotos(id),
     sql<{ id: string; booking_date: string; booking_time: string; guest_name: string; phone: string; party_size: number; status: string; table_label: string | null; member_name: string | null }[]>`
       select b.id, b.booking_date, b.booking_time, b.guest_name, b.phone, b.party_size, b.status, vt.label as table_label, m.name as member_name
       from guest_bookings b
@@ -65,6 +68,8 @@ export default async function VenuePage({ params }: { params: Promise<{ id: stri
     ["Логотип", !!logo],
     ["Описание на русском и казахском", !!v.description && !!v.description_kk],
     ["План зала со столами", plan.items.some((i) => i.kind === "table")],
+    ["Вход: фасад, интерьер и зал", ["exterior", "interior", "hall"].every((k) => entry.some((p) => p.kind === k))],
+    ["Зоны у столов (у окна, у бара…)", plan.items.some((i) => i.zone)],
     ["Бонус гостям (perk)", !!offerWithPerk],
     ["Показывается в каталоге", v.is_listed],
   ];
@@ -172,6 +177,74 @@ export default async function VenuePage({ params }: { params: Promise<{ id: stri
             ))}
           </ul>
         )}
+      </Section>
+
+      <Section title="Вход в заведение">
+        <div className="flex flex-col gap-4 rounded-tile-r bg-tile p-5 md:p-6">
+          <p className="max-w-[48rem] text-[14px] text-ink-3">
+            Гость «заходит» в заведение по фото: фасад с улицы, интерьер, потом зал — и сразу видит, где сесть. Нужны настоящие фото
+            этого места, вертикальные или квадратные. Фото зала можно привязать к залу на плане.
+          </p>
+          {entry.length ? (
+            <ul className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">
+              {entry.map((p) => {
+                const url = entryPhotoUrl(p.path);
+                const hallName = plan.halls.find((h) => h.id === p.hall_id)?.name;
+                return (
+                  <li key={p.id} className="flex flex-col gap-2">
+                    <div className="aspect-[4/5] overflow-hidden rounded-[var(--radius-inner)] bg-raised">
+                      {url ? <img src={url} alt="" className="h-full w-full object-cover" /> : null}
+                    </div>
+                    <p className="text-[13px] text-ink-2">
+                      {p.kind === "exterior" ? "Фасад" : p.kind === "interior" ? "Интерьер" : `Зал${hallName ? `: ${hallName}` : ""}`}
+                      {p.caption ? ` · ${p.caption}` : ""}
+                      {p.path.startsWith("/") ? " · демо-иллюстрация" : ""}
+                    </p>
+                    <ButtonForm action={removeEntryPhoto} fields={{ id: p.id }} label="Убрать" confirmText="Убрать это фото?" />
+                  </li>
+                );
+              })}
+            </ul>
+          ) : (
+            <Empty>Фото входа нет: на странице заведения одно фото или обложка категории.</Empty>
+          )}
+          <Disclosure title="Добавить фото входа">
+            <ActionForm action={uploadEntryPhoto} submit="Загрузить">
+              <input type="hidden" name="id" value={v.id} />
+              <div className="grid gap-4 sm:grid-cols-2">
+                <label className="flex flex-col gap-2">
+                  <span className="label">Что на фото</span>
+                  <select name="kind" className="field" defaultValue="exterior" required>
+                    <option value="exterior">Фасад, вход с улицы</option>
+                    <option value="interior">Интерьер</option>
+                    <option value="hall">Зал</option>
+                  </select>
+                </label>
+                <label className="flex flex-col gap-2">
+                  <span className="label">Какой зал (для фото зала)</span>
+                  <select name="hall_id" className="field" defaultValue="">
+                    <option value="">Не привязывать</option>
+                    {plan.halls.map((h) => (
+                      <option key={h.id} value={h.id}>{h.name}</option>
+                    ))}
+                  </select>
+                </label>
+                <label className="flex flex-col gap-2">
+                  <span className="label">Подпись (рус), необязательно</span>
+                  <input name="caption" className="field" maxLength={140} placeholder="Столы у окон" />
+                </label>
+                <label className="flex flex-col gap-2">
+                  <span className="label">Подпись (қаз), необязательно</span>
+                  <input name="caption_kk" className="field" maxLength={140} />
+                </label>
+              </div>
+              <div className="flex flex-col gap-2">
+                <label htmlFor="entry-photo" className="label">Фото</label>
+                <ImageInput id="entry-photo" name="photo" required />
+              </div>
+            </ActionForm>
+          </Disclosure>
+        </div>
       </Section>
 
       <Section title="Фото и логотип">

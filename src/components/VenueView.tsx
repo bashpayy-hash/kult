@@ -2,9 +2,11 @@ import { BookingWidget } from "@/components/BookingWidget";
 import { BookBar } from "@/components/BookBar";
 import { Monogram } from "@/components/Monogram";
 import { Plate } from "@/components/Plate";
-import { openNow, type PlanHall, type PlanItem, type VenueHours } from "@/lib/booking";
+import { VenueEntry, type EntryShot } from "@/components/VenueEntry";
+import { openNow, ZONES, type PlanHall, type PlanItem, type VenueHours } from "@/lib/booking";
+import { loadEntryPhotos } from "@/lib/venueData";
 import { almatyNowMinutes, almatyToday, formatMoney, instagramHandle } from "@/lib/format";
-import { publicImageUrl } from "@/lib/storage";
+import { entryPhotoUrl, publicImageUrl } from "@/lib/storage";
 import { coverFor } from "@/lib/covers";
 import { cityByKey, cityKey, gisLink, gisSearch } from "@/lib/cities";
 import type { Dict, Lang } from "@/lib/i18n/dicts";
@@ -34,10 +36,11 @@ const SERVICE: Category[] = ["beauty", "wellness", "fitness"];
 
 /**
  * One layout for the catalog page (/v/<venue>) and a member's invite
- * (/<member>/<venue>): facts on the left, booking on the right. The venue's
- * own photo if it has one, otherwise its category's retro cover.
+ * (/<member>/<venue>): facts on the left, booking on the right. On top of the
+ * left column the way in — street front, room, hall — when the venue has
+ * those pictures; otherwise its own photo, or its category's retro cover.
  */
-export function VenueView({
+export async function VenueView({
   d,
   lang,
   t,
@@ -69,11 +72,38 @@ export function VenueView({
   const ck = cityKey(d.city);
   const route = ck ? (d.lat != null && d.lng != null ? gisLink(cityByKey(ck), d.lat, d.lng) : d.address ? gisSearch(cityByKey(ck), d.address) : null) : null;
 
+  // The way in: street front, room, then each hall (named after the plan's hall).
+  const E = t.entry;
+  const tables = plan.items.filter((i) => i.kind === "table");
+  const zonesOf = (hallId: string | null) =>
+    ZONES.map((z) => ({ z, label: b.zones[z], n: tables.filter((x) => x.zone === z && (!hallId || x.hall_id === hallId)).length })).filter((x) => x.n > 0);
+  const shots: EntryShot[] = (await loadEntryPhotos(d.venue_id)).flatMap((p) => {
+    const src = entryPhotoUrl(p.path);
+    if (!src) return [];
+    const hall = plan.halls.find((h) => h.id === p.hall_id);
+    const demo = p.path.startsWith("/venues/");
+    return [
+      {
+        key: p.id,
+        label: p.kind === "exterior" ? E.exterior : p.kind === "interior" ? E.interior : (hall && ((lang === "kk" && hall.name_kk) || hall.name)) || E.hall,
+        src,
+        srcSet: demo ? `${p.path.replace(/\.webp$/, "-640.webp")} 640w, ${p.path} 1000w` : undefined,
+        caption: (lang === "kk" && p.caption_kk) || p.caption,
+        demo,
+        hall: p.kind === "hall",
+        zones: active && p.kind === "hall" ? zonesOf(hall ? hall.id : null) : [],
+      },
+    ];
+  });
+
   return (
     <div className="grid gap-10 md:grid-cols-[5fr_7fr] md:gap-12 lg:gap-16">
       <div className="flex min-w-0 flex-col gap-6">
-        {/* The venue's own photo, else its category's collage plate. */}
+        {/* The way in, else the venue's own photo, else its category's collage plate. */}
         <div className="rise">
+          {shots.length ? (
+            <VenueEntry shots={shots} name={d.venue_name} bookLabel={SERVICE.includes(d.category) ? b.titleService : b.title} bg={cover.bg} lang={lang} />
+          ) : (
           <Plate
             src={photo ?? cover.src}
             srcSet={photo ? undefined : cover.srcSet}
@@ -84,6 +114,7 @@ export function VenueView({
           focus={photo ? undefined : cover.focus}
             priority
           />
+          )}
         </div>
 
         <div className="rise rise-1">

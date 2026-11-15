@@ -8,10 +8,27 @@ export async function loadPlan(venueId: string): Promise<{ halls: PlanHall[]; it
   const [halls, items] = await Promise.all([
     sql<PlanHall[]>`select id, name, name_kk, width, height from venue_halls where venue_id = ${venueId} order by sort, created_at`,
     sql<PlanItem[]>`
-      select id, hall_id, kind, label, shape, x::float8 as x, y::float8 as y, w::float8 as w, h::float8 as h, seats_min, seats_max
+      select id, hall_id, kind, label, shape, x::float8 as x, y::float8 as y, w::float8 as w, h::float8 as h, seats_min, seats_max, zone
       from venue_tables where venue_id = ${venueId} and active order by kind desc, label`,
   ]);
   return { halls, items };
+}
+
+export type EntryPhoto = {
+  id: string;
+  kind: "exterior" | "interior" | "hall";
+  hall_id: string | null;
+  path: string;
+  caption: string | null;
+  caption_kk: string | null;
+};
+
+/** The venue's pictures in the order a guest walks in: street front, room, halls. */
+export async function loadEntryPhotos(venueId: string): Promise<EntryPhoto[]> {
+  return db()<EntryPhoto[]>`
+    select id, kind, hall_id, path, caption, caption_kk from venue_photos
+    where venue_id = ${venueId}
+    order by case kind when 'exterior' then 0 when 'interior' then 1 else 2 end, sort, created_at`;
 }
 
 /**
@@ -94,7 +111,7 @@ export async function nextFreeSlots(venues: CatalogVenue[], party = 2, count = 3
   const sql = db();
   const [tables, rows] = await Promise.all([
     sql<(PlanItem & { venue_id: string })[]>`
-      select id, hall_id, kind, label, shape, x::float8 as x, y::float8 as y, w::float8 as w, h::float8 as h, seats_min, seats_max, venue_id
+      select id, hall_id, kind, label, shape, x::float8 as x, y::float8 as y, w::float8 as w, h::float8 as h, seats_min, seats_max, zone, venue_id
       from venue_tables where venue_id = any(${ids}::uuid[]) and active and kind = 'table'`,
     sql<{ venue_id: string; table_id: string; from_min: number; hold_minutes: number }[]>`
       select venue_id, table_id, (extract(epoch from (starts_at - ${today}::date::timestamp)) / 60)::int as from_min, hold_minutes

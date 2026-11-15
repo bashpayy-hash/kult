@@ -20,7 +20,7 @@ export type PlanLayers = {
   /** Plan width in metres, for the live scale bar. */
   widthM: number;
 };
-export type CameraStrings = { zoomIn: string; zoomOut: string; whole: string; aria: string; close: string; open: string; north: string; m: string; km: string; hint: string; twoFingers: string; walk: string; walkHere: string };
+export type CameraStrings = { zoomIn: string; zoomOut: string; whole: string; aria: string; close: string; open: string; north: string; m: string; km: string; hint: string; twoFingers: string };
 
 type Tile = { key: string; src: string; left: number; top: number; w: number; h: number };
 /**
@@ -82,7 +82,7 @@ const ease = (t: number) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 
  * landmarks and places read the zoom from --k and scale back by it, so they
  * hold their size on the very same frame.
  */
-export function PlanCamera({ city, layers, active, setActive, focus, setFocus, onWalk, s }: { city: MapCity; layers: PlanLayers; active: number | null; setActive: (n: number | null) => void; focus: number | null; setFocus: (n: number | null) => void; onWalk?: (n?: number) => void; s: CameraStrings }) {
+export function PlanCamera({ city, layers, active, setActive, focus, setFocus, s }: { city: MapCity; layers: PlanLayers; active: number | null; setActive: (n: number | null) => void; focus: number | null; setFocus: (n: number | null) => void; s: CameraStrings }) {
   const view = useRef<HTMLDivElement>(null);
   const camEl = useRef<HTMLDivElement>(null);
   const cam = useRef<Cam>({ k: 1, cx: 50, cy: 50 });
@@ -364,11 +364,6 @@ export function PlanCamera({ city, layers, active, setActive, focus, setFocus, o
         ) : <span />}
         <Link href={v.href} className="btn btn-ink btn-sm">{s.open}</Link>
       </div>
-      {onWalk ? (
-        <button type="button" onClick={() => onWalk(v.n)} className="mt-2.5 flex min-h-9 w-full items-center gap-2 border-t border-paper-line pt-2 text-left text-[13px] font-semibold text-paper-ink-2 hover:text-paper-ink">
-          <WalkIcon /> {s.walkHere}
-        </button>
-      ) : null}
     </div>
   );
 
@@ -475,7 +470,7 @@ export function PlanCamera({ city, layers, active, setActive, focus, setFocus, o
           {/* On a phone the card docks to the plate's bottom edge instead of the pin. */}
           {focused ? <div className="absolute inset-x-2 bottom-2 z-10 sm:hidden">{card(focused, true)}</div> : null}
 
-          {/* Fixed furniture: north, the city name, the zoom controls, the walk. */}
+          {/* Fixed furniture: north, the city name, the zoom controls. */}
           <div aria-hidden="true" className="pointer-events-none absolute left-3 top-2.5 flex items-center gap-2 text-paper-ink">
             <span className="text-[12px] font-semibold uppercase tracking-[0.08em]">{city.name}</span>
             <svg viewBox="0 0 14 20" className="h-4 w-3"><path d="M7 1l5 16-5-4-5 4z" fill="currentColor" /><path d="M7 1v12" stroke="#e9d7b5" strokeWidth="0.8" /></svg>
@@ -492,11 +487,6 @@ export function PlanCamera({ city, layers, active, setActive, focus, setFocus, o
               <svg viewBox="0 0 16 16" className="h-4 w-4" aria-hidden="true"><path d="M1 5V1h4M11 1h4v4M15 11v4h-4M5 15H1v-4" fill="none" stroke="currentColor" strokeWidth="1.5" /></svg>
             </button>
           </div>
-          {onWalk ? (
-            <button type="button" onClick={() => onWalk()} className={`absolute left-2 flex min-h-11 items-center gap-2 border border-paper-ink bg-paper-ink px-3.5 text-[14px] font-semibold text-paper hover:bg-[#3a2a22] ${focused ? "bottom-2 max-sm:hidden" : "bottom-2"}`}>
-              <WalkIcon /> {s.walk}
-            </button>
-          ) : null}
         </div>
       </div>
       <figcaption className="mt-3 flex flex-wrap items-center gap-x-3 gap-y-1 text-[12px] text-ink-3">
@@ -535,14 +525,6 @@ function TileImg({ t }: { t: Tile }) {
   );
 }
 
-export function WalkIcon() {
-  return (
-    <svg viewBox="0 0 16 20" className="h-4 w-4" aria-hidden="true" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-      <circle cx="9" cy="2.8" r="1.6" fill="currentColor" stroke="none" />
-      <path d="M8 6.5l-2.5 3.5 2 2.5-1.5 6M8 6.5l1.5 4 3 1M7.5 12.5l3 2 1 4" />
-    </svg>
-  );
-}
 
 /** Landmarks as small printed pictograms, one ink, one weight. */
 function Landmark({ k }: { k: PlanLandmark["k"] }) {

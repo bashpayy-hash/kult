@@ -1,14 +1,9 @@
 "use client";
 
 import Link from "next/link";
-import dynamic from "next/dynamic";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import { CategoryMark } from "./CategoryMark";
-import type { WalkStrings } from "./CityWalk";
 import { PlanCamera, type CameraStrings, type PlanLayers } from "./PlanCamera";
-
-// The 3D walk (three.js, its scene ~400 KB) loads only when someone opens it.
-const CityWalk = dynamic(() => import("./CityWalk"), { ssr: false });
 
 export type MapVenue = {
   n: number;
@@ -47,7 +42,7 @@ export type MapCity = {
   venues: MapVenue[];
 };
 
-type Strings = { soonText: string; soonCta: string; credit: string; km: string; countryAlt: string; countryCredit: string; camera: CameraStrings; showOnMap: string; walk: WalkStrings };
+type Strings = { soonText: string; soonCta: string; credit: string; km: string; countryAlt: string; countryCredit: string; camera: CameraStrings; showOnMap: string };
 
 const GRID = "rgba(109, 76, 46, 0.2)"; // paper-ink-3 at 20%: the survey grid on the paper
 
@@ -61,23 +56,10 @@ const GRID = "rgba(109, 76, 46, 0.2)"; // paper-ink-3 at 20%: the survey grid on
  * numbers. A city with no places shows its plate with an invitation for
  * venues: the map tells where the project is going without inventing places.
  */
-export function CityMap({ title, cities, s, lang = "ru" }: { title: string; cities: MapCity[]; s: Strings; lang?: "ru" | "kk" }) {
+export function CityMap({ title, cities, s }: { title: string; cities: MapCity[]; s: Strings; lang?: "ru" | "kk" }) {
   const [key, setKey] = useState(cities[0]?.key);
   const [active, setActive] = useState<number | null>(null);
   const [focus, setFocus] = useState<number | null>(null);
-  const [walking, setWalking] = useState<{ venue?: number } | null>(null);
-  // The walk rebuilds its whole city when these change: keep them the same objects between renders.
-  const walkVenues = useMemo(
-    () => (cities.find((c) => c.key === "almaty")?.venues ?? []).map((v) => ({ n: v.n, name: v.name, category: v.category, kind: v.kind, href: v.href, lat: v.lat, lng: v.lng, slot: v.slot })),
-    [cities],
-  );
-  const closeWalk = useCallback(() => setWalking(null), []);
-  // The cover's «Прогуляться по центру» opens the same walk.
-  useEffect(() => {
-    const open = () => setWalking({});
-    window.addEventListener("bolek:walk", open);
-    return () => window.removeEventListener("bolek:walk", open);
-  }, []);
   const plate = useRef<HTMLDivElement>(null);
   const city = cities.find((c) => c.key === key) ?? cities[0];
   if (!city) return null;
@@ -106,7 +88,7 @@ export function CityMap({ title, cities, s, lang = "ru" }: { title: string; citi
       <div className="mt-8 grid gap-8 md:grid-cols-[7fr_5fr] md:gap-12">
         <div ref={plate} className="min-w-0 scroll-mt-6">
         {city.layers ? (
-          <PlanCamera key={city.key} city={city} layers={city.layers} active={active} setActive={setActive} focus={focus} setFocus={setFocus} onWalk={city.key === "almaty" ? (n) => setWalking({ venue: n }) : undefined} s={s.camera} />
+          <PlanCamera key={city.key} city={city} layers={city.layers} active={active} setActive={setActive} focus={focus} setFocus={setFocus} s={s.camera} />
         ) : (
         <figure className="min-w-0">
           <div className="bg-paper p-2 sm:p-2.5">
@@ -245,15 +227,6 @@ export function CityMap({ title, cities, s, lang = "ru" }: { title: string; citi
           ) : null}
         </div>
       </div>
-      {walking ? (
-        <CityWalk
-          venues={walkVenues}
-          startVenue={walking.venue}
-          lang={lang}
-          onClose={closeWalk}
-          s={s.walk}
-        />
-      ) : null}
     </>
   );
 }

@@ -9,7 +9,6 @@ import { clock } from "@/lib/booking";
 import { CLUB_COVER, COVER, MARKET } from "@/lib/covers";
 import { CATEGORIES, type Category } from "@/lib/types";
 import { CityMap, type MapCity } from "@/components/CityMap";
-import { WalkButton } from "@/components/WalkButton";
 import { Tick } from "@/components/Tick";
 import plans from "@/lib/cityPlans.generated.json";
 import almatyPlan from "@/lib/almatyPlan.generated.json";
@@ -112,8 +111,9 @@ export default async function Overview({ searchParams }: { searchParams: Promise
         {/* The cover (15 Nov 2026, owner: «иллюстрация классная, но не под лендинг… нужно
             брать ещё что-то сильнее», then «что-то в стиле более презентабельном»):
             full-bleed, an editorial photograph of an evening out in Almaty, the title set
-            over it, two ways in — the nearest free time or a walk through the centre. The
-            contents (tonight's times) follow straight under it. */}
+            over it, two ways in — the nearest free time or the map (the free 3D walk left
+            on 15 Nov 2026: «Свободного перемещения по карте не будет»). The contents
+            (tonight's times) follow straight under it. */}
         <section aria-labelledby="hero-title" className="relative isolate overflow-hidden border-t border-line" style={{ background: COVER.bg }}>
           <picture>
             <source media="(min-width: 768px)" srcSet={COVER.wide.srcSet} sizes="100vw" />
@@ -130,7 +130,7 @@ export default async function Overview({ searchParams }: { searchParams: Promise
             <p className="enter mt-4 max-w-[34rem] text-[17px] text-ink-2 md:text-[19px]" style={{ ["--i" as string]: 2 }}>{C.count(total)}</p>
             <div className="enter mt-6 flex flex-wrap gap-2.5 md:mt-7 md:gap-3" style={{ ["--i" as string]: 3 }}>
               <a href={nearest.length ? "#nearest" : "#places"} className="btn btn-primary">{C.heroCta}</a>
-              <WalkButton label={C.walkCta} className="btn btn-soft inline-flex items-center gap-2" />
+              <a href="#map" className="btn btn-soft">{C.mapTitle}</a>
             </div>
           </div>
         </section>
@@ -198,8 +198,7 @@ export default async function Overview({ searchParams }: { searchParams: Promise
             lang={lang}
             s={{
               soonText: C.mapSoonText, soonCta: C.mapSoonCta, credit: C.mapCredit, km: C.mapKm, countryAlt: C.mapCountryAlt, countryCredit: C.mapCountryCredit, showOnMap: C.mapShow,
-              camera: { zoomIn: C.mapZoomIn, zoomOut: C.mapZoomOut, whole: C.mapWhole, aria: C.mapAria, close: C.mapClose, open: C.mapOpen, north: C.mapNorth, m: C.mapM, km: C.mapKm, hint: C.mapHint, twoFingers: C.mapTwoFingers, walk: C.walkCta, walkHere: C.walkHere },
-              walk: { title: C.walkTitle, air: C.walkAir, hint: C.walkHint, hintTouch: C.walkHintTouch, forward: C.walkForward, back: C.walkBack, go: C.walkGo, stop: C.walkStop, loading: C.walkLoading, close: C.walkClose, open: C.mapOpen, routes: C.walkRoutes, fail: C.walkFail },
+              camera: { zoomIn: C.mapZoomIn, zoomOut: C.mapZoomOut, whole: C.mapWhole, aria: C.mapAria, close: C.mapClose, open: C.mapOpen, north: C.mapNorth, m: C.mapM, km: C.mapKm, hint: C.mapHint, twoFingers: C.mapTwoFingers },
             }}
           />
         </section>

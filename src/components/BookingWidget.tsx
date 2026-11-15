@@ -1,10 +1,10 @@
 "use client";
 
-import { useActionState, useEffect, useMemo, useState } from "react";
+import { useActionState, useEffect, useMemo, useRef, useState } from "react";
 import { submitBooking } from "@/app/actions";
 import { Consent, errProps, Field, FormError, Honeypot, SubmitButton } from "@/components/form";
 import { FloorPlan, type TableState } from "@/components/FloorPlan";
-import { clock, fits, isFree, slotList, type PlanHall, type PlanItem, type Taken, type VenueHours } from "@/lib/booking";
+import { clock, fits, isFree, isZone, slotList, ZONES, type PlanHall, type PlanItem, type Taken, type VenueHours, type Zone } from "@/lib/booking";
 import { formatDay, shiftDate } from "@/lib/format";
 import { dicts, type Lang } from "@/lib/i18n/dicts";
 import type { FormState } from "@/lib/types";
@@ -29,8 +29,8 @@ type Props = {
 const DAYS = 14;
 
 /**
- * The booking flow: day → guests → time → (optional) table on the plan →
- * contacts. Slots and tables come from /api/availability; the server checks
+ * The booking flow: day → guests → where to sit (by the window, at the bar…)
+ * → time → (optional) table on the plan → contacts. Slots and tables come from /api/availability; the server checks
  * everything again on submit.
  */
 export function BookingWidget(props: Props) {
@@ -52,6 +52,35 @@ function Flow({ lang, venueId, hours, halls, items, today, linkId, phrase, initi
   const [slot, setSlot] = useState<number | null>(initialSlot ?? null);
   const [tableId, setTableId] = useState<string | null>(null);
   const [hallId, setHallId] = useState(plannedHalls[0]?.id ?? "");
+  // Where to sit (15 Nov 2026, owner: «какой столик вам понравится у окна, у каунтера»).
+  const [zone, setZone] = useState<Zone | null>(null);
+  const zonesHere = ZONES.map((z) => ({ z, n: tables.filter((x) => x.zone === z).length })).filter((x) => x.n > 0);
+  const inZone = (x: PlanItem) => !zone || x.zone === zone;
+  const pickZone = (z: Zone | null) => {
+    setZone(z);
+    if (!z) return;
+    // Show the hall where that place is.
+    const h = plannedHalls.find((h) => tables.some((x) => x.hall_id === h.id && x.zone === z));
+    if (h) setHallId(h.id);
+  };
+  // On a phone the plan scrolls sideways: bring the chosen place into view.
+  const scroller = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    const el = scroller.current;
+    const hall = halls.find((h) => h.id === hallId);
+    const first = zone && hall ? tables.filter((x) => x.hall_id === hall.id && x.zone === zone).sort((a, b) => a.x - b.x)[0] : null;
+    if (!el || !first || !hall || el.scrollWidth <= el.clientWidth) return;
+    el.scrollTo({ left: Math.max(0, (first.x / hall.width) * el.scrollWidth - 24), behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth" });
+  }, [zone, hallId, halls, tables]);
+  // The venue's entry («Зал» step) can send the guest here with a place in mind.
+  useEffect(() => {
+    const on = (e: Event) => {
+      const z = (e as CustomEvent).detail;
+      if (isZone(z)) pickZone(z);
+    };
+    window.addEventListener("bolek:zone", on);
+    return () => window.removeEventListener("bolek:zone", on);
+  });
   const [avail, setAvail] = useState<{ date: string; taken: Taken[]; earliest: number } | null>(null);
   const [state, action] = useActionState<FormState, FormData>(submitBooking, {});
 
@@ -73,25 +102,26 @@ function Flow({ lang, venueId, hours, halls, items, today, linkId, phrase, initi
   const hold = hours.hold_minutes;
 
   const slotOpen = (m: number) =>
-    !loading && m >= (avail?.earliest ?? 0) && (tables.length === 0 || tables.some((x) => fits(x, party) && isFree(x.id, m, hold, taken)));
+    !loading && m >= (avail?.earliest ?? 0) && (tables.length === 0 || tables.some((x) => inZone(x) && fits(x, party) && isFree(x.id, m, hold, taken)));
   const slots = slotList(hours);
   const open = slots.filter(slotOpen);
 
   // Keep choices consistent when the day or the party size changes.
   const slotValid = slot !== null && open.includes(slot);
   const table = tables.find((x) => x.id === tableId) ?? null;
-  const tableValid = !!table && slotValid && fits(table, party) && isFree(table.id, slot!, hold, taken);
+  const tableValid = !!table && slotValid && inZone(table) && fits(table, party) && isFree(table.id, slot!, hold, taken);
   const chosenSlot = slotValid ? slot : null;
   const chosenTable = tableValid ? table : null;
 
   const stateOf = (x: PlanItem): TableState => {
     if (chosenTable?.id === x.id) return "selected";
+    if (!inZone(x)) return "away";
     if (!fits(x, party)) return "unfit";
     if (chosenSlot === null) return "idle";
     return isFree(x.id, chosenSlot, hold, taken) ? "free" : "busy";
   };
   const describe = (x: PlanItem, s: TableState) =>
-    `${b.tableName(x.label)}, ${b.upTo(x.seats_max)}, ${s === "selected" ? b.yours : s === "busy" ? b.busy : s === "unfit" ? b.unfit : b.free}`;
+    `${b.tableName(x.label)}${x.zone ? `, ${b.zones[x.zone].toLowerCase()}` : ""}, ${b.upTo(x.seats_max)}, ${s === "selected" ? b.yours : s === "busy" ? b.busy : s === "unfit" ? b.unfit : s === "away" ? b.away : b.free}`;
 
   const dayLabel = (d: string) =>
     d === today ? b.today : d === shiftDate(today, 1) ? b.tomorrow : new Intl.DateTimeFormat(lang === "kk" ? "kk-KZ" : "ru-RU", { timeZone: "UTC", weekday: "short" }).format(new Date(d + "T12:00:00Z"));
@@ -127,6 +157,7 @@ function Flow({ lang, venueId, hours, halls, items, today, linkId, phrase, initi
       <input type="hidden" name="party_size" value={party} />
       <input type="hidden" name="slot" value={chosenSlot ?? ""} />
       <input type="hidden" name="table_id" value={chosenTable?.id ?? ""} />
+      <input type="hidden" name="zone" value={zone ?? ""} />
       <Honeypot />
 
       {/* Day and party size */}
@@ -162,13 +193,27 @@ function Flow({ lang, venueId, hours, halls, items, today, linkId, phrase, initi
         </div>
       </fieldset>
 
+      {/* Where to sit: the plan's zones, before the time, since they change which times are free. */}
+      {zonesHere.length ? (
+        <fieldset id="book-where" className="min-w-0 scroll-mt-6">
+          <legend className="label mb-3">{b.plan}</legend>
+          <div className="flex flex-wrap gap-2">
+            {[null, ...zonesHere.map((x) => x.z)].map((z) => (
+              <button key={z ?? "any"} type="button" aria-pressed={zone === z} onClick={() => pickZone(z)} className="pick min-h-11 px-4 text-[14px] font-medium">
+                {z ? b.zones[z] : b.anyZone}
+              </button>
+            ))}
+          </div>
+        </fieldset>
+      ) : null}
+
       {/* Time */}
       <fieldset className="min-w-0">
         <legend className="label mb-3">{b.time}</legend>
         {loading ? (
           <p className="text-[14px] text-ink-3">{b.loading}</p>
         ) : open.length === 0 ? (
-          <p className="text-[14px] text-ink-3">{b.noSlots}</p>
+          <p className="text-[14px] text-ink-3">{zone ? b.noSlotsZone : b.noSlots}</p>
         ) : (
           <div className="grid grid-cols-4 gap-2 sm:grid-cols-6">
             {slots
@@ -196,7 +241,7 @@ function Flow({ lang, venueId, hours, halls, items, today, linkId, phrase, initi
       {/* Table on the floor plan */}
       {plannedHalls.length ? (
         <fieldset className="min-w-0">
-          <legend className="label mb-3">{b.plan}</legend>
+          <legend className="label mb-3">{zonesHere.length ? b.planTitle : b.plan}</legend>
           {plannedHalls.length > 1 ? (
             <div className="mb-3 flex flex-wrap gap-2">
               {plannedHalls.map((h) => (
@@ -222,7 +267,7 @@ function Flow({ lang, venueId, hours, halls, items, today, linkId, phrase, initi
               return (
                 <div key={h.id}>
                   {/* A region the keyboard can reach and scroll, even before a time makes the tables pickable. */}
-                  <div tabIndex={0} role="region" aria-label={`${b.plan}: ${(lang === "kk" && h.name_kk) || h.name}`} className="overflow-x-auto rounded-[var(--radius-inner)] border border-line bg-canvas p-2 outline-none focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--color-accent)]">
+                  <div ref={scroller} tabIndex={0} role="region" aria-label={`${b.plan}: ${(lang === "kk" && h.name_kk) || h.name}`} className="overflow-x-auto rounded-[var(--radius-inner)] border border-line bg-canvas p-2 outline-none focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--color-accent)]">
                     <div style={{ minWidth }}>
                       <FloorPlan hall={h} items={items} stateOf={stateOf} describe={describe} onSelect={chosenSlot === null ? undefined : (x) => setTableId(chosenTable?.id === x.id ? null : x.id)} />
                     </div>
@@ -233,7 +278,7 @@ function Flow({ lang, venueId, hours, halls, items, today, linkId, phrase, initi
                       <p className="label mb-2">{b.tables}</p>
                       <div className="flex flex-wrap gap-2">
                         {items
-                          .filter((x) => x.hall_id === h.id && x.kind === "table" && fits(x, party))
+                          .filter((x) => x.hall_id === h.id && x.kind === "table" && inZone(x) && fits(x, party))
                           .map((x) => {
                             const s = stateOf(x);
                             return (

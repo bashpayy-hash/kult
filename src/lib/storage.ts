@@ -116,6 +116,14 @@ export function publicImageUrl(key: string | null): string | null {
   return base ? `${base}/storage/v1/object/public/venue-photos/${key}` : null;
 }
 
+/**
+ * An entry photo's address: demo pictures live in the site itself
+ * ("/venues/…"), uploads in the venue-photos bucket.
+ */
+export function entryPhotoUrl(path: string): string | null {
+  return path.startsWith("/") ? path : publicImageUrl(path);
+}
+
 /** Story screenshots are private: signed URLs valid for an hour. */
 export async function signedImageUrls(keys: string[]): Promise<Record<string, string>> {
   const out: Record<string, string> = {};

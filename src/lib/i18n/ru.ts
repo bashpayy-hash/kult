@@ -1,3 +1,4 @@
+import type { Zone } from "../booking";
 import { pluralRu } from "../format";
 
 const ru = {
@@ -33,6 +34,7 @@ const ru = {
     tableBusy: "Этот стол только что заняли. Выберите другой.",
     tableSize: (n: number) => `Этот стол не подходит для компании из ${n}.`,
     noTables: (n: number) => `На это время нет свободных столов на ${n}. Выберите другое время.`,
+    zoneBusy: "У этого места на это время свободных столов нет. Выберите другое время или «Любое место».",
   },
   nav: { places: "Места", club: "Клуб" },
   catalog: {
@@ -47,20 +49,6 @@ const ru = {
     mapRoute: "Маршрут в 2ГИС",
     mapKm: "км",
     mapM: "м",
-    walkCta: "Прогуляться по центру",
-    walkHere: "Пройтись по улице рядом",
-    walkTitle: "Прогулка по центру Алматы",
-    walkAir: "Над городом",
-    walkHint: "Тяните, чтобы осмотреться; колесо или стрелки — идти",
-    walkHintTouch: "Ведите пальцем, чтобы осмотреться; свайп вверх — идти",
-    walkForward: "Вперёд",
-    walkBack: "Назад",
-    walkGo: "Идти",
-    walkStop: "Стоп",
-    walkLoading: "Печатаем город…",
-    walkClose: "Закрыть прогулку",
-    walkRoutes: "Улицы для прогулки",
-    walkFail: "Город не загрузился. Закройте и попробуйте ещё раз.",
     mapShow: "Показать на карте",
     mapZoomIn: "Приблизить",
     mapZoomOut: "Отдалить",
@@ -141,6 +129,22 @@ const ru = {
     phraseReminder: (phrase: string) => `На входе скажите «${phrase}».`,
     hours: (open: string, close: string) => `Открыто ${open}–${close}`,
     perkTitle: "Специальное предложение",
+    planTitle: "План зала",
+    anyZone: "Любое место",
+    zones: { window: "У окна", bar: "У бара", kitchen: "У открытой кухни", terrace: "Терраса", sofa: "Диваны", quiet: "Тихий угол", private: "Отдельный кабинет" } as Record<Zone, string>,
+    away: "В другом месте зала",
+    noSlotsZone: "У этого места на этот день всё занято. Выберите другой день или «Любое место».",
+  },
+  entry: {
+    aria: "Вход в заведение",
+    exterior: "Фасад",
+    interior: "Внутри",
+    hall: "Зал",
+    enter: "Зайти внутрь",
+    toHall: "В зал",
+    back: "Назад",
+    step: (i: number, n: number) => `${i} из ${n}`,
+    illustration: "Иллюстрация к демо-заведению",
   },
   landing: {
     lead: "Закрытое комьюнити Алматы. Участницы бывают в местах-партнёрах и выкладывают сторис со своей ссылкой, а их подписчики приходят следом.",

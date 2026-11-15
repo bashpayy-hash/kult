@@ -1,3 +1,4 @@
+import type { Zone } from "../booking";
 import type { Dict } from "./ru";
 
 const kk: Dict = {
@@ -33,6 +34,7 @@ const kk: Dict = {
     tableBusy: "Бұл үстелді жаңа ғана біреу алды. Басқасын таңдаңыз.",
     tableSize: (n: number) => `Бұл үстел ${n} адамға сәйкес келмейді.`,
     noTables: (n: number) => `Бұл уақытта ${n} адамға бос үстел жоқ. Басқа уақытты таңдаңыз.`,
+    zoneBusy: "Бұл орында осы уақытта бос үстел жоқ. Басқа уақытты не «Кез келген орын» таңдаңыз.",
   },
   nav: { places: "Орындар", club: "Клуб" },
   catalog: {
@@ -47,20 +49,6 @@ const kk: Dict = {
     mapRoute: "2ГИС-те бағыт",
     mapKm: "км",
     mapM: "м",
-    walkCta: "Орталықта серуендеу",
-    walkHere: "Жақын көшемен жүру",
-    walkTitle: "Алматы орталығымен серуен",
-    walkAir: "Қала үстінде",
-    walkHint: "Айналаға қарау үшін тартыңыз; дөңгелек не нұсқағыштар — жүру",
-    walkHintTouch: "Айналаға қарау үшін саусақпен жүргізіңіз; жоғары сырғыту — жүру",
-    walkForward: "Алға",
-    walkBack: "Артқа",
-    walkGo: "Жүру",
-    walkStop: "Тоқта",
-    walkLoading: "Қаланы басып жатырмыз…",
-    walkClose: "Серуенді жабу",
-    walkRoutes: "Серуенге арналған көшелер",
-    walkFail: "Қала жүктелмеді. Жауып, қайта көріңіз.",
     mapShow: "Картадан көрсету",
     mapZoomIn: "Жақындату",
     mapZoomOut: "Алыстату",
@@ -141,6 +129,22 @@ const kk: Dict = {
     phraseReminder: (phrase: string) => `Кіре берісте «${phrase}» деп айтыңыз.`,
     hours: (open: string, close: string) => `${open}–${close} аралығында ашық`,
     perkTitle: "Арнайы ұсыныс",
+    planTitle: "Зал жоспары",
+    anyZone: "Кез келген орын",
+    zones: { window: "Терезе жанында", bar: "Бар жанында", kitchen: "Ашық асүй жанында", terrace: "Терраса", sofa: "Дивандар", quiet: "Тыныш бұрыш", private: "Жеке бөлме" } as Record<Zone, string>,
+    away: "Залдың басқа жерінде",
+    noSlotsZone: "Бұл орында осы күні бәрі бос емес. Басқа күнді не «Кез келген орын» таңдаңыз.",
+  },
+  entry: {
+    aria: "Мекемеге кіру",
+    exterior: "Сырты",
+    interior: "Іші",
+    hall: "Зал",
+    enter: "Ішке кіру",
+    toHall: "Залға",
+    back: "Артқа",
+    step: (i: number, n: number) => `${n}-ден ${i}`,
+    illustration: "Демо-мекемеге арналған иллюстрация",
   },
   landing: {
     lead: "Алматыдағы жабық қауымдастық. Қатысушылар серіктес орындарға барып, жеке сілтемесімен сторис салады, ал жазылушылары соңынан келеді.",
