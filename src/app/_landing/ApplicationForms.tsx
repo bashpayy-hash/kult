@@ -19,7 +19,7 @@ export function MemberApplicationForm({ lang }: { lang: Lang }) {
   const t = dicts[lang];
   const f = t.landing.member;
   const [state, action] = useActionState<FormState, FormData>(submitMemberApplication, {});
-  if (state.ok) return <Success title={f.successTitle} text={f.successText} />;
+  if (state.ok) return <Success title={f.successTitle} text={state.values?.instagram ? `${f.successText} ${state.values.instagram}` : f.successText} />;
   const fe = state.fieldErrors || {};
   const v = state.values || {};
   return (

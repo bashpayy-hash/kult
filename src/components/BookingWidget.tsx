@@ -22,6 +22,8 @@ type Props = {
   /** From a catalog card: «20:00» was tapped, so open with that day and time. */
   initialDate?: string;
   initialSlot?: number;
+  /** Guests to start with: 1 for services (beauty, wellness, fitness), 2 for tables. */
+  defaultParty?: number;
 };
 
 const DAYS = 14;
@@ -37,7 +39,7 @@ export function BookingWidget(props: Props) {
   return <Flow key={round} {...props} onAgain={() => setRound((r) => r + 1)} />;
 }
 
-function Flow({ lang, venueId, hours, halls, items, today, linkId, phrase, initialDate, initialSlot, onAgain }: Props & { onAgain: () => void }) {
+function Flow({ lang, venueId, hours, halls, items, today, linkId, phrase, initialDate, initialSlot, defaultParty = 2, onAgain }: Props & { onAgain: () => void }) {
   const t = dicts[lang];
   const b = t.booking;
   const tables = useMemo(() => items.filter((i) => i.kind === "table"), [items]);
@@ -45,7 +47,8 @@ function Flow({ lang, venueId, hours, halls, items, today, linkId, phrase, initi
 
   const startDate = initialDate && initialDate >= today && initialDate <= shiftDate(today, DAYS - 1) ? initialDate : today;
   const [date, setDate] = useState(startDate);
-  const [party, setParty] = useState(2);
+  // A manicure or a pilates slot is usually for one; a table for two (uxaudit, 15 Nov 2026).
+  const [party, setParty] = useState(defaultParty);
   const [slot, setSlot] = useState<number | null>(initialSlot ?? null);
   const [tableId, setTableId] = useState<string | null>(null);
   const [hallId, setHallId] = useState(plannedHalls[0]?.id ?? "");

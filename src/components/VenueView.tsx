@@ -157,6 +157,7 @@ export function VenueView({
             </h2>
             <div className="mt-6">
               <BookingWidget
+                defaultParty={SERVICE.includes(d.category) ? 1 : 2}
                 lang={lang}
                 venueId={d.venue_id}
                 hours={d.hours}

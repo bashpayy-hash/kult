@@ -115,7 +115,7 @@ function ArrivedForm({ b, token, lang, close }: { b: HostBooking; token: string;
           <input id={gid} name="guests_count" type="number" inputMode="numeric" min={1} max={50} className="field" defaultValue={b.guests_count ?? b.party_size} required {...errProps(gid, fe.guests_count)} />
         </Field>
         <Field label={t.checkAmount} htmlFor={cid} error={fe.check_amount}>
-          <input id={cid} name="check_amount" inputMode="numeric" className="field" placeholder="0" defaultValue={b.check_amount ?? ""} required autoFocus {...errProps(cid, fe.check_amount)} />
+          <input id={cid} name="check_amount" inputMode="numeric" className="field" defaultValue={b.check_amount ?? ""} required autoFocus {...errProps(cid, fe.check_amount)} />
         </Field>
       </div>
       <FormError error={state.error} />
@@ -194,7 +194,7 @@ function PhraseGuestForm({ links, token, date, lang, close }: { links: HostLink[
           <input id="pg-guests" name="guests_count" type="number" inputMode="numeric" min={1} max={50} className="field" defaultValue={1} required {...errProps("pg-guests", fe.guests_count)} />
         </Field>
         <Field label={t.checkAmount} htmlFor="pg-check" error={fe.check_amount}>
-          <input id="pg-check" name="check_amount" inputMode="numeric" className="field" placeholder="0" required {...errProps("pg-check", fe.check_amount)} />
+          <input id="pg-check" name="check_amount" inputMode="numeric" className="field" required {...errProps("pg-check", fe.check_amount)} />
         </Field>
       </div>
       <FormError error={state.error} />

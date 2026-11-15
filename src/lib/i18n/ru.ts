@@ -162,7 +162,7 @@ const ru = {
       consent: "Согласна на обработку персональных данных",
       submit: "Отправить заявку",
       successTitle: "Заявка у нас",
-      successText: "Мы напишем вам в Instagram, когда посмотрим её.",
+      successText: "Мы напишем вам в Instagram, когда посмотрим её:",
     },
     partner: {
       title: "Для заведений",

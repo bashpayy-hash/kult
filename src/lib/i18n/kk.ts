@@ -162,7 +162,7 @@ const kk: Dict = {
       consent: "Дербес деректерімді өңдеуге келісемін",
       submit: "Өтінімді жіберу",
       successTitle: "Өтінім қабылданды",
-      successText: "Қарап шыққан соң Instagram арқылы жазамыз.",
+      successText: "Қарап шыққан соң Instagram арқылы жазамыз:",
     },
     partner: {
       title: "Мекемелерге",

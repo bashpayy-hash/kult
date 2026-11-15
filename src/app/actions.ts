@@ -56,7 +56,8 @@ export async function submitMemberApplication(_prev: FormState, fd: FormData): P
     console.error("member application failed", e);
     return { error: t.errors.generic, values: values(fd, MEMBER_FIELDS) };
   }
-  return { ok: true };
+  // The thank-you repeats the handle, so a typo shows (uxaudit, 15 Nov 2026).
+  return { ok: true, values: { instagram: instagram ?? "" } };
 }
 
 const PARTNER_FIELDS = ["venue_name", "category", "contact_name", "phone", "instagram", "avg_check", "consent"];
