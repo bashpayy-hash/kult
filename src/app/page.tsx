@@ -230,6 +230,27 @@ export default async function Overview({ searchParams }: { searchParams: Promise
           </section>
         ) : null}
 
+        {/* Blat (16 Nov 2026): anyone recommends a place, a visit the hostess
+            confirmed earns a point per guest, points buy treats, never money. */}
+        <section className="px-edge border-t border-line py-14 md:py-20" aria-labelledby="blat-title">
+          <div className="grid gap-8 md:grid-cols-[5fr_7fr] md:gap-12">
+            <div className="reveal max-w-[30rem]">
+              <p className="label">{t.blat.adviseTitle}</p>
+              <h2 id="blat-title" className="mt-2 text-[32px] md:text-[44px]">{t.blat.title}</h2>
+              <p className="mt-4 text-[17px] text-ink-2">{t.blat.lead}</p>
+              <Link href="/blat" className="btn btn-soft mt-7">{t.blat.howTitle} →</Link>
+            </div>
+            <ol className="reveal grid content-start gap-3" style={{ ["--c" as string]: 1 }}>
+              {t.blat.how.map((step, i) => (
+                <li key={i} className="flex gap-4 bg-raised px-5 py-4 text-[15px] text-ink-2">
+                  <span className="numerals text-[32px] leading-none text-accent">{i + 1}</span>
+                  <span>{step}</span>
+                </li>
+              ))}
+            </ol>
+          </div>
+        </section>
+
         {/* The club on paper. */}
         <section className="bg-paper text-paper-ink" aria-labelledby="club">
           <div className="px-edge grid items-center gap-8 py-14 md:grid-cols-[4fr_8fr] md:gap-16 md:py-20">

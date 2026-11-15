@@ -19,6 +19,8 @@ type Props = {
   /** Member link: the booking counts for her pair; the phrase is repeated on success. */
   linkId?: string;
   phrase?: string;
+  /** A friend's recommendation (/p/<code>): the booking counts for their blat. */
+  pickId?: string;
   /** From a catalog card: «20:00» was tapped, so open with that day and time. */
   initialDate?: string;
   initialSlot?: number;
@@ -39,7 +41,7 @@ export function BookingWidget(props: Props) {
   return <Flow key={round} {...props} onAgain={() => setRound((r) => r + 1)} />;
 }
 
-function Flow({ lang, venueId, hours, halls, items, today, linkId, phrase, initialDate, initialSlot, defaultParty = 2, onAgain }: Props & { onAgain: () => void }) {
+function Flow({ lang, venueId, hours, halls, items, today, linkId, phrase, pickId, initialDate, initialSlot, defaultParty = 2, onAgain }: Props & { onAgain: () => void }) {
   const t = dicts[lang];
   const b = t.booking;
   const tables = useMemo(() => items.filter((i) => i.kind === "table"), [items]);
@@ -159,6 +161,7 @@ function Flow({ lang, venueId, hours, halls, items, today, linkId, phrase, initi
       <input type="hidden" name="lang" value={lang} />
       <input type="hidden" name="venue_id" value={venueId} />
       {linkId ? <input type="hidden" name="link_id" value={linkId} /> : null}
+      {pickId ? <input type="hidden" name="pick_id" value={pickId} /> : null}
       <input type="hidden" name="date" value={date} />
       <input type="hidden" name="party_size" value={party} />
       <input type="hidden" name="slot" value={chosenSlot ?? ""} />

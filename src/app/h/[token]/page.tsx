@@ -5,7 +5,7 @@ import { getDict } from "@/lib/i18n";
 import { almatyToday, formatDay, formatMoney, isIsoDate, shiftDate } from "@/lib/format";
 import { Mark } from "@/components/Logo";
 import { LangSwitch } from "@/components/LangSwitch";
-import { BookingCard, LogEntry, MemberVisitPanel, PhraseGuestPanel, type HostBooking, type HostLink } from "./HostClient";
+import { BlatCodePanel, BookingCard, LogEntry, MemberVisitPanel, PhraseGuestPanel, type HostBooking, type HostLink } from "./HostClient";
 
 export const dynamic = "force-dynamic";
 export const metadata: Metadata = { title: "Хостес", robots: { index: false, follow: false } };
@@ -40,8 +40,10 @@ export default async function HostPage({ params, searchParams }: Props) {
     sql<HostBooking[]>`
       select b.id, b.guest_name, b.phone, b.booking_time, b.party_size, b.comment, b.status,
              m.name as member_name, m.slug as member_slug, vt.label as table_label,
-             gv.guests_count, gv.check_amount
+             gv.guests_count, gv.check_amount, r.name as pick_name
       from guest_bookings b
+      left join picks p on p.id = b.pick_id
+      left join recommenders r on r.id = p.recommender_id
       left join tracking_links tl on tl.id = b.tracking_link_id
       left join members m on m.id = tl.member_id
       left join venue_tables vt on vt.id = b.table_id
@@ -138,6 +140,8 @@ export default async function HostPage({ params, searchParams }: Props) {
             </ul>
           )}
         </section>
+
+        <BlatCodePanel token={token} lang={lang} />
 
         <section className="mt-10 flex flex-col gap-3" aria-label={t.host.phraseGuest}>
           {links.length === 0 ? (

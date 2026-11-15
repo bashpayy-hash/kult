@@ -741,3 +741,38 @@ export async function savePlan(_prev: FormState, fd: FormData): Promise<FormStat
   revalidatePath(`/admin/venues/${venueId}`);
   return { ok: true, message: "План сохранён" };
 }
+
+// ── Blat treats (16 Nov 2026): what a venue gives for points, never money ──
+
+export async function createReward(_prev: FormState, fd: FormData): Promise<FormState> {
+  await requireAdmin();
+  const venueId = str(fd, "venue_id", 40);
+  const title = str(fd, "title", 80);
+  const cost = int(fd, "cost");
+  if (!isUuid(venueId)) return { error: "Нет заведения." };
+  const fe: Record<string, string> = {};
+  if (!title) fe.title = "Напишите угощение.";
+  if (cost === null || Number.isNaN(cost) || cost < 1 || cost > 100) fe.cost = "От 1 до 100 баллов.";
+  if (Object.keys(fe).length) return { error: Object.values(fe).join(" ") };
+  try {
+    await db()`insert into blat_rewards (venue_id, title, title_kk, cost) values (${venueId}, ${title}, ${strOrNull(fd, "title_kk", 80)}, ${cost})`;
+  } catch (e) {
+    return dbError(e);
+  }
+  revalidatePath(`/admin/venues/${venueId}`);
+  return { ok: true, message: "Угощение добавлено" };
+}
+
+/** Taken treats keep their row (codes refer to it), so a used one is switched off instead. */
+export async function removeReward(fd: FormData): Promise<void> {
+  await requireAdmin();
+  const id = str(fd, "id", 40);
+  if (!isUuid(id)) return;
+  const sql = db();
+  const [r] = await sql<{ venue_id: string }[]>`
+    delete from blat_rewards w where w.id = ${id}
+      and not exists (select 1 from blat_redemptions r where r.reward_id = w.id)
+    returning venue_id`;
+  const [off] = r ? [r] : await sql<{ venue_id: string }[]>`update blat_rewards set active = false where id = ${id} returning venue_id`;
+  if (off) revalidatePath(`/admin/venues/${off.venue_id}`);
+}

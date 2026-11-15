@@ -111,6 +111,36 @@
     "public/plates/market-2048.webp"
    ],
    "master": "design/plates/source/market.webp"
+  },
+  {
+   "name": "chaikhana",
+   "date": "2026-11-16",
+   "job": "5c6491a7-deed-4875-a848-2b8a3ec27410",
+   "references": [
+    "ca6681cd-7f3e-41ff-b14d-b5a1ec7edf6c",
+    "e09d9d89-5a48-4879-98e4-2e02919724c1"
+   ],
+   "subject": "кобальтовая пиала и чайник с хлопком, лепёшка из тандыра, курага, пар из ваты; бирюза и шафран",
+   "files": [
+    "public/plates/chaikhana-480.webp",
+    "public/plates/chaikhana-900.webp"
+   ],
+   "master": "design/plates/source/chaikhana.webp"
+  },
+  {
+   "name": "street",
+   "date": "2026-11-16",
+   "job": "4d3f86e8-c64b-481b-af7a-38a4747c08c2",
+   "references": [
+    "ca6681cd-7f3e-41ff-b14d-b5a1ec7edf6c",
+    "e09d9d89-5a48-4879-98e4-2e02919724c1"
+   ],
+   "subject": "два шампура шашлыка крест-накрест, шаурма в крафте, лук и зелень, дым из ваты; томатный и уголь",
+   "files": [
+    "public/plates/street-480.webp",
+    "public/plates/street-900.webp"
+   ],
+   "master": "design/plates/source/street.webp"
   }
  ],
  "notGenerated": "Цифры Kraftco — src/components/NumeralBand.tsx (SVG): живые данные. verify.mjs против замера Kraftco: mean ΔE 2.37; max 32.6 даёт только серо-белый мелкий текст обложки (0,4% площади).",

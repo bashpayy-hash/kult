@@ -3,6 +3,7 @@ import { BookBar } from "@/components/BookBar";
 import { Monogram } from "@/components/Monogram";
 import { Plate } from "@/components/Plate";
 import { VenueEntry, type EntryShot } from "@/components/VenueEntry";
+import { PickForm } from "@/components/Blat";
 import { openNow, ZONES, type PlanHall, type PlanItem, type VenueHours } from "@/lib/booking";
 import { loadEntryPhotos } from "@/lib/venueData";
 import { almatyNowMinutes, almatyToday, formatMoney, instagramHandle } from "@/lib/format";
@@ -48,6 +49,8 @@ export async function VenueView({
   active,
   invite,
   initial,
+  pick,
+  advise,
 }: {
   d: VenueViewData;
   lang: Lang;
@@ -56,6 +59,10 @@ export async function VenueView({
   active: boolean;
   invite?: { linkId: string; memberName: string; memberSlug: string; phrase: string };
   initial?: { date?: string; slot?: number };
+  /** Opened from a friend's recommendation (/p/<code>). */
+  pick?: { id: string; name: string; note: string | null };
+  /** Offer «Посоветовать другу»; `known` is this browser's recommender, if any. */
+  advise?: { known: string | null };
 }) {
   const photo = publicImageUrl(d.photo_path);
   const logo = publicImageUrl(d.logo_path);
@@ -99,6 +106,17 @@ export async function VenueView({
   return (
     <div className="grid gap-10 md:grid-cols-[5fr_7fr] md:gap-12 lg:gap-16">
       <div className="flex min-w-0 flex-col gap-6">
+        {/* A friend's pick comes first: who recommends the place and why, before its pictures. */}
+        {pick ? (
+          <div className="rise border-l-2 border-accent pl-4">
+            <p className="flex items-center gap-2.5 text-[16px] font-semibold text-ink">
+              <Monogram name={pick.name} size={28} />
+              {t.blat.pickFrom(pick.name)}
+            </p>
+            {pick.note ? <p className="mt-2 text-[16px] text-ink-2">«{pick.note}»</p> : null}
+            <p className="mt-2 text-[12px] text-ink-3">{t.blat.pickLabel(pick.name)}</p>
+          </div>
+        ) : null}
         {/* The way in, else the venue's own photo, else its category's collage plate. */}
         <div className="rise">
           {shots.length ? (
@@ -119,11 +137,16 @@ export async function VenueView({
 
         <div className="rise rise-1">
           {invite ? (
-            <p className="mb-5 flex items-center gap-2.5 text-[15px] text-ink-2">
-              <Monogram name={invite.memberName} size={28} />
-              {t.invite.from(invite.memberName)}
-            </p>
+            <div className="mb-5">
+              <p className="flex items-center gap-2.5 text-[15px] text-ink-2">
+                <Monogram name={invite.memberName} size={28} />
+                {t.invite.from(invite.memberName)}
+              </p>
+              {/* The member was treated by the venue: say so (ad marking, 16 Nov 2026). */}
+              <p className="mt-2 text-[12px] text-ink-3">{t.invite.adLabel}</p>
+            </div>
           ) : null}
+
           <div className="flex items-start justify-between gap-4">
             <div className="min-w-0">
               <p className="label">{[t.categories[d.category], d.address].filter(Boolean).join(" · ")}</p>
@@ -167,6 +190,7 @@ export async function VenueView({
                 {d.terms ? <p className="mt-2 text-[14px] text-ink-3">{d.terms}</p> : null}
               </div>
             ) : null}
+            {advise ? <PickForm venueId={d.venue_id} venueName={d.venue_name} lang={lang} known={advise.known} /> : null}
             {invite ? (
               <div className="border-t border-line pt-5">
                 <p className="label">{t.invite.phraseTitle}</p>
@@ -197,6 +221,7 @@ export async function VenueView({
                 today={almatyToday()}
                 linkId={invite?.linkId}
                 phrase={invite?.phrase}
+                pickId={pick?.id}
                 initialDate={initial?.date}
                 initialSlot={initial?.slot}
               />

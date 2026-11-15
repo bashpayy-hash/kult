@@ -1,6 +1,6 @@
 export type Status = "active" | "paused" | "archived";
-export type Category = "restaurant" | "cafe" | "bar" | "beauty" | "wellness" | "fitness" | "other";
-export const CATEGORIES: Category[] = ["restaurant", "cafe", "bar", "beauty", "wellness", "fitness", "other"];
+export type Category = "restaurant" | "cafe" | "bar" | "chaikhana" | "street" | "beauty" | "wellness" | "fitness" | "other";
+export const CATEGORIES: Category[] = ["restaurant", "cafe", "bar", "chaikhana", "street", "beauty", "wellness", "fitness", "other"];
 
 export type Member = {
   id: string;

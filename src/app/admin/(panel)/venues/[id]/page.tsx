@@ -12,6 +12,8 @@ import {
   deleteVenue,
   regenerateHostToken,
   removeEntryPhoto,
+  createReward,
+  removeReward,
   removeVenueLogo,
   removeVenuePhoto,
   updateOffer,
@@ -42,9 +44,12 @@ export default async function VenuePage({ params }: { params: Promise<{ id: stri
       from tracking_links tl join members m on m.id = tl.member_id join pair_stats ps on ps.tracking_link_id = tl.id
       where tl.venue_id = ${id} order by m.name`,
   ]);
-  const [plan, entry, upcoming] = await Promise.all([
+  const [plan, entry, rewards, upcoming] = await Promise.all([
     loadPlan(id),
     loadEntryPhotos(id),
+    sql<{ id: string; title: string; title_kk: string | null; cost: number; taken: number }[]>`
+      select w.id, w.title, w.title_kk, w.cost, (select count(*)::int from blat_redemptions r where r.reward_id = w.id and r.status = 'used') as taken
+      from blat_rewards w where w.venue_id = ${id} and w.active order by w.cost`,
     sql<{ id: string; booking_date: string; booking_time: string; guest_name: string; phone: string; party_size: number; status: string; table_label: string | null; member_name: string | null }[]>`
       select b.id, b.booking_date, b.booking_time, b.guest_name, b.phone, b.party_size, b.status, vt.label as table_label, m.name as member_name
       from guest_bookings b
@@ -71,6 +76,7 @@ export default async function VenuePage({ params }: { params: Promise<{ id: stri
     ["Вход: фасад, интерьер и зал", ["exterior", "interior", "hall"].every((k) => entry.some((p) => p.kind === k))],
     ["Зоны у столов (у окна, у бара…)", plan.items.some((i) => i.zone)],
     ["Бонус гостям (perk)", !!offerWithPerk],
+    ["Угощение за блат", rewards.length > 0],
     ["Показывается в каталоге", v.is_listed],
   ];
 
@@ -158,6 +164,52 @@ export default async function VenuePage({ params }: { params: Promise<{ id: stri
             <ActionForm action={createOffer} submit="Добавить">
               <input type="hidden" name="venue_id" value={v.id} />
               <OfferFields idp="o-new" />
+            </ActionForm>
+          </Disclosure>
+        </div>
+      </Section>
+
+      <Section title="Угощения за блат">
+        <div className="flex flex-col gap-4 rounded-tile-r bg-tile p-5 md:p-6">
+          <p className="max-w-[48rem] text-[14px] text-ink-3">
+            Гости, которые советуют заведение друзьям, получают балл за каждого пришедшего гостя (его отмечает хостес) и меняют баллы
+            на угощение. Только угощения: не скидки и не деньги. Хостес отмечает код угощения на своей странице.
+          </p>
+          {rewards.length ? (
+            <ul className="flex flex-col divide-y divide-line">
+              {rewards.map((w) => (
+                <li key={w.id} className="flex flex-wrap items-baseline justify-between gap-3 py-3 text-[15px]">
+                  <span className="text-ink">
+                    {w.title}
+                    {w.title_kk ? <span className="text-ink-3"> · {w.title_kk}</span> : null}
+                  </span>
+                  <span className="flex items-baseline gap-4 text-[14px] text-ink-3">
+                    {w.cost} балл. · выдано {w.taken}
+                    <ButtonForm action={removeReward} fields={{ id: w.id }} label="Убрать" confirmText="Убрать угощение? Уже выданные коды останутся." />
+                  </span>
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <Empty>Угощений нет: в блате это заведение не показывается.</Empty>
+          )}
+          <Disclosure title="Добавить угощение">
+            <ActionForm action={createReward} submit="Добавить">
+              <input type="hidden" name="venue_id" value={v.id} />
+              <div className="grid gap-4 sm:grid-cols-[2fr_2fr_1fr]">
+                <label className="flex flex-col gap-2">
+                  <span className="label">Угощение (рус)</span>
+                  <input name="title" className="field" maxLength={80} required placeholder="Десерт от шефа" />
+                </label>
+                <label className="flex flex-col gap-2">
+                  <span className="label">Угощение (қаз)</span>
+                  <input name="title_kk" className="field" maxLength={80} />
+                </label>
+                <label className="flex flex-col gap-2">
+                  <span className="label">Баллов</span>
+                  <input name="cost" type="number" min={1} max={100} defaultValue={3} className="field" required />
+                </label>
+              </div>
             </ActionForm>
           </Disclosure>
         </div>

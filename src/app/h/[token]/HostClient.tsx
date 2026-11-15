@@ -1,7 +1,7 @@
 "use client";
 
 import { useActionState, useEffect, useState } from "react";
-import { addMemberVisit, addPhraseGuest, markArrived, markNoShow, removeEntry } from "./actions";
+import { addMemberVisit, addPhraseGuest, markArrived, markNoShow, removeEntry, redeemBlatCode } from "./actions";
 import { errProps, Field, FormError, SubmitButton } from "@/components/form";
 import { dicts, type Lang } from "@/lib/i18n/dicts";
 import { formatMoney, formatPhone, formatTime } from "@/lib/format";
@@ -20,6 +20,8 @@ export type HostBooking = {
   table_label: string | null;
   guests_count: number | null;
   check_amount: number | null;
+  /** Booked through a friend's recommendation: marking the guests earns that friend blat. */
+  pick_name: string | null;
 };
 
 export type HostLink = { id: string; member_name: string; member_slug: string; member_reward: string | null };
@@ -59,6 +61,8 @@ export function BookingCard({ b, token, lang }: { b: HostBooking; token: string;
             <span aria-hidden="true">·</span>
             {b.member_name && b.member_slug ? (
               <span>{t.from(b.member_name)}</span>
+            ) : b.pick_name ? (
+              <span>{t.byPick(b.pick_name)}</span>
             ) : (
               <span>{t.fromCatalog}</span>
             )}
@@ -291,5 +295,27 @@ export function LogEntry({
         </form>
       ) : null}
     </li>
+  );
+}
+
+/** A guest shows a six-digit blat code: check it and mark the treat given. */
+export function BlatCodePanel({ token, lang }: { token: string; lang: Lang }) {
+  const t = dicts[lang].host;
+  const [state, action] = useActionState<FormState, FormData>(redeemBlatCode, {});
+  const fe = state.fieldErrors || {};
+  return (
+    <section aria-labelledby="blat-code" className="mt-10 rounded-tile-r bg-tile p-5">
+      <h2 id="blat-code" className="text-[20px]">{t.blatTitle}</h2>
+      <p className="mt-1 text-[14px] text-ink-3">{t.blatHint}</p>
+      <form action={action} className="mt-4 flex flex-wrap items-end gap-3">
+        <input type="hidden" name="token" value={token} />
+        <input type="hidden" name="lang" value={lang} />
+        <Field label={t.blatCode} htmlFor="blat-code-input" error={fe.code}>
+          <input id="blat-code-input" name="code" inputMode="numeric" autoComplete="off" maxLength={7} placeholder="000 000" className="field w-40 font-mono tracking-[0.12em]" required {...errProps("blat-code-input", fe.code)} />
+        </Field>
+        <SubmitButton className="btn btn-primary btn-sm">{t.blatCheck}</SubmitButton>
+      </form>
+      {state.ok ? <p role="status" className="mt-3 text-[15px] text-success">{state.message}</p> : null}
+    </section>
   );
 }

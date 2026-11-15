@@ -93,7 +93,7 @@ export async function listVenues(opts: { category?: string | null; limit?: numbe
 export async function listedCategories(): Promise<{ category: string; n: number }[]> {
   const rows = await db()<{ category: string; n: number }[]>`
     select category, count(*)::int as n from venues where status = 'active' and is_listed group by category`;
-  const order = ["restaurant", "cafe", "bar", "beauty", "wellness", "fitness", "other"];
+  const order = ["restaurant", "cafe", "bar", "chaikhana", "street", "beauty", "wellness", "fitness", "other"];
   return order.flatMap((c) => rows.filter((r) => r.category === c));
 }
 
@@ -137,4 +137,26 @@ export async function nextFreeSlots(venues: CatalogVenue[], party = 2, count = 3
     }
   }
   return out;
+}
+
+type VenueRow = Omit<import("@/components/VenueView").VenueViewData, "hours"> & { open_time: string; close_time: string; slot_minutes: number; hold_minutes: number };
+
+/** A venue for the venue page, by slug (listed only) or by id (any active one, for a friend's pick). */
+export async function loadVenueView(by: { slug: string } | { id: string }): Promise<import("@/components/VenueView").VenueViewData | null> {
+  const slug = "slug" in by ? by.slug : null;
+  const id = "id" in by ? by.id : null;
+  if (slug && !/^[a-z0-9][a-z0-9-]{1,39}$/.test(slug)) return null;
+  const [row] = await db()<VenueRow[]>`
+    select v.id as venue_id, v.name as venue_name, v.category, v.description, v.description_kk, v.address, v.city, v.lat, v.lng,
+           v.instagram, v.photo_path, v.logo_path, v.avg_check, v.open_time::text, v.close_time::text, v.slot_minutes, v.hold_minutes,
+           o.guest_perk as perk, o.guest_perk_kk as perk_kk, o.terms
+    from venues v
+    left join lateral (
+      select guest_perk, guest_perk_kk, terms from offers
+      where venue_id = v.id and active and guest_perk is not null order by created_at limit 1
+    ) o on true
+    where v.status = 'active' and (${slug}::text is null or (v.slug = ${slug} and v.is_listed)) and (${id}::uuid is null or v.id = ${id}::uuid)`;
+  if (!row) return null;
+  const { open_time, close_time, slot_minutes, hold_minutes, ...rest } = row;
+  return { ...rest, hours: { open_time, close_time, slot_minutes, hold_minutes } };
 }

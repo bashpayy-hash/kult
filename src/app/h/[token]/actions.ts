@@ -7,6 +7,7 @@ import { isLang, type Lang } from "@/lib/i18n";
 import { int, isUuid, str, strOrNull } from "@/lib/forms";
 import { almatyToday, isIsoDate, shiftDate } from "@/lib/format";
 import type { FormState } from "@/lib/types";
+import { MAX_POINTS_PER_BOOKING } from "@/lib/blat";
 
 // Every action re-resolves the venue from the secret token and checks that
 // the row it touches belongs to that venue. No login: the token is the key.
@@ -57,6 +58,14 @@ export async function markArrived(_prev: FormState, fd: FormData): Promise<FormS
       for update`;
     if (!b) return false;
     await tx`update guest_bookings set status = 'arrived' where id = ${b.id}`;
+    // Blat: a guest who came through a friend's pick earns the friend a point
+    // per guest (capped), unless the guest is the friend by phone.
+    await tx`
+      insert into blat_points (recommender_id, delta, reason, booking_id)
+      select p.recommender_id, least(${guests}::int, ${MAX_POINTS_PER_BOOKING}::int), 'visit', b.id
+      from guest_bookings b join picks p on p.id = b.pick_id join recommenders r on r.id = p.recommender_id
+      where b.id = ${b.id} and r.phone <> b.phone
+      on conflict (booking_id) do update set delta = excluded.delta`;
     await tx`
       insert into guest_visits (tracking_link_id, venue_id, booking_id, source, visit_date, guests_count, check_amount)
       values (${b.tracking_link_id}, ${venue.id}, ${b.id}, 'booking', ${b.booking_date}, ${guests}, ${amount})
@@ -79,6 +88,7 @@ export async function markNoShow(fd: FormData): Promise<void> {
       select b.id from guest_bookings b where b.id = ${bookingId} and b.venue_id = ${venue.id}`;
     if (!b) return;
     await tx`delete from guest_visits where booking_id = ${b.id}`;
+    await tx`delete from blat_points where booking_id = ${b.id}`;
     await tx`update guest_bookings set status = 'no_show' where id = ${b.id}`;
   });
   revalidatePath(`/h/${venue.token}`);
@@ -149,4 +159,21 @@ export async function removeEntry(fd: FormData): Promise<void> {
         and not exists (select 1 from content_proofs cp where cp.member_visit_id = mv.id)`;
   }
   revalidatePath(`/h/${venue.token}`);
+}
+
+/** A guest shows a blat code: the treat is theirs, mark it given. */
+export async function redeemBlatCode(_prev: FormState, fd: FormData): Promise<FormState> {
+  const t = dicts[lang(fd)];
+  const venue = await venueFor(fd);
+  if (!venue) return { error: t.host.badTitle };
+  const code = str(fd, "code", 12).replace(/\D/g, "");
+  if (code.length !== 6) return { fieldErrors: { code: t.host.blatBad } };
+  const [r] = await db()<{ title: string }[]>`
+    update blat_redemptions r set status = 'used', used_at = now()
+    from blat_rewards w
+    where r.code = ${code} and r.venue_id = ${venue.id} and r.status = 'issued' and w.id = r.reward_id
+    returning w.title`;
+  if (!r) return { fieldErrors: { code: t.host.blatBad } };
+  revalidatePath(`/h/${venue.token}`);
+  return { ok: true, message: t.host.blatOk(r.title) };
 }

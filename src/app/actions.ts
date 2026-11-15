@@ -116,7 +116,9 @@ export async function submitBooking(_prev: FormState, fd: FormData): Promise<For
 
   const venueId = str(fd, "venue_id", 40);
   const linkId = str(fd, "link_id", 40) || null;
-  if (!isUuid(venueId) || (linkId && !isUuid(linkId))) return { error: t.errors.generic };
+  // A friend's recommendation (/p/<code>); a member's link wins if both came.
+  const pickId = linkId ? null : str(fd, "pick_id", 40) || null;
+  if (!isUuid(venueId) || (linkId && !isUuid(linkId)) || (pickId && !isUuid(pickId))) return { error: t.errors.generic };
 
   const guestName = str(fd, "guest_name", 80);
   const phoneRaw = str(fd, "phone", 40);
@@ -160,6 +162,12 @@ export async function submitBooking(_prev: FormState, fd: FormData): Promise<For
       if (!link) return { error: t.invite.inactiveTitle };
     }
 
+    let pick: string | null = null;
+    if (pickId) {
+      const [p] = await sql<{ id: string }[]>`select id from picks where id = ${pickId} and venue_id = ${venueId} and active`;
+      pick = p?.id ?? null;
+    }
+
     if (!slotList(venue).includes(slot) || slot < earliestStart(date, LEAD_MINUTES)) {
       return { error: t.errors.slot, values: keep };
     }
@@ -188,10 +196,10 @@ export async function submitBooking(_prev: FormState, fd: FormData): Promise<For
     const at = toCalendar(date, slot);
     await sql`
       insert into guest_bookings
-        (venue_id, tracking_link_id, source, table_id, hold_minutes, guest_name, phone,
+        (venue_id, tracking_link_id, pick_id, source, table_id, hold_minutes, guest_name, phone,
          booking_date, booking_time, party_size, comment, consent, visitor_hash, lang)
       values
-        (${venueId}, ${linkId}, ${linkId ? "link" : "catalog"}, ${table?.id ?? null}, ${venue.hold_minutes}, ${guestName}, ${phone},
+        (${venueId}, ${linkId}, ${pick}, ${linkId ? "link" : pick ? "pick" : "catalog"}, ${table?.id ?? null}, ${venue.hold_minutes}, ${guestName}, ${phone},
          ${at.date}, ${at.time}, ${party}, ${comment}, true, ${visitor.hash}, ${lang})`;
     // The calendar date, not the service day: a 00:30 table is «14 ноября, 00:30».
     return { ok: true, values: { date: at.date, time: at.time, table: table?.label ?? "", zone: table?.zone ?? "", party_size: String(party) } };

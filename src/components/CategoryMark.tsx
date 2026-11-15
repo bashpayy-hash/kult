@@ -4,7 +4,7 @@
  * the signs of the 3D walk (14 Nov 2026, owner on the square markers: «эти
  * прямоугольники некрасиво смотрятся… неужели нету других способов»).
  */
-export type CategoryKind = "restaurant" | "cafe" | "bar" | "beauty" | "wellness" | "fitness" | "other";
+export type CategoryKind = "restaurant" | "cafe" | "bar" | "chaikhana" | "street" | "beauty" | "wellness" | "fitness" | "other";
 
 export const MARK_PATHS: Record<CategoryKind, string> = {
   // Fork and knife.
@@ -13,6 +13,10 @@ export const MARK_PATHS: Record<CategoryKind, string> = {
   cafe: "M4 9h10v3a4 4 0 0 1-4 4H8a4 4 0 0 1-4-4zM14 10h1.5a2 2 0 0 1 0 4H14M7 3c-1 1 1 2 0 4M11 3c-1 1 1 2 0 4",
   // A coupe glass.
   bar: "M3.5 5h13c0 4-3 6.5-6.5 6.5S3.5 9 3.5 5zM10 11.5V17M6.5 17h7",
+  // A teapot beside a piala.
+  chaikhana: "M3 10h9v2.5a3.5 3.5 0 0 1-3.5 3.5h-2A3.5 3.5 0 0 1 3 12.5zM12 11l3-2.5M5.5 10V8.5h4V10M7.5 8.5V7M13.5 13.5h4l-.6 2.5h-2.8z",
+  // A skewer with three pieces.
+  street: "M3 17L17 3M5.6 11.2l3.2 3.2M8.4 8.4l3.2 3.2M11.2 5.6l3.2 3.2",
   // A bottle of polish.
   beauty: "M8 3h4v4H8zM6.5 7h7v9.5a.5.5 0 0 1-.5.5H7a.5.5 0 0 1-.5-.5zM9 10v4",
   // A stack of stones with steam.

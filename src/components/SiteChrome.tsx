@@ -46,6 +46,9 @@ export function SiteFooter({ t, flush = false }: { t: Dict; flush?: boolean }) {
           <Link href="/join#partners" className="link-quiet">
             {t.nav.venues}
           </Link>
+          <Link href="/blat" className="link-quiet">
+            {t.nav.blat}
+          </Link>
           <Link href="/privacy" className="link-quiet">
             {t.privacyLink}
           </Link>
