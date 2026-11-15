@@ -57,16 +57,13 @@ export const CLUB_COVER = plate("chick-club", "#e52e01");
 export const NOT_FOUND_COVER = plate("chick-404", "#7ca5ac");
 
 /**
- * Heublein 1970: two silhouettes, a lake of gold. Portrait (3:4).
- * Since 12 Nov 2026 the still is the first frame of the living loop
- * (`loop`, 10 s there and back, Higgsfield FLUX 3 Video from this picture),
- * graded the same way, so the loop starts on exactly what is on screen.
+ * The cover since 15 Nov 2026: the site's own 3D Alma-Ata at golden hour, a
+ * seamless loop in two cuts (CityFilm.tsx). It replaced the Heublein photograph (hero-*.webp, hero-loop.*) on 15 Nov 2026.
  */
-export const HERO = {
-  src: "/plates/hero-1200.webp",
-  srcSet: "/plates/hero-800.webp 800w, /plates/hero-1200.webp 1200w",
-  loop: "/plates/hero-loop.mp4",
-  bg: "#231917",
+export const FILM = {
+  tall: { poster: "/plates/city-tall.webp", mp4: "/plates/city-tall.mp4" },
+  wide: { poster: "/plates/city-wide.webp", mp4: "/plates/city-wide.mp4" },
+  bg: "#c9a06a",
 };
 
 /** Coca-Cola 1987: one documentary photograph of a market. */

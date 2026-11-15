@@ -154,10 +154,24 @@ export default async function HostPage({ params, searchParams }: Props) {
           <h2 id="log" className="text-[24px]">
             {t.host.logTitle}
           </h2>
-          {phraseGuests.length + memberVisits.length === 0 ? (
+          {/* Arrivals by booking belong to the day's log too: before, a guest marked «Пришли»
+              above still left «Пока ничего не отмечено» here (uxaudit, 15 Nov 2026). */}
+          {arrived.length + phraseGuests.length + memberVisits.length === 0 ? (
             <p className="mt-3 text-ink-3">{t.host.logEmpty}</p>
           ) : (
             <ul className="mt-4 flex flex-col divide-y divide-line rounded-tile-r bg-tile px-5">
+              {arrived.map((b) => (
+                <LogEntry
+                  key={b.id}
+                  token={token}
+                  lang={lang}
+                  kind="guest"
+                  id={b.id}
+                  title={t.host.logBooking(b.guest_name)}
+                  meta={b.guests_count != null ? `${t.host.guests(b.guests_count)}${b.check_amount != null ? ` · ${formatMoney(b.check_amount)}` : ""}` : ""}
+                  removable={false}
+                />
+              ))}
               {phraseGuests.map((g) => (
                 <LogEntry
                   key={g.id}

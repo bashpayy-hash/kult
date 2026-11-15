@@ -6,10 +6,10 @@ import { Plate } from "@/components/Plate";
 import { listedCategories, listVenues, nextFreeSlots } from "@/lib/venueData";
 import { almatyNowMinutes, almatyToday, formatDay } from "@/lib/format";
 import { clock } from "@/lib/booking";
-import { CLUB_COVER, HERO, MARKET } from "@/lib/covers";
+import { CLUB_COVER, FILM, MARKET } from "@/lib/covers";
 import { CATEGORIES, type Category } from "@/lib/types";
 import { CityMap, type MapCity } from "@/components/CityMap";
-import { HeroCover } from "@/components/HeroCover";
+import { CityFilm, WalkButton } from "@/components/CityFilm";
 import { Tick } from "@/components/Tick";
 import plans from "@/lib/cityPlans.generated.json";
 import almatyPlan from "@/lib/almatyPlan.generated.json";
@@ -109,33 +109,30 @@ export default async function Overview({ searchParams }: { searchParams: Promise
     <>
       <SiteHeader lang={lang} t={t} />
       <main>
-        {/* Cover and contents: Heublein 1970 photograph; the contents page lists
-            tonight. On phones the photograph is cut to 16:10 so the title and
-            the first times are on the first screen. */}
-        <section className="px-edge grid gap-8 border-t border-line pb-16 pt-6 md:grid-cols-[5fr_7fr] md:gap-12 md:pb-24 md:pt-10 lg:gap-20">
-          <div className="enter relative overflow-hidden" style={{ background: HERO.bg, ["--i" as string]: 2 }}>
-            <HeroCover
-              src={HERO.src}
-              srcSet={HERO.srcSet}
-              loop={HERO.loop}
-              sizes="(min-width: 768px) 42vw, 92vw"
-              alt={C.heroAlt}
-              className="aspect-[16/10] w-full object-cover object-[50%_40%] md:aspect-[4/5] md:h-full"
-              videoClassName="object-cover object-[50%_40%]"
-            />
-            <p className="absolute inset-x-4 bottom-4 flex items-baseline justify-between text-[13px] tracking-[0.02em] text-ink-2">
-              <span>Бөлек, Алматы</span>
-              <span className="numerals text-[20px] text-accent">{today.slice(0, 4)}</span>
-            </p>
+        {/* The cover (15 Nov 2026, owner: «иллюстрация классная, но не под лендинг… нужно
+            брать ещё что-то сильнее»): full-bleed, the site's own 3D Alma-Ata at golden hour
+            in a seamless loop, the title set over it, two ways in — the nearest free time or
+            the city itself. The contents (tonight's times) follow straight under it. */}
+        <section aria-labelledby="hero-title" className="relative isolate overflow-hidden border-t border-line" style={{ background: FILM.bg }}>
+          <CityFilm tall={FILM.tall} wide={FILM.wide} alt={C.filmAlt} />
+          {/* Ink rises from the foot of the picture so the title reads on any frame. */}
+          <div aria-hidden="true" className="absolute inset-0 bg-[linear-gradient(to_bottom,rgba(35,25,23,0)_16%,rgba(35,25,23,0.5)_42%,rgba(35,25,23,0.86)_70%,rgba(35,25,23,1)_100%)]" />
+          <div className="px-edge relative flex min-h-[76svh] flex-col justify-end pb-8 pt-28 md:min-h-[84vh] md:pb-14">
+            <p className="enter label text-ink first-letter:uppercase" style={{ ["--i" as string]: 0 }}>{formatDay(today, lang, true)}</p>
+            <h1 id="hero-title" className="enter mt-3 max-w-[12ch] text-[52px] leading-[0.98] tracking-[-0.035em] text-ink md:text-[96px]" style={{ ["--i" as string]: 1 }}>{C.title}</h1>
+            <p className="enter mt-4 max-w-[34rem] text-[17px] text-ink-2 md:text-[19px]" style={{ ["--i" as string]: 2 }}>{C.count(total)}</p>
+            <div className="enter mt-7 flex flex-wrap gap-3" style={{ ["--i" as string]: 3 }}>
+              <a href={nearest.length ? "#nearest" : "#places"} className="btn btn-primary">{C.heroCta}</a>
+              <WalkButton label={C.walkCta} className="btn btn-soft inline-flex items-center gap-2" />
+            </div>
           </div>
-          <div className="flex flex-col md:pt-2">
-            <p className="enter label first-letter:uppercase" style={{ ["--i" as string]: 0 }}>{formatDay(today, lang, true)}</p>
-            <h1 className="enter mt-3 text-[40px] md:text-[52px]" style={{ ["--i" as string]: 1 }}>{C.title}</h1>
-            <p className="enter mt-4 max-w-[34rem] text-[17px] text-ink-2" style={{ ["--i" as string]: 3 }}>{C.count(total)}</p>
-            {nearest.length ? (
-              <>
+        </section>
+
+        {nearest.length ? (
+          <section id="nearest" aria-labelledby="nearest-title" className="px-edge scroll-mt-4 pb-6 pt-10 md:pt-14">
+            <div className="max-w-[44rem]">
                 {/* A small label over the list, not a section heading: the list is named by it. */}
-                <p id="nearest-title" className="enter label mt-10" style={{ ["--i" as string]: 4 }}>{C.nearestTitle}</p>
+                <p id="nearest-title" className="enter label" style={{ ["--i" as string]: 4 }}>{C.nearestTitle}</p>
                 <ul aria-labelledby="nearest-title" className="mt-2 border-t border-line">
                   {nearest.map(({ v, f, at }, k) => (
                     <li key={v.id} className="enter border-b border-line" style={{ ["--i" as string]: 5 + k }}>
@@ -152,10 +149,9 @@ export default async function Overview({ searchParams }: { searchParams: Promise
                     </li>
                   ))}
                 </ul>
-              </>
-            ) : null}
-          </div>
-        </section>
+            </div>
+          </section>
+        ) : null}
 
         <section id="places" className="px-edge scroll-mt-4 pb-6 pt-16 md:pt-24" aria-labelledby="places-title">
           <div className="reveal flex flex-col gap-4 border-b border-line md:flex-row md:items-end md:justify-between">

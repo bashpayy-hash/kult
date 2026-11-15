@@ -27,6 +27,11 @@ export default async function Join() {
                 {L.howTitle}
               </h2>
               <p className="enter mt-2 text-[16px] text-paper-ink-2" style={{ ["--i" as string]: 4 }}>{L.example}</p>
+              {/* Two doors from the cover: the venue form sat three screens down with no way to it. */}
+              <p className="enter mt-6 flex flex-wrap gap-x-5 gap-y-2 text-[15px] font-semibold" style={{ ["--i" as string]: 5 }}>
+                <a href="#join" className="link-quiet text-paper-ink">{L.member.title} ↓</a>
+                <a href="#partners" className="link-quiet text-paper-ink">{L.partner.title} ↓</a>
+              </p>
             </div>
             <div className="enter max-w-[24rem] md:justify-self-end" style={{ ["--i" as string]: 1 }}>
               <Plate src={CLUB_COVER.src} srcSet={CLUB_COVER.srcSet} sizes="(min-width: 768px) 32vw, 90vw" bg={CLUB_COVER.bg} priority />
@@ -41,7 +46,8 @@ export default async function Join() {
                 <h2 id="join-title" className="text-[30px] md:text-[40px]">
                   {L.member.title}
                 </h2>
-                <p className="mt-4 max-w-[36rem] text-ink-2">{L.member.lead}</p>
+                <p className="mt-4 max-w-[36rem] text-[18px] font-medium text-ink">{L.member.gets}</p>
+                <p className="mt-3 max-w-[36rem] text-ink-2">{L.member.lead}</p>
               </div>
               <div>
                 <MemberApplicationForm lang={lang} />
@@ -58,6 +64,7 @@ export default async function Join() {
                   {L.partner.title}
                 </h2>
                 <p className="mt-4 max-w-[36rem] text-ink-2">{L.partner.lead}</p>
+                <p className="mt-3 max-w-[36rem] font-medium text-ink">{L.partner.cost}</p>
               </div>
               <div>
                 <PartnerApplicationForm lang={lang} />

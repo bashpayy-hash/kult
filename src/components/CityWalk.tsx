@@ -64,6 +64,15 @@ const ease = (t: number) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 
 
 type Pose = { pos: THREE.Vector3; look: THREE.Vector3 };
 
+/**
+ * Film mode, for the home page's cover loop (scripts/render-hero-film.cjs):
+ * the recorder sets `window.__walkFilm = {}` before the walk opens, then
+ * drives the camera frame by frame at a fixed time step and takes each
+ * frame from the canvas. No interface is drawn over the city.
+ */
+type Film = { ready?: boolean; route?: (id: string) => number[]; frame?: (pos: number[], look: number[], dt: number) => string };
+const filmHooks = () => (typeof window === "undefined" ? undefined : (window as unknown as { __walkFilm?: Film }).__walkFilm);
+
 export default function CityWalk({ venues, startVenue, lang, onClose, s }: { venues: WalkVenue[]; startVenue?: number; lang: "ru" | "kk"; onClose: () => void; s: WalkStrings }) {
   const host = useRef<HTMLDivElement>(null);
   const signs = useRef<(HTMLDivElement | null)[]>([]);
@@ -75,6 +84,7 @@ export default function CityWalk({ venues, startVenue, lang, onClose, s }: { ven
   const [card, setCard] = useState<number | null>(null);
   const closeBtn = useRef<HTMLButtonElement>(null);
   const [touch] = useState(() => window.matchMedia("(pointer: coarse)").matches);
+  const [filming] = useState(() => !!filmHooks());
 
   useEffect(() => {
     closeBtn.current?.focus();
@@ -160,7 +170,9 @@ export default function CityWalk({ venues, startVenue, lang, onClose, s }: { ven
     let flight: { from: Pose; to: Pose; t0: number; ms: number; arc: number; done?: () => void } | null = null;
     const air = { target: new THREE.Vector3(0, 0, 200), radius: 1500, pitch: 0.42, yaw: Math.PI };
     let walk: { pts: THREE.Vector3[]; cum: number[]; len: number; s: number; sTo: number; yaw: number; yawTo: number; pitch: number; v: number } | null = null;
-    let modeNow: "air" | "walk" | "fly" = "fly";
+    let modeNow: "air" | "walk" | "fly" | "film" = "fly";
+    const film = filmHooks();
+    let filmDt: number | null = null;
     let autoOn = false;
 
     const airPose = (): Pose => {
@@ -1266,6 +1278,20 @@ export default function CityWalk({ venues, startVenue, lang, onClose, s }: { ven
         ready = true;
         setRoutes(d.routes);
         setState("ready");
+        if (film) {
+          modeNow = "film";
+          film.route = (id) => d.routes.find((r) => r.id === id)?.p ?? [];
+          film.frame = (pos, look, dt) => {
+            cur.pos.set(pos[0], pos[1], pos[2]);
+            cur.look.set(look[0], look[1], look[2]);
+            filmDt = dt;
+            tick(last + dt * 1000);
+            filmDt = null;
+            return renderer.domElement.toDataURL("image/jpeg", 0.93);
+          };
+          film.ready = true;
+          return;
+        }
         // From the map: straight down over the centre, then the city tilts up with the mountains behind it.
         cur.pos.set(0, 4200, 1);
         cur.look.set(0, 0, 0);
@@ -1361,18 +1387,20 @@ export default function CityWalk({ venues, startVenue, lang, onClose, s }: { ven
     const v3 = new THREE.Vector3();
     let skip = false, tuneAt = performance.now(), frameSum = 0, frames = 0, lowered = 0, raised = false;
     const tick = (now: number) => {
-      raf = requestAnimationFrame(tick);
+      if (filmDt === null) raf = requestAnimationFrame(tick);
       if (!ready) {
         last = now;
         return;
       }
+      // Filming: frames come only from the recorder, at its own pace.
+      if (film && filmDt === null) return;
       // A phone at rest draws every other frame: the city is still, the battery and the heat matter more.
       const busy = !!flight || autoOn || held.size > 0 || ptr.size > 0 || now - lastInput < 600 || (!!walk && Math.abs(walk.sTo - walk.s) > 0.05);
       if (lite && !busy) {
         skip = !skip;
         if (skip) return;
       }
-      const interval = now - last;
+      const interval = filmDt !== null ? filmDt * 1000 : now - last;
       const dt = Math.min(0.05, interval / 1000);
       last = now;
       // Resolution follows the frame rate, measured only while things move at full pace.
@@ -1380,7 +1408,7 @@ export default function CityWalk({ venues, startVenue, lang, onClose, s }: { ven
         frameSum += interval;
         frames++;
       }
-      if (now - tuneAt > 1200) {
+      if (!film && now - tuneAt > 1200) {
         const avg = frames > 20 ? frameSum / frames : 0;
         if (avg > 26 && dpr > 0.75) {
           dpr = Math.max(0.75, dpr - 0.25);
@@ -1523,7 +1551,7 @@ export default function CityWalk({ venues, startVenue, lang, onClose, s }: { ven
   };
 
   return (
-    <div role="dialog" aria-modal="true" aria-label={s.title} className="walk fixed inset-0 z-[70] bg-[#ecdcbe] text-paper-ink">
+    <div role="dialog" aria-modal="true" aria-label={s.title} className={`walk fixed inset-0 z-[70] bg-[#ecdcbe] text-paper-ink ${filming ? "walk--film" : ""}`}>
       <div ref={host} className="absolute inset-0 touch-none" />
       <div aria-hidden="true" className="walk-vignette pointer-events-none absolute inset-0" />
 

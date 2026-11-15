@@ -150,7 +150,9 @@ export function VenueView({
       {active ? (
         <section id="book" aria-labelledby="book-title" className="rise rise-3 min-w-0 scroll-mt-4 md:pt-1">
           <div className="border-t border-line pt-6 md:border-t-0 md:pt-0">
-            <h2 id="book-title" className="text-[26px] md:text-[30px]">
+            {/* A link from the cover lands here, below the photo and the name: say where. */}
+            <p className="label">{d.venue_name}</p>
+            <h2 id="book-title" className="mt-1 text-[26px] md:text-[30px]">
               {SERVICE.includes(d.category) ? b.titleService : b.title}
             </h2>
             <div className="mt-6">

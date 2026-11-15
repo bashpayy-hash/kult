@@ -11,13 +11,21 @@ import { useEffect, useState } from "react";
  */
 export function BookBar({ label }: { label: string }) {
   const [show, setShow] = useState(false);
+  const [booked, setBooked] = useState(false);
   useEffect(() => {
     const el = document.getElementById("book");
     if (!el) return;
     const io = new IntersectionObserver(([e]) => setShow(!e.isIntersecting && e.boundingClientRect.top > 0));
     io.observe(el);
-    return () => io.disconnect();
+    // After «Бронь принята» the bar would only invite a second booking (uxaudit, 15 Nov 2026).
+    const done = () => setBooked(true);
+    window.addEventListener("bolek:booked", done);
+    return () => {
+      io.disconnect();
+      window.removeEventListener("bolek:booked", done);
+    };
   }, []);
+  if (booked) return null;
   return (
     <div
       aria-hidden={!show}

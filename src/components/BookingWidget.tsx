@@ -94,6 +94,8 @@ function Flow({ lang, venueId, hours, halls, items, today, linkId, phrase, initi
     d === today ? b.today : d === shiftDate(today, 1) ? b.tomorrow : new Intl.DateTimeFormat(lang === "kk" ? "kk-KZ" : "ru-RU", { timeZone: "UTC", weekday: "short" }).format(new Date(d + "T12:00:00Z"));
 
   if (state.ok) {
+    // The page's sticky «book» bar steps away once the booking is made (BookBar listens).
+    if (typeof window !== "undefined") queueMicrotask(() => window.dispatchEvent(new Event("bolek:booked")));
     const v = state.values || {};
     const when = `${formatDay(v.date || date, lang)}, ${v.time}`;
     return (

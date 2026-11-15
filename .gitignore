@@ -17,3 +17,4 @@ design/map-source/*.json
 !design/map-source/walk-pulled.json
 design/map-source/dem/
 .agents/
+design/hero-film/frames/

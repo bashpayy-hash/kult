@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import dynamic from "next/dynamic";
-import { useCallback, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { CategoryMark } from "./CategoryMark";
 import type { WalkStrings } from "./CityWalk";
 import { PlanCamera, type CameraStrings, type PlanLayers } from "./PlanCamera";
@@ -72,6 +72,12 @@ export function CityMap({ title, cities, s, lang = "ru" }: { title: string; citi
     [cities],
   );
   const closeWalk = useCallback(() => setWalking(null), []);
+  // The cover's «Прогуляться по центру» opens the same walk.
+  useEffect(() => {
+    const open = () => setWalking({});
+    window.addEventListener("bolek:walk", open);
+    return () => window.removeEventListener("bolek:walk", open);
+  }, []);
   const plate = useRef<HTMLDivElement>(null);
   const city = cities.find((c) => c.key === key) ?? cities[0];
   if (!city) return null;
