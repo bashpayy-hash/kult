@@ -57,14 +57,19 @@ export const CLUB_COVER = plate("chick-club", "#e52e01");
 export const NOT_FOUND_COVER = plate("chick-404", "#7ca5ac");
 
 /**
- * The cover since 15 Nov 2026: the site's own 3D Alma-Ata at golden hour, a
- * seamless loop in two cuts (CityFilm.tsx). It replaced the Heublein photograph (hero-*.webp, hero-loop.*) on 15 Nov 2026.
+ * The cover since 15 Nov 2026 (owner: «зачем вот эту страшненькую генерацию
+ * ставить на фон… что-то в стиле более презентабельном»): three friends on a
+ * rooftop terrace at golden hour, Kok-Tobe and the pink-gold range behind —
+ * an editorial photograph (Higgsfield, GPT Image 2.6, see
+ * design/plates/cover-2026-11-15.json). A tall cut for phones, a wide one for
+ * computers, each in two widths.
  */
-export const FILM = {
-  tall: { poster: "/plates/city-tall.webp", mp4: "/plates/city-tall.mp4" },
-  wide: { poster: "/plates/city-wide.webp", mp4: "/plates/city-wide.mp4" },
-  bg: "#c9a06a",
+export const COVER = {
+  tall: { src: "/plates/cover-tall-800.webp", srcSet: "/plates/cover-tall-800.webp 800w, /plates/cover-tall-1200.webp 1200w" },
+  wide: { src: "/plates/cover-wide-1600.webp", srcSet: "/plates/cover-wide-1600.webp 1600w, /plates/cover-wide-2400.webp 2400w" },
+  bg: "#3a2618",
 };
+
 
 /** Coca-Cola 1987: one documentary photograph of a market. */
 export const MARKET = {

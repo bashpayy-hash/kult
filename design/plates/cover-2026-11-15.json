@@ -1,0 +1,23 @@
+{
+ "date": "2026-11-15",
+ "use": "home cover (src/app/page.tsx, COVER in src/lib/covers.ts)",
+ "owner_quote": "зачем вот эту страшненькую генерацию ставить на фон… что-то в стиле более презентабельном",
+ "service": "Higgsfield",
+ "model": "gpt_image_2_6 (quality high, 2k)",
+ "wide": {
+  "job_id": "a583febb-e5db-4ff5-a38d-78b647f04b7c",
+  "aspect": "16:9",
+  "prompt": "Three stylish young Kazakh women friends in their late twenties sit at a candle-lit table on a rooftop restaurant terrace in Almaty at golden hour, laughing, one raising a coupe of champagne. Behind them the city and the snow-capped Zailiysky Alatau mountains glowing pink-gold in the last sun. Modern minimal fashion: an oversized camel blazer, a silk slip dress, small gold earrings. Shot on 35mm film, Kodak Portra 400, soft grain, warm amber, cream and deep brown palette, shallow depth of field, editorial luxury magazine photograph, authentic candid moment, cinematic composition; the lower left third is quieter and darker, leaving room for a headline. No text, no logos, no watermark."
+ },
+ "tall": {
+  "job_id": "196fa18e-5121-420a-8892-2cb755f072a2",
+  "aspect": "2:3",
+  "reference": "a583febb-e5db-4ff5-a38d-78b647f04b7c",
+  "prompt": "Recompose this exact photograph as a vertical 2:3 frame for a phone screen; mountains, Kok-Tobe and the city in the upper third, the three women in the middle, the candle-lit table and dark banquette in the lower third for a headline."
+ },
+ "alternatives": {
+  "alt-street-*": "two women in camel coats at a 1970s Soviet-modernist restaurant, golden poplars (acf75341…, a165b82a…)",
+  "alt-dinner-wide": "four friends at dinner, brass lamps, mountains in the window (a9257203…)"
+ },
+ "rejected": "Soul 2.0 variants put garbled lettering into the frame."
+}

@@ -6,10 +6,10 @@ import { Plate } from "@/components/Plate";
 import { listedCategories, listVenues, nextFreeSlots } from "@/lib/venueData";
 import { almatyNowMinutes, almatyToday, formatDay } from "@/lib/format";
 import { clock } from "@/lib/booking";
-import { CLUB_COVER, FILM, MARKET } from "@/lib/covers";
+import { CLUB_COVER, COVER, MARKET } from "@/lib/covers";
 import { CATEGORIES, type Category } from "@/lib/types";
 import { CityMap, type MapCity } from "@/components/CityMap";
-import { CityFilm, WalkButton } from "@/components/CityFilm";
+import { WalkButton } from "@/components/WalkButton";
 import { Tick } from "@/components/Tick";
 import plans from "@/lib/cityPlans.generated.json";
 import almatyPlan from "@/lib/almatyPlan.generated.json";
@@ -110,18 +110,25 @@ export default async function Overview({ searchParams }: { searchParams: Promise
       <SiteHeader lang={lang} t={t} />
       <main>
         {/* The cover (15 Nov 2026, owner: «иллюстрация классная, но не под лендинг… нужно
-            брать ещё что-то сильнее»): full-bleed, the site's own 3D Alma-Ata at golden hour
-            in a seamless loop, the title set over it, two ways in — the nearest free time or
-            the city itself. The contents (tonight's times) follow straight under it. */}
-        <section aria-labelledby="hero-title" className="relative isolate overflow-hidden border-t border-line" style={{ background: FILM.bg }}>
-          <CityFilm tall={FILM.tall} wide={FILM.wide} alt={C.filmAlt} />
+            брать ещё что-то сильнее», then «что-то в стиле более презентабельном»):
+            full-bleed, an editorial photograph of an evening out in Almaty, the title set
+            over it, two ways in — the nearest free time or a walk through the centre. The
+            contents (tonight's times) follow straight under it. */}
+        <section aria-labelledby="hero-title" className="relative isolate overflow-hidden border-t border-line" style={{ background: COVER.bg }}>
+          <picture>
+            <source media="(min-width: 768px)" srcSet={COVER.wide.srcSet} sizes="100vw" />
+            {/* Phone: the picture fills the top of the screen and the faces stay clear; the
+                title sits below them, where the table fades into the page. Computer: full-bleed,
+                the title on the darker left. */}
+            <img src={COVER.tall.src} srcSet={COVER.tall.srcSet} sizes="100vw" alt={C.coverAlt} fetchPriority="high" className="absolute inset-x-0 top-0 h-[62svh] w-full object-cover object-top md:inset-0 md:h-full md:object-[50%_40%]" />
+          </picture>
           {/* Ink rises from the foot of the picture so the title reads on any frame. */}
-          <div aria-hidden="true" className="absolute inset-0 bg-[linear-gradient(to_bottom,rgba(35,25,23,0)_16%,rgba(35,25,23,0.5)_42%,rgba(35,25,23,0.86)_70%,rgba(35,25,23,1)_100%)]" />
-          <div className="px-edge relative flex min-h-[76svh] flex-col justify-end pb-8 pt-28 md:min-h-[84vh] md:pb-14">
+          <div aria-hidden="true" className="absolute inset-0 bg-[linear-gradient(to_bottom,rgba(35,25,23,0)_30svh,rgba(35,25,23,0.7)_45svh,rgba(35,25,23,1)_61svh)] md:bg-[linear-gradient(to_bottom,rgba(35,25,23,0)_16%,rgba(35,25,23,0.5)_42%,rgba(35,25,23,0.86)_70%,rgba(35,25,23,1)_100%)]" />
+          <div className="px-edge relative flex flex-col justify-end pb-8 pt-[43svh] md:min-h-[84vh] md:pb-14 md:pt-28">
             <p className="enter label text-ink first-letter:uppercase" style={{ ["--i" as string]: 0 }}>{formatDay(today, lang, true)}</p>
             <h1 id="hero-title" className="enter mt-3 max-w-[12ch] text-[52px] leading-[0.98] tracking-[-0.035em] text-ink md:text-[96px]" style={{ ["--i" as string]: 1 }}>{C.title}</h1>
             <p className="enter mt-4 max-w-[34rem] text-[17px] text-ink-2 md:text-[19px]" style={{ ["--i" as string]: 2 }}>{C.count(total)}</p>
-            <div className="enter mt-7 flex flex-wrap gap-3" style={{ ["--i" as string]: 3 }}>
+            <div className="enter mt-6 flex flex-wrap gap-2.5 md:mt-7 md:gap-3" style={{ ["--i" as string]: 3 }}>
               <a href={nearest.length ? "#nearest" : "#places"} className="btn btn-primary">{C.heroCta}</a>
               <WalkButton label={C.walkCta} className="btn btn-soft inline-flex items-center gap-2" />
             </div>
