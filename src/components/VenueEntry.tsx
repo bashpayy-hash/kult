@@ -54,7 +54,9 @@ export function VenueEntry({
     const target = document.getElementById(z ? "book-where" : "book");
     target?.scrollIntoView({ behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth", block: "start" });
   };
-  const nextLabel = shots[at + 1]?.hall ? s.toHall : s.enter;
+  // The button names where it leads: «Зайти внутрь», then the hall itself («Терраса»).
+  const nextShot = shots[at + 1];
+  const nextLabel = nextShot && nextShot.hall ? nextShot.label : s.enter;
 
   return (
     <section aria-label={`${s.aria}: ${name}`} aria-roledescription="carousel" className="bg-paper p-2 sm:p-2.5">
@@ -113,12 +115,15 @@ export function VenueEntry({
         </p>
 
         {shot.hall && shot.zones.length ? (
-          <div className="mt-3 flex flex-wrap gap-2 px-2">
-            {shot.zones.map((z) => (
-              <button key={z.z} type="button" onClick={() => toPlan(z.z)} className="min-h-10 border border-paper-ink px-3 text-[14px] font-semibold text-paper-ink transition-colors duration-150 hover:bg-paper-ink hover:text-paper">
-                {z.label} <span className="num ml-1 text-[12px] opacity-70">{z.n}</span>
-              </button>
-            ))}
+          <div className="mt-3 px-2">
+            <p className="text-[12px] font-semibold uppercase tracking-[0.08em] text-paper-ink-3">{s.where}</p>
+            <div className="mt-2 flex flex-wrap gap-2">
+              {shot.zones.map((z) => (
+                <button key={z.z} type="button" onClick={() => toPlan(z.z)} className="group min-h-10 border border-paper-ink px-3 text-[14px] font-semibold text-paper-ink transition-colors duration-150 hover:bg-paper-ink hover:text-paper">
+                  {z.label} <span className="ml-1 text-[13px] font-medium text-paper-ink-2 group-hover:text-paper">· {s.tables(z.n)}</span>
+                </button>
+              ))}
+            </div>
           </div>
         ) : null}
 

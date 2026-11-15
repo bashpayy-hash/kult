@@ -4,7 +4,7 @@ import { useActionState, useEffect, useMemo, useRef, useState } from "react";
 import { submitBooking } from "@/app/actions";
 import { Consent, errProps, Field, FormError, Honeypot, SubmitButton } from "@/components/form";
 import { FloorPlan, type TableState } from "@/components/FloorPlan";
-import { clock, fits, isFree, isZone, slotList, ZONES, type PlanHall, type PlanItem, type Taken, type VenueHours, type Zone } from "@/lib/booking";
+import { clock, fits, isFree, isZone, slotList, toCalendar, ZONES, type PlanHall, type PlanItem, type Taken, type VenueHours, type Zone } from "@/lib/booking";
 import { formatDay, shiftDate } from "@/lib/format";
 import { dicts, type Lang } from "@/lib/i18n/dicts";
 import type { FormState } from "@/lib/types";
@@ -130,12 +130,18 @@ function Flow({ lang, venueId, hours, halls, items, today, linkId, phrase, initi
     // The page's sticky «book» bar steps away once the booking is made (BookBar listens).
     if (typeof window !== "undefined") queueMicrotask(() => window.dispatchEvent(new Event("bolek:booked")));
     const v = state.values || {};
-    const when = `${formatDay(v.date || date, lang)}, ${v.time}`;
+    // Everything the guest chose, so the confirmation can be checked at a glance
+    // (user-testing-agent, 15 Nov 2026: no zone, no guests, «Стол 4» read as «на 4»).
+    const d = v.date || date;
+    const near = d === today || d === shiftDate(today, 1) ? `${dayLabel(d)}, ` : "";
+    const when = `${near}${formatDay(d, lang)}, ${v.time}`;
+    const z = isZone(v.zone) ? `, ${b.zones[v.zone].toLowerCase()}` : "";
+    const seat = [v.party_size ? b.guestsN(Number(v.party_size)) : "", v.table ? `${b.tableName(v.table)}${z}` : ""].filter(Boolean).join(" · ");
     return (
       <div role="status" className="sheet-in flex flex-col items-start gap-3 py-2">
         <h3 className="text-[28px]">{b.successTitle}</h3>
         <p className="text-ink-2">
-          {b.successText(when, v.table ? b.tableName(v.table) : "")}
+          {b.successText(when, seat)}
           {phrase ? ` ${b.phraseReminder(phrase)}` : ""}
         </p>
         <button type="button" onClick={onAgain} className="link-quiet text-[15px]">
@@ -266,13 +272,14 @@ function Flow({ lang, venueId, hours, halls, items, today, linkId, phrase, initi
               const minWidth = Math.min(960, Math.ceil(((h.width + 4) * 44) / smallest));
               return (
                 <div key={h.id}>
+                  {/* Said before the plan, not after it (user-testing-agent, 15 Nov 2026). */}
+                  {minWidth > 330 ? <p className="mb-2 text-[13px] text-ink-3 sm:hidden">{b.scrollHint}</p> : null}
                   {/* A region the keyboard can reach and scroll, even before a time makes the tables pickable. */}
                   <div ref={scroller} tabIndex={0} role="region" aria-label={`${b.plan}: ${(lang === "kk" && h.name_kk) || h.name}`} className="overflow-x-auto rounded-[var(--radius-inner)] border border-line bg-canvas p-2 outline-none focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--color-accent)]">
                     <div style={{ minWidth }}>
                       <FloorPlan hall={h} items={items} stateOf={stateOf} describe={describe} onSelect={chosenSlot === null ? undefined : (x) => setTableId(chosenTable?.id === x.id ? null : x.id)} />
                     </div>
                   </div>
-                  {minWidth > 330 ? <p className="mt-2 text-[13px] text-ink-3 sm:hidden">{b.scrollHint}</p> : null}
                   {chosenSlot !== null ? (
                     <div className="mt-4">
                       <p className="label mb-2">{b.tables}</p>
@@ -327,6 +334,17 @@ function Flow({ lang, venueId, hours, halls, items, today, linkId, phrase, initi
         <Consent id="b-consent" label={t.invite.consent} linkLabel={t.more} error={fe.consent} defaultChecked={v.consent === "1"} />
       </fieldset>
 
+      {/* What will be booked, next to the button, so no one scrolls back up to check. */}
+      {chosenSlot !== null ? (
+        <p className="-mb-3 text-[15px] text-ink-2" aria-live="polite">
+          <span className="label mr-2">{b.summary}</span>
+          {[(() => {
+            // A slot after midnight belongs to the next calendar day: say that day.
+            const cal = toCalendar(date, chosenSlot).date;
+            return `${cal === today || cal === shiftDate(today, 1) ? `${dayLabel(cal)}, ` : ""}${formatDay(cal, lang)}`;
+          })(), clock(chosenSlot), b.guestsN(party), zone ? b.zones[zone] : null, chosenTable ? b.tableName(chosenTable.label) : null].filter(Boolean).join(" · ")}
+        </p>
+      ) : null}
       <FormError error={state.error && !Object.keys(fe).length ? state.error : undefined} />
       <SubmitButton className="btn btn-primary w-full sm:w-auto" disabled={chosenSlot === null}>
         {chosenSlot === null ? b.chooseTime : b.submit(clock(chosenSlot))}

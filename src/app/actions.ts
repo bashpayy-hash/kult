@@ -194,7 +194,7 @@ export async function submitBooking(_prev: FormState, fd: FormData): Promise<For
         (${venueId}, ${linkId}, ${linkId ? "link" : "catalog"}, ${table?.id ?? null}, ${venue.hold_minutes}, ${guestName}, ${phone},
          ${at.date}, ${at.time}, ${party}, ${comment}, true, ${visitor.hash}, ${lang})`;
     // The calendar date, not the service day: a 00:30 table is «14 ноября, 00:30».
-    return { ok: true, values: { date: at.date, time: at.time, table: table?.label ?? "", party_size: String(party) } };
+    return { ok: true, values: { date: at.date, time: at.time, table: table?.label ?? "", zone: table?.zone ?? "", party_size: String(party) } };
   } catch (e) {
     if (typeof e === "object" && e && "code" in e && (e as { code: string }).code === "23P01") {
       return { error: t.errors.tableBusy, values: keep };

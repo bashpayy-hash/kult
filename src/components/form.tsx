@@ -1,7 +1,7 @@
 "use client";
 
 import { useFormStatus } from "react-dom";
-import type { ReactNode } from "react";
+import { useState, type ReactNode } from "react";
 
 export function Field({
   label,
@@ -47,7 +47,7 @@ export function Consent({
   id = "consent",
   label,
   linkLabel,
-  error,
+  error: serverError,
   defaultChecked,
 }: {
   id?: string;
@@ -56,10 +56,14 @@ export function Consent({
   error?: string;
   defaultChecked?: boolean;
 }) {
+  // Ticking the box answers the error at once (user-testing-agent, 15 Nov
+  // 2026: the red line stayed after the tick, «засчиталась ли галочка?»).
+  const [ticked, setTicked] = useState<{ for?: string; on: boolean }>({ on: false });
+  const error = serverError && !(ticked.for === serverError && ticked.on) ? serverError : undefined;
   return (
     <div className="flex flex-col gap-2">
       <label htmlFor={id} className="flex cursor-pointer items-start gap-3 text-[15px] text-ink-2">
-        <input id={id} name="consent" type="checkbox" value="1" className="check" defaultChecked={defaultChecked} {...errProps(id, error)} />
+        <input id={id} name="consent" type="checkbox" value="1" className="check" defaultChecked={defaultChecked} onChange={(e) => setTicked({ for: serverError, on: e.target.checked })} {...errProps(id, error)} />
         <span>
           {label}.{" "}
           <a href="/privacy" target="_blank" className="link-quiet">

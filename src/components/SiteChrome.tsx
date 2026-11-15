@@ -10,11 +10,15 @@ export function SiteHeader({ lang, t, logoHref = "/" }: { lang: Lang; t: Dict; l
       <div className="flex items-center gap-1 sm:gap-3">
         {/* Visible on phones too: with two sections a header beats a tab bar. */}
         <nav aria-label="Бөлек" className="flex items-center font-[family-name:var(--font-ui)] text-[15px]">
-          <Link href="/" className="grid h-11 place-items-center px-2.5 text-ink-2 transition-colors duration-150 hover:text-ink">
+          <Link href="/" className="grid h-11 place-items-center px-2 text-ink-2 transition-colors duration-150 hover:text-ink sm:px-2.5">
             {t.nav.places}
           </Link>
-          <Link href="/join" className="grid h-11 place-items-center px-2.5 text-ink-2 transition-colors duration-150 hover:text-ink">
+          <Link href="/join" className="grid h-11 place-items-center px-2 text-ink-2 transition-colors duration-150 hover:text-ink sm:px-2.5">
             {t.nav.club}
+          </Link>
+          {/* Owners looked for a way in and found it only at the foot of the page (user-testing-agent, 15 Nov 2026). */}
+          <Link href="/join#partners" className="grid h-11 place-items-center px-2 text-ink-2 transition-colors duration-150 hover:text-ink sm:px-2.5">
+            {t.nav.venues}
           </Link>
         </nav>
         <LangSwitch lang={lang} label={t.langLabel} />
@@ -38,6 +42,9 @@ export function SiteFooter({ t, flush = false }: { t: Dict; flush?: boolean }) {
           </Link>
           <Link href="/join" className="link-quiet">
             {t.nav.club}
+          </Link>
+          <Link href="/join#partners" className="link-quiet">
+            {t.nav.venues}
           </Link>
           <Link href="/privacy" className="link-quiet">
             {t.privacyLink}
