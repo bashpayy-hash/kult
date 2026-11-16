@@ -14,7 +14,7 @@ import type { Category } from "./types";
 const PLATES: Record<Category, { file: string; bg: string; focus?: string }> = {
   restaurant: { file: "restaurant", bg: "#7f91d7" },
   cafe: { file: "cafe", bg: "#cd831b" },
-  bar: { file: "bar", bg: "#102041", focus: "50% 100%" },
+  bar: { file: "bar", bg: "#1c2e53", focus: "50% 100%" },
   // 16 Nov 2026, phase 2: «кебабку, тонерку… чайхану».
   chaikhana: { file: "chaikhana", bg: "#007a83" },
   street: { file: "street", bg: "#cb3117" },

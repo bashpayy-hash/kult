@@ -55,7 +55,12 @@
     "public/plates/bar-480.webp",
     "public/plates/bar-900.webp"
    ],
-   "master": "design/plates/source/bar.webp"
+   "master": "design/plates/source/bar.webp",
+   "replaced": {
+    "date": "2026-11-16",
+    "job": "4a17bf4e-708b-4e48-9c69-4b30899df362",
+    "why": "Проверка фактов: коктейльный бокал с оливкой похож на косвенную рекламу алкоголя (Закон РК «О рекламе», ст. 13). Новый сюжет: лимонад, труба, пластинка; старый мастер — design/plates/source/bar-2026-11-12-cocktail.webp"
+   }
   },
   {
    "name": "beauty",

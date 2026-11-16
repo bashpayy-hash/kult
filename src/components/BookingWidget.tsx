@@ -5,7 +5,7 @@ import { submitBooking } from "@/app/actions";
 import { Consent, errProps, Field, FormError, Honeypot, SubmitButton } from "@/components/form";
 import { FloorPlan, type TableState } from "@/components/FloorPlan";
 import { clock, fits, isFree, isZone, slotList, toCalendar, ZONES, type PlanHall, type PlanItem, type Taken, type VenueHours, type Zone } from "@/lib/booking";
-import { formatDay, shiftDate } from "@/lib/format";
+import { formatDay, shiftDate, weekdayShort } from "@/lib/format";
 import { dicts, type Lang } from "@/lib/i18n/dicts";
 import type { FormState } from "@/lib/types";
 
@@ -127,7 +127,7 @@ function Flow({ lang, venueId, hours, halls, items, today, linkId, phrase, pickI
     `${b.tableName(x.label)}${x.zone ? `, ${b.zones[x.zone].toLowerCase()}` : ""}, ${b.upTo(x.seats_max)}, ${s === "selected" ? b.yours : s === "busy" ? b.busy : s === "unfit" ? b.unfit : s === "away" ? b.away : b.free}`;
 
   const dayLabel = (d: string) =>
-    d === today ? b.today : d === shiftDate(today, 1) ? b.tomorrow : new Intl.DateTimeFormat(lang === "kk" ? "kk-KZ" : "ru-RU", { timeZone: "UTC", weekday: "short" }).format(new Date(d + "T12:00:00Z"));
+    d === today ? b.today : d === shiftDate(today, 1) ? b.tomorrow : weekdayShort(d, lang);
 
   if (state.ok) {
     // The page's sticky «book» bar steps away once the booking is made (BookBar listens).

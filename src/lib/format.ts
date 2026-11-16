@@ -39,15 +39,34 @@ export function isIsoDate(s: unknown): s is string {
 
 const locale = (lang: Lang) => (lang === "kk" ? "kk-KZ" : "ru-RU");
 
-/** '12 ноября' / '12 қараша'. */
+// Names spelled out here, not taken from Intl: browsers without Kazakh locale
+// data print «Wed» or «November» where the server printed «ср» and «қараша»,
+// and React then rejects the page's markup (16 Nov 2026).
+const MONTHS: Record<Lang, string[]> = {
+  ru: ["января", "февраля", "марта", "апреля", "мая", "июня", "июля", "августа", "сентября", "октября", "ноября", "декабря"],
+  kk: ["қаңтар", "ақпан", "наурыз", "сәуір", "мамыр", "маусым", "шілде", "тамыз", "қыркүйек", "қазан", "қараша", "желтоқсан"],
+};
+const WEEKDAYS: Record<Lang, string[]> = {
+  ru: ["воскресенье", "понедельник", "вторник", "среда", "четверг", "пятница", "суббота"],
+  kk: ["жексенбі", "дүйсенбі", "сейсенбі", "сәрсенбі", "бейсенбі", "жұма", "сенбі"],
+};
+const WEEKDAYS_SHORT: Record<Lang, string[]> = {
+  ru: ["вс", "пн", "вт", "ср", "чт", "пт", "сб"],
+  kk: ["жс", "дс", "сс", "ср", "бс", "жм", "сб"],
+};
+
+/** '12 ноября' / '12 қараша'; with the weekday 'понедельник, 12 ноября' / '12 қараша, дүйсенбі'. */
 export function formatDay(iso: string, lang: Lang = "ru", withWeekday = false): string {
   const d = new Date(iso + "T12:00:00Z");
-  return new Intl.DateTimeFormat(locale(lang), {
-    timeZone: "UTC",
-    day: "numeric",
-    month: "long",
-    ...(withWeekday ? { weekday: "long" } : {}),
-  }).format(d);
+  const day = `${d.getUTCDate()} ${MONTHS[lang][d.getUTCMonth()]}`;
+  if (!withWeekday) return day;
+  const wd = WEEKDAYS[lang][d.getUTCDay()];
+  return lang === "kk" ? `${day}, ${wd}` : `${wd}, ${day}`;
+}
+
+/** 'ср' / 'ср': a short weekday for the booking's day picker. */
+export function weekdayShort(iso: string, lang: Lang = "ru"): string {
+  return WEEKDAYS_SHORT[lang][new Date(iso + "T12:00:00Z").getUTCDay()];
 }
 
 export function formatDateTime(d: Date, lang: Lang = "ru"): string {

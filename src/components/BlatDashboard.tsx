@@ -41,6 +41,7 @@ export function BlatDashboard({ d, lang, t, secret }: { d: Dashboard; lang: Lang
 
       <section aria-labelledby="blat-picks">
         <h2 id="blat-picks" className="text-[24px]">{B.picksTitle}</h2>
+        {d.picks.length ? <p className="mt-1 text-[14px] text-ink-3">{B.publicHint}</p> : null}
         {d.picks.length === 0 ? (
           <p className="mt-3 text-[15px] text-ink-2">
             {B.noPicks}{" "}

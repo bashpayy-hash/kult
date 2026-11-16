@@ -33,7 +33,7 @@ export default async function VenuePage({ params, searchParams }: Props) {
   const initial = { date: isIsoDate(sp.d) ? sp.d : undefined, slot: /^\d{1,4}$/.test(sp.t ?? "") ? Number(sp.t) : undefined };
   if (!d) notFound();
   const { lang, t } = await getDict();
-  const [plan, rec] = await Promise.all([loadPlan(d.venue_id), currentRecommender()]);
+  const [plan, rec] = await Promise.all([loadPlan(d.venue_id, lang), currentRecommender()]);
   return (
     <>
       <SiteHeader lang={lang} t={t} />

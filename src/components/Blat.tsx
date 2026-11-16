@@ -82,6 +82,7 @@ export function PickForm({
       <div ref={ready} role="status" className="sheet-in flex flex-col gap-3 border-t border-line pt-5">
         <p className="label">{B.linkReady}</p>
         <ShareLink url={v.url} text={B.shareText(venueName)} lang={lang} />
+        <p className="text-[13px] text-ink-3">{B.publicHint}</p>
         <Link href="/blat" className="link-quiet self-start text-[15px]">
           {B.myBlat} →
         </Link>

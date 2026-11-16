@@ -13,7 +13,7 @@ import type { Category } from "./types";
 
 export const BLAT_COOKIE = "blat";
 /** A big table does not turn into a jackpot: at most this many points a booking. */
-export const MAX_POINTS_PER_BOOKING = 6;
+export { MAX_POINTS_PER_BOOKING } from "./booking";
 const COOKIE_AGE = 60 * 60 * 24 * 400;
 
 export type Recommender = { id: string; name: string; phone: string; secret: string };

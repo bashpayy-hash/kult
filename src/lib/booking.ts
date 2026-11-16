@@ -23,12 +23,17 @@ export type PlanItem = {
   seats_min: number;
   seats_max: number;
   zone: Zone | null;
+  /** The label in Kazakh («Кіреберіс» for «Вход»); public pages show it on the Kazakh side. */
+  label_kk?: string | null;
 };
 
 /** A live booking on a table, as an interval of service-day minutes. */
 export type Taken = { table_id: string; from: number; to: number };
 
 export type VenueHours = { open_time: string; close_time: string; slot_minutes: number; hold_minutes: number };
+
+/** Blat: points a booking can earn at most, one per guest who came. */
+export const MAX_POINTS_PER_BOOKING = 6;
 
 /** Guests can still be seated this many minutes before closing. */
 export const LAST_SEATING_BEFORE_CLOSE = 60;

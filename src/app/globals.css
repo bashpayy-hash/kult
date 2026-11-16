@@ -314,17 +314,6 @@ input[type="file"].field::file-selector-button {
 .plan-venue { left: calc(50% + 21px); top: 50%; transform: translateY(-50%); font-size: 12.5px; font-weight: 600; letter-spacing: -0.01em; color: var(--color-paper-ink); }
 .plan-venue.is-on { opacity: 1; }
 
-/* The 3D walk (CityWalk): the render is graded like the site's photographs
-   (faded, a touch warm) and printed over with the same grain. */
-/* The walk is a warm 80s print. The warmth is in the scene's own colours;
-   over it lies one still layer, an amber vignette with a little paper, at
-   plain opacity: no CSS filter or blend mode on the canvas, which cost a
-   phone a full-screen pass on every frame (15 Nov 2026). */
-.walk-canvas { display: block; width: 100%; height: 100%; }
-.walk-vignette { background-image: radial-gradient(ellipse at 50% 45%, transparent 55%, rgba(120, 64, 24, 0.26) 100%), var(--tex-paper); background-size: 100% 100%, 360px 360px; opacity: 0.6; }
-.walk--film > :not(:first-child) { display: none !important; }
-.walk-hold { -webkit-touch-callout: none; user-select: none; -webkit-user-select: none; touch-action: none; }
-.walk-sign { transition: opacity 240ms var(--ease-out); will-change: transform; }
 
 @keyframes pulse-ring { from { opacity: 0.55; transform: scale(1); } to { opacity: 0; transform: scale(3.2); } }
 .pulse-ring { animation: pulse-ring 2.4s var(--ease-out) infinite; }

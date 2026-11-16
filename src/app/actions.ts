@@ -178,7 +178,7 @@ export async function submitBooking(_prev: FormState, fd: FormData): Promise<For
     if (n >= MAX_BOOKINGS_PER_HOUR) return { error: t.errors.tooMany, values: keep };
 
     // Venues with a floor plan seat every booking at a table.
-    const tables = (await loadPlan(venueId)).items.filter((i) => i.kind === "table");
+    const tables = (await loadPlan(venueId, lang)).items.filter((i) => i.kind === "table");
     let table: PlanItem | null = null;
     if (tables.length) {
       const taken = await loadTaken(venueId, date);

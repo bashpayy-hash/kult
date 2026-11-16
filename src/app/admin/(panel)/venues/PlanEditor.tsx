@@ -209,6 +209,12 @@ export function PlanEditor({ venueId, initialHalls, initialItems }: { venueId: s
                 {selected.kind === "table" ? "Номер или название" : "Текст"}
                 <input className="field" value={selected.label} maxLength={24} onChange={(e) => update(selected.id, { label: e.target.value })} />
               </label>
+              {/^\d+$/.test(selected.label) ? null : (
+                <label className="flex flex-col gap-1.5 text-[13px] text-ink-3">
+                  То же по-казахски
+                  <input className="field" value={selected.label_kk ?? ""} maxLength={24} onChange={(e) => update(selected.id, { label_kk: e.target.value || null })} />
+                </label>
+              )}
               {selected.kind === "table" ? (
                 <div className="grid grid-cols-2 gap-3">
                   <label className="flex flex-col gap-1.5 text-[13px] text-ink-3">

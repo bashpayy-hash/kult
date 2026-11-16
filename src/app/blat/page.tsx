@@ -34,6 +34,8 @@ export default async function BlatPage() {
             </>
           ) : (
             <>
+              {/* Where you stand, even with nothing yet (uxaudit L3, 16 Nov 2026: system status). */}
+              <p role="status" className="mb-5 border-y border-line py-4 text-[16px] text-ink">{B.noStatus}</p>
               <Link href="/#places" className="btn btn-primary">{B.start}</Link>
               {rewards.length ? (
                 <section aria-labelledby="blat-rewards" className="mt-12">

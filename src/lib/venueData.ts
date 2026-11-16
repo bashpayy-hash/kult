@@ -3,12 +3,15 @@ import { db } from "./db";
 import { fits, isFree, LEAD_MINUTES, slotList, type PlanHall, type PlanItem, type Taken } from "./booking";
 import { almatyToday, earliestStart, shiftDate } from "./format";
 
-export async function loadPlan(venueId: string): Promise<{ halls: PlanHall[]; items: PlanItem[] }> {
+/** The floor plan; with `lang: "kk"` table and decor labels come in Kazakh where the venue gave them. */
+export async function loadPlan(venueId: string, lang?: "ru" | "kk"): Promise<{ halls: PlanHall[]; items: PlanItem[] }> {
+  const kk = lang === "kk";
   const sql = db();
   const [halls, items] = await Promise.all([
     sql<PlanHall[]>`select id, name, name_kk, width, height from venue_halls where venue_id = ${venueId} order by sort, created_at`,
     sql<PlanItem[]>`
-      select id, hall_id, kind, label, shape, x::float8 as x, y::float8 as y, w::float8 as w, h::float8 as h, seats_min, seats_max, zone
+      select id, hall_id, kind, case when ${kk} then coalesce(nullif(label_kk, ''), label) else label end as label, label_kk,
+             shape, x::float8 as x, y::float8 as y, w::float8 as w, h::float8 as h, seats_min, seats_max, zone
       from venue_tables where venue_id = ${venueId} and active order by kind desc, label`,
   ]);
   return { halls, items };
@@ -149,10 +152,10 @@ export async function loadVenueView(by: { slug: string } | { id: string }): Prom
   const [row] = await db()<VenueRow[]>`
     select v.id as venue_id, v.name as venue_name, v.category, v.description, v.description_kk, v.address, v.city, v.lat, v.lng,
            v.instagram, v.photo_path, v.logo_path, v.avg_check, v.open_time::text, v.close_time::text, v.slot_minutes, v.hold_minutes,
-           o.guest_perk as perk, o.guest_perk_kk as perk_kk, o.terms
+           o.guest_perk as perk, o.guest_perk_kk as perk_kk, o.terms, o.terms_kk
     from venues v
     left join lateral (
-      select guest_perk, guest_perk_kk, terms from offers
+      select guest_perk, guest_perk_kk, terms, terms_kk from offers
       where venue_id = v.id and active and guest_perk is not null order by created_at limit 1
     ) o on true
     where v.status = 'active' and (${slug}::text is null or (v.slug = ${slug} and v.is_listed)) and (${id}::uuid is null or v.id = ${id}::uuid)`;

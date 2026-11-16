@@ -13,6 +13,9 @@ export function BookBar({ label }: { label: string }) {
   const [show, setShow] = useState(false);
   const [booked, setBooked] = useState(false);
   const [typing, setTyping] = useState(false);
+  // Not on the first screen: there the page's own next step leads, and the bar
+  // would cover the venue's name (uxaudit L3, 16 Nov 2026: two primary buttons).
+  const [scrolled, setScrolled] = useState(false);
   useEffect(() => {
     const el = document.getElementById("book");
     if (!el) return;
@@ -22,16 +25,24 @@ export function BookBar({ label }: { label: string }) {
     const done = () => setBooked(true);
     window.addEventListener("bolek:booked", done);
     // A form elsewhere on the page (e.g. «Посоветовать другу») must not sit under the bar.
+    const onScroll = () => {
+      if (window.scrollY > 160) {
+        setScrolled(true);
+        window.removeEventListener("scroll", onScroll);
+      }
+    };
+    window.addEventListener("scroll", onScroll, { passive: true });
     const focusIn = (e: FocusEvent) => setTyping(!!(e.target as Element | null)?.closest?.("[data-hide-bookbar]"));
     document.addEventListener("focusin", focusIn);
     return () => {
       io.disconnect();
       window.removeEventListener("bolek:booked", done);
       document.removeEventListener("focusin", focusIn);
+      window.removeEventListener("scroll", onScroll);
     };
   }, []);
   if (booked) return null;
-  const visible = show && !typing;
+  const visible = show && scrolled && !typing;
   return (
     <div
       aria-hidden={!visible}

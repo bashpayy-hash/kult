@@ -32,6 +32,7 @@ export type VenueViewData = {
   perk: string | null;
   perk_kk: string | null;
   terms: string | null;
+  terms_kk: string | null;
 };
 
 const SERVICE: Category[] = ["beauty", "wellness", "fitness"];
@@ -189,7 +190,7 @@ export async function VenueView({
               <div className="border-t border-line pt-5">
                 <p className="label">{invite ? t.invite.perkTitle : b.perkTitle}</p>
                 <p className="mt-2 text-[20px] font-semibold leading-snug tracking-[-0.02em] text-ink md:text-[22px]">{perk}</p>
-                {d.terms ? <p className="mt-2 text-[14px] text-ink-3">{d.terms}</p> : null}
+                {d.terms ? <p className="mt-2 text-[14px] text-ink-3">{(lang === "kk" && d.terms_kk) || d.terms}</p> : null}
               </div>
             ) : null}
             {advise ? <PickForm venueId={d.venue_id} venueName={d.venue_name} category={d.category} treats={treats} lang={lang} known={advise.known} /> : null}

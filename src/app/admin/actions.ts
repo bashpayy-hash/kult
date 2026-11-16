@@ -676,7 +676,7 @@ export async function deleteGuestVisit(fd: FormData): Promise<void> {
 
 type PlanPayload = {
   halls: { id: string; name: string; name_kk: string | null; width: number; height: number }[];
-  items: { id: string; hall_id: string; kind: string; label: string; shape: string; x: number; y: number; w: number; h: number; seats_min: number; seats_max: number; zone?: string | null }[];
+  items: { id: string; hall_id: string; kind: string; label: string; shape: string; x: number; y: number; w: number; h: number; seats_min: number; seats_max: number; zone?: string | null; label_kk?: string | null }[];
 };
 
 const num = (x: unknown, lo: number, hi: number) => {
@@ -726,12 +726,13 @@ export async function savePlan(_prev: FormState, fd: FormData): Promise<FormStat
         const smin = Math.round(num(it.seats_min, 1, 50)), smax = Math.max(smin, Math.round(num(it.seats_max, 1, 50)));
         const zone = kind === "table" && isZone(it.zone) ? it.zone : null;
         await tx`
-          insert into venue_tables (id, venue_id, hall_id, kind, label, shape, x, y, w, h, seats_min, seats_max, zone)
-          values (${it.id}, ${venueId}, ${it.hall_id}, ${kind}, ${String(it.label || "").trim().slice(0, 24)}, ${shape},
+          insert into venue_tables (id, venue_id, hall_id, kind, label, label_kk, shape, x, y, w, h, seats_min, seats_max, zone)
+          values (${it.id}, ${venueId}, ${it.hall_id}, ${kind}, ${String(it.label || "").trim().slice(0, 24)},
+                  ${String(it.label_kk || "").trim().slice(0, 24) || null}, ${shape},
                   ${x}, ${y}, ${w}, ${h}, ${smin}, ${smax}, ${zone})
           on conflict (id) do update set hall_id = excluded.hall_id, kind = excluded.kind, label = excluded.label,
             shape = excluded.shape, x = excluded.x, y = excluded.y, w = excluded.w, h = excluded.h,
-            seats_min = excluded.seats_min, seats_max = excluded.seats_max, zone = excluded.zone, active = true
+            seats_min = excluded.seats_min, seats_max = excluded.seats_max, zone = excluded.zone, label_kk = excluded.label_kk, active = true
           where venue_tables.venue_id = ${venueId}`;
       }
     });

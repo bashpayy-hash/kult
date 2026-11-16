@@ -43,7 +43,7 @@ export default async function PickPage({ params }: Props) {
   const x = await loadPick((await params).code);
   if (!x) notFound();
   const { lang, t } = await getDict();
-  const [plan, rec, v] = await Promise.all([loadPlan(x.d.venue_id), currentRecommender(), getVisitor()]);
+  const [plan, rec, v] = await Promise.all([loadPlan(x.d.venue_id, lang), currentRecommender(), getVisitor()]);
   // Opens are counted for the recommender's page; after the response, never for prefetches.
   if (!v.isPrefetch) {
     after(async () => {

@@ -6,7 +6,7 @@
   "site": "public/venues/<slug>/<kind>.webp (1000w) and <kind>-640.webp",
   "jobs": {
     "nomad-bar-exterior": "343e4e95-f0cf-4f25-bd5a-ecbd3e8b15f2",
-    "nomad-bar-interior": "54636192-499d-4590-90cf-06a934339409",
+    "nomad-bar-interior": "43662c20-9f63-47e2-bb3e-8c2cd28bfb9f",
     "nomad-bar-hall": "2159fde8-3468-4a9b-86cf-fc8ff2e6fa71",
     "sora-bistro-exterior": "0ef18af7-ec5f-4272-a9bb-fdce51f0b7d7",
     "sora-bistro-interior": "192bd60a-d7e5-4143-bd29-77c335b1d782",
@@ -15,5 +15,12 @@
     "mono-coffee-interior": "c8179b4f-1914-4245-8227-c0ac8f569e44",
     "mono-coffee-hall": "cf00c5e3-8d14-484b-975d-df88679b9d44"
   },
-  "style": "editorial architectural/interior photography, warm tungsten or low sun, slight film grain, late-Soviet Almaty buildings (honeycomb sun screens, pink tuff, terrazzo, mosaics) with modern fittings; no people in focus, no readable text or logos"
+  "style": "editorial architectural/interior photography, warm tungsten or low sun, slight film grain, late-Soviet Almaty buildings (honeycomb sun screens, pink tuff, terrazzo, mosaics) with modern fittings; no people in focus, no readable text or logos",
+  "replaced": {
+    "nomad-bar-interior": {
+      "date": "2026-11-16",
+      "was": "54636192-499d-4590-90cf-06a934339409",
+      "why": "без бутылок на полке: реклама алкоголя запрещена"
+    }
+  }
 }

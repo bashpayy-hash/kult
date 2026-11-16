@@ -53,7 +53,7 @@ export default async function InvitePage({ params }: Props) {
     }
   }
 
-  const plan = await loadPlan(d.venue_id);
+  const plan = await loadPlan(d.venue_id, lang);
   return (
     <>
       <SiteHeader lang={lang} t={t} />
