@@ -6,6 +6,7 @@ import { VenueEntry, type EntryShot } from "@/components/VenueEntry";
 import { PickForm } from "@/components/Blat";
 import { openNow, ZONES, type PlanHall, type PlanItem, type VenueHours } from "@/lib/booking";
 import { loadEntryPhotos } from "@/lib/venueData";
+import { venueRewards } from "@/lib/blat";
 import { almatyNowMinutes, almatyToday, formatMoney, instagramHandle } from "@/lib/format";
 import { entryPhotoUrl, publicImageUrl } from "@/lib/storage";
 import { coverFor } from "@/lib/covers";
@@ -81,6 +82,7 @@ export async function VenueView({
 
   // The way in: street front, room, then each hall (named after the plan's hall).
   const E = t.entry;
+  const treats = advise ? (await venueRewards(d.venue_id)).map((r) => ({ title: (lang === "kk" && r.title_kk) || r.title, cost: r.cost })) : [];
   const tables = plan.items.filter((i) => i.kind === "table");
   const zonesOf = (hallId: string | null) =>
     ZONES.map((z) => ({ z, label: b.zones[z], n: tables.filter((x) => x.zone === z && (!hallId || x.hall_id === hallId)).length })).filter((x) => x.n > 0);
@@ -190,7 +192,7 @@ export async function VenueView({
                 {d.terms ? <p className="mt-2 text-[14px] text-ink-3">{d.terms}</p> : null}
               </div>
             ) : null}
-            {advise ? <PickForm venueId={d.venue_id} venueName={d.venue_name} lang={lang} known={advise.known} /> : null}
+            {advise ? <PickForm venueId={d.venue_id} venueName={d.venue_name} category={d.category} treats={treats} lang={lang} known={advise.known} /> : null}
             {invite ? (
               <div className="border-t border-line pt-5">
                 <p className="label">{t.invite.phraseTitle}</p>
@@ -222,6 +224,7 @@ export async function VenueView({
                 linkId={invite?.linkId}
                 phrase={invite?.phrase}
                 pickId={pick?.id}
+                pickName={pick?.name}
                 initialDate={initial?.date}
                 initialSlot={initial?.slot}
               />

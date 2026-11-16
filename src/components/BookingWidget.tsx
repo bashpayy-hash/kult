@@ -21,6 +21,7 @@ type Props = {
   phrase?: string;
   /** A friend's recommendation (/p/<code>): the booking counts for their blat. */
   pickId?: string;
+  pickName?: string;
   /** From a catalog card: «20:00» was tapped, so open with that day and time. */
   initialDate?: string;
   initialSlot?: number;
@@ -41,7 +42,7 @@ export function BookingWidget(props: Props) {
   return <Flow key={round} {...props} onAgain={() => setRound((r) => r + 1)} />;
 }
 
-function Flow({ lang, venueId, hours, halls, items, today, linkId, phrase, pickId, initialDate, initialSlot, defaultParty = 2, onAgain }: Props & { onAgain: () => void }) {
+function Flow({ lang, venueId, hours, halls, items, today, linkId, phrase, pickId, pickName, initialDate, initialSlot, defaultParty = 2, onAgain }: Props & { onAgain: () => void }) {
   const t = dicts[lang];
   const b = t.booking;
   const tables = useMemo(() => items.filter((i) => i.kind === "table"), [items]);
@@ -145,6 +146,8 @@ function Flow({ lang, venueId, hours, halls, items, today, linkId, phrase, pickI
         <p className="text-ink-2">
           {b.successText(when, seat)}
           {phrase ? ` ${b.phraseReminder(phrase)}` : ""}
+          {/* The friend's recommendation counted (user-testing-agent, 16 Nov 2026: «засчитается ли?»). */}
+          {pickName ? ` ${t.blat.pickCredit(pickName)}` : ""}
         </p>
         <button type="button" onClick={onAgain} className="link-quiet text-[15px]">
           {t.invite.another}
@@ -251,6 +254,8 @@ function Flow({ lang, venueId, hours, halls, items, today, linkId, phrase, pickI
       {plannedHalls.length ? (
         <fieldset className="min-w-0">
           <legend className="label mb-3">{zonesHere.length ? b.planTitle : b.plan}</legend>
+          {/* Said before the plan: the table is optional (user-testing-agent, 16 Nov 2026). */}
+          {chosenSlot !== null && !chosenTable ? <p className="-mt-1 mb-3 text-[15px] text-ink-2">{b.planHint}</p> : null}
           {plannedHalls.length > 1 ? (
             <div className="mb-3 flex flex-wrap gap-2">
               {plannedHalls.map((h) => (
@@ -345,7 +350,7 @@ function Flow({ lang, venueId, hours, halls, items, today, linkId, phrase, pickI
             // A slot after midnight belongs to the next calendar day: say that day.
             const cal = toCalendar(date, chosenSlot).date;
             return `${cal === today || cal === shiftDate(today, 1) ? `${dayLabel(cal)}, ` : ""}${formatDay(cal, lang)}`;
-          })(), clock(chosenSlot), b.guestsN(party), zone ? b.zones[zone] : null, chosenTable ? b.tableName(chosenTable.label) : null].filter(Boolean).join(" · ")}
+          })(), clock(chosenSlot), b.guestsN(party), zone ? b.zones[zone] : null, chosenTable ? b.tableName(chosenTable.label) : null, pickName ? t.blat.pickBy(pickName) : null].filter(Boolean).join(" · ")}
         </p>
       ) : null}
       <FormError error={state.error && !Object.keys(fe).length ? state.error : undefined} />

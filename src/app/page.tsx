@@ -156,6 +156,14 @@ export default async function Overview({ searchParams }: { searchParams: Promise
                     </li>
                   ))}
                 </ul>
+                {/* Blat near the top: a guest scanning the page missed the band further down (user-testing-agent, 16 Nov 2026). */}
+                <Link href="/blat" className="enter group mt-5 flex items-center justify-between gap-4 bg-raised px-4 py-3.5" style={{ ["--i" as string]: 9 }}>
+                  <span className="min-w-0">
+                    <span className="block text-[16px] font-semibold text-ink">{t.blat.teaserTitle}</span>
+                    <span className="block text-[14px] text-ink-2">{t.blat.teaserText}</span>
+                  </span>
+                  <span aria-hidden="true" className="shrink-0 text-[20px] text-accent transition-transform duration-150 group-hover:translate-x-1">→</span>
+                </Link>
             </div>
           </section>
         ) : null}

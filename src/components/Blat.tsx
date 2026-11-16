@@ -1,11 +1,11 @@
 "use client";
 
 import Link from "next/link";
-import { useActionState, useState, useSyncExternalStore } from "react";
+import { useActionState, useEffect, useRef, useState, useSyncExternalStore } from "react";
 import { cancelRedemption, createPick, redeemReward } from "@/app/blatActions";
 import { Consent, errProps, Field, FormError, Honeypot, SubmitButton } from "@/components/form";
 import { dicts, type Lang } from "@/lib/i18n/dicts";
-import type { FormState } from "@/lib/types";
+import type { Category, FormState } from "@/lib/types";
 
 const noop = () => () => {};
 
@@ -48,17 +48,38 @@ export function ShareLink({ url, text, lang }: { url: string; text: string; lang
  * «Посоветовать другу» on a venue page: a personal link to this place. A
  * browser that already recommends needs no name or phone again.
  */
-export function PickForm({ venueId, venueName, lang, known }: { venueId: string; venueName: string; lang: Lang; known: string | null }) {
+export function PickForm({
+  venueId,
+  venueName,
+  category,
+  treats,
+  lang,
+  known,
+}: {
+  venueId: string;
+  venueName: string;
+  category: Category;
+  /** This venue's treats for points: what a recommender can get here. */
+  treats: { title: string; cost: number }[];
+  lang: Lang;
+  known: string | null;
+}) {
   const t = dicts[lang];
   const B = t.blat;
   const [open, setOpen] = useState(false);
   const [state, action] = useActionState<FormState, FormData>(createPick, {});
   const fe = state.fieldErrors || {};
   const v = state.values || {};
+  const ready = useRef<HTMLDivElement>(null);
+  // The block gets shorter when the form turns into the link: keep the link on screen
+  // (user-testing-agent, 16 Nov 2026: «страница прыгнула вниз, ссылка за экраном»).
+  useEffect(() => {
+    if (state.ok) ready.current?.scrollIntoView({ block: "center", behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth" });
+  }, [state.ok]);
 
   if (state.ok && v.url) {
     return (
-      <div role="status" className="sheet-in flex flex-col gap-3 border-t border-line pt-5">
+      <div ref={ready} role="status" className="sheet-in flex flex-col gap-3 border-t border-line pt-5">
         <p className="label">{B.linkReady}</p>
         <ShareLink url={v.url} text={B.shareText(venueName)} lang={lang} />
         <Link href="/blat" className="link-quiet self-start text-[15px]">
@@ -69,9 +90,15 @@ export function PickForm({ venueId, venueName, lang, known }: { venueId: string;
   }
 
   return (
-    <div className="border-t border-line pt-5">
+    // data-hide-bookbar: the sticky «Забронировать» bar steps away while someone fills this in.
+    <div data-hide-bookbar className="border-t border-line pt-5">
       <p className="label">{B.adviseTitle}</p>
       <p className="mt-2 max-w-[36rem] text-[15px] text-ink-2">{B.adviseText}</p>
+      {treats.length ? (
+        <p className="mt-2 max-w-[36rem] text-[15px] text-ink">
+          <span className="text-ink-3">{B.hereRewards}:</span> {treats.map((r) => `${r.title} — ${B.points(r.cost)}`).join(" · ")}
+        </p>
+      ) : null}
       {!open ? (
         <button type="button" onClick={() => setOpen(true)} className="btn btn-soft btn-sm mt-4">
           {B.adviseTitle}
@@ -92,7 +119,7 @@ export function PickForm({ venueId, venueName, lang, known }: { venueId: string;
             </div>
           )}
           <Field label={B.note} htmlFor="p-note" optional={t.optional}>
-            <input id="p-note" name="note" className="field" maxLength={200} placeholder={B.notePlaceholder} defaultValue={v.note} />
+            <input id="p-note" name="note" className="field" maxLength={200} placeholder={B.notePlaceholders[category] ?? B.notePlaceholder} defaultValue={v.note} />
           </Field>
           {known ? null : <Consent id="p-consent" label={B.consent} linkLabel={t.more} error={fe.consent} />}
           <FormError error={state.error && !Object.keys(fe).length ? state.error : undefined} />

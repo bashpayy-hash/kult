@@ -12,6 +12,7 @@ import { useEffect, useState } from "react";
 export function BookBar({ label }: { label: string }) {
   const [show, setShow] = useState(false);
   const [booked, setBooked] = useState(false);
+  const [typing, setTyping] = useState(false);
   useEffect(() => {
     const el = document.getElementById("book");
     if (!el) return;
@@ -20,18 +21,23 @@ export function BookBar({ label }: { label: string }) {
     // After «Бронь принята» the bar would only invite a second booking (uxaudit, 15 Nov 2026).
     const done = () => setBooked(true);
     window.addEventListener("bolek:booked", done);
+    // A form elsewhere on the page (e.g. «Посоветовать другу») must not sit under the bar.
+    const focusIn = (e: FocusEvent) => setTyping(!!(e.target as Element | null)?.closest?.("[data-hide-bookbar]"));
+    document.addEventListener("focusin", focusIn);
     return () => {
       io.disconnect();
       window.removeEventListener("bolek:booked", done);
+      document.removeEventListener("focusin", focusIn);
     };
   }, []);
   if (booked) return null;
+  const visible = show && !typing;
   return (
     <div
-      aria-hidden={!show}
-      className={`fixed inset-x-0 bottom-0 z-20 border-t border-line bg-canvas px-5 pb-[max(12px,env(safe-area-inset-bottom))] pt-3 transition-transform duration-300 ease-[var(--ease-out)] md:hidden ${show ? "translate-y-0" : "translate-y-full"}`}
+      aria-hidden={!visible}
+      className={`fixed inset-x-0 bottom-0 z-20 border-t border-line bg-canvas px-5 pb-[max(12px,env(safe-area-inset-bottom))] pt-3 transition-transform duration-300 ease-[var(--ease-out)] md:hidden ${visible ? "translate-y-0" : "translate-y-full"}`}
     >
-      <a href="#book" tabIndex={show ? undefined : -1} className="btn btn-primary w-full">
+      <a href="#book" tabIndex={visible ? undefined : -1} className="btn btn-primary w-full">
         {label}
       </a>
     </div>

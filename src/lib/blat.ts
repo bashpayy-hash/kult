@@ -104,3 +104,9 @@ export async function rewardsList(): Promise<BlatReward[]> {
     where w.active and v.status = 'active' and v.is_listed
     order by w.cost, v.name`;
 }
+
+/** A venue's own treats, for its «Посоветовать другу» block. */
+export async function venueRewards(venueId: string): Promise<{ title: string; title_kk: string | null; cost: number }[]> {
+  return db()<{ title: string; title_kk: string | null; cost: number }[]>`
+    select title, title_kk, cost from blat_rewards where venue_id = ${venueId} and active order by cost`;
+}
