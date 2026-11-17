@@ -1,0 +1,343 @@
+[
+  {
+    "name": "Fika",
+    "category": "cafe",
+    "subtype": "bakery / brunch",
+    "address": "ул. Кабанбай батыра, 104, Алматы",
+    "district": "центр, ул. Кабанбай батыра (вероятно Алмалинский) — проверить",
+    "instagram": "@fika.almaty",
+    "phone": null,
+    "avg_check": "≈4 200 ₸ (OneTwoTrip, дата статьи не видна)",
+    "booking_today": "Онлайн-брони не найдено; бронь по звонку не подтверждена — проверить",
+    "why": "Пекарня-кафе с завтраками в здании 1950-х (интерьер Studio NAAW, о нём писали Wallpaper и Dezeen): фотогеничные зоны для блогеров, а выпечка — готовое угощение.",
+    "sources": [
+      {"url": "https://www.trvlogue.com/en/fika-almaty-cafe-review", "seen": "2026-11-17"},
+      {"url": "https://www.onetwotrip.com/ru/blog/?p=117783", "seen": "2026-11-17"}
+    ],
+    "check": "Подают вино — проверить, что вечером формат не алкогольный; часы 08:00–23:00 (trvlogue); телефон и рассадка (окна, общий стол) — проверить."
+  },
+  {
+    "name": "Eva Coffee (Eva Coffee House)",
+    "category": "cafe",
+    "subtype": "specialty coffee / brunch",
+    "address": "мкр. Казахфильм, 19Б (Яндекс Карты); вторая точка на ул. Ауэзова — номер дома проверить",
+    "district": "Бостандыкский (Казахфильм); точка на Ауэзова — центр, район проверить",
+    "instagram": null,
+    "phone": null,
+    "avg_check": null,
+    "booking_today": "Брони не видно; 30+ посадочных мест, вероятно без брони — проверить",
+    "why": "Локальный проект: панорамные окна, книги, розетки у каждого стола, завтраки весь день и альтернатива (V60, кемекс); есть за что выбирать столик.",
+    "sources": [
+      {"url": "https://sxodim.com/almaty/article/eva-coffee", "seen": "2026-11-17"},
+      {"url": "https://sxodim.com/almaty/place/eva-coffee-house", "seen": "2026-11-17"}
+    ],
+    "check": "Instagram, телефон и адрес точки на Ауэзова — проверить; статья sxodim, судя по сниппету, февраля 2026; раньше точка называлась Coffee Original."
+  },
+  {
+    "name": "Aqqu Central Café (Аққу)",
+    "category": "cafe",
+    "subtype": "bakery / brunch",
+    "address": "ул. Панфилова, 123 (Яндекс Карты); восстановленный павильон в сквере им. Молдагуловой и Маметовой — проверить",
+    "district": "центр — район проверить",
+    "instagram": "@aqqu.cafe (по restaurantguru) — проверить",
+    "phone": null,
+    "avg_check": null,
+    "booking_today": "Не найдено; формат круглогодичного кафе-ресторана, возможна бронь по телефону — проверить",
+    "why": "Восстановленное легендарное кафе 1960-х (проект AT Interiors, публикация Dezeen): пекарня с витриной и терраса с видом на парк, сильная локация для блогеров.",
+    "sources": [
+      {"url": "https://yandex.com/maps/org/aqqu/79663641305/", "seen": "2026-11-17"},
+      {"url": "https://www.trvlogue.com/en/akku-cafe-almaty-review", "seen": "2026-11-17"},
+      {"url": "https://www.dezeen.com/?p=2297557", "seen": "2026-11-17"}
+    ],
+    "check": "Адреса расходятся (Панфилова, 123 у Яндекса, Кунаева, 130 у restaurantguru); оператор и доля алкоголя; телефон есть в карточке Яндекса, но в выдаче не виден — проверить."
+  },
+  {
+    "name": "Agosto (Agosto Park Cafe / Agosto Coffee)",
+    "category": "cafe",
+    "subtype": "specialty coffee / brunch",
+    "address": "ул. Казыбек би, 43Б",
+    "district": "Медеуский (рядом с парком 28 панфиловцев и Вознесенским собором) — проверить",
+    "instagram": null,
+    "phone": "+7 747 710 00 09 (Яндекс Карты)",
+    "avg_check": "Средний чек не указан; капучино 900–1 200 ₸ (Яндекс), кофе от 700 ₸ (Digital Business, 05.11.2025)",
+    "booking_today": "Брони не видно — проверить",
+    "why": "Большие окна с видом на зелень парка (почти каждое место с видом), летняя терраса, рейтинг 4,8–4,9 при сотнях оценок; паста и пицца в меню поднимают чек до целевого.",
+    "sources": [
+      {"url": "https://yandex.com/maps/org/agosto/240699381189/", "seen": "2026-11-17"},
+      {"url": "https://www.trvlogue.com/en/agosto-coffee-almaty-review", "seen": "2026-11-17"},
+      {"url": "https://digitalbusiness.kz/2025-11-05/gde-v-almati-vipit-kofe-za-700-tenge-poluchit-kosmetiku-v-podarok-i-zavtrak-v-ogne/", "seen": "2026-11-17"}
+    ],
+    "check": "На sxodim карточка называется «Restobar Agosto» — проверить долю алкоголя; Instagram — проверить."
+  },
+  {
+    "name": "Voronka (Voronka Specialty Coffee)",
+    "category": "cafe",
+    "subtype": "specialty coffee / brunch",
+    "address": "ул. Желтоксан, 160 (Spotted by Locals) — проверить",
+    "district": "центр, ул. Желтоксан — район проверить",
+    "instagram": null,
+    "phone": null,
+    "avg_check": null,
+    "booking_today": "Не найдено; формат кофейни без брони — проверить",
+    "why": "Specialty на местном зерне, завтраки весь день с 8:00 и своя выпечка (хит — маритоццо с малиной), терраса, можно с собакой.",
+    "sources": [
+      {"url": "https://www.spottedbylocals.com/almaty/voronka-cafe-on-zheltoksan", "seen": "2026-11-17"},
+      {"url": "https://tatlerasia.kz/ru/dining/food/tainaya-sigarnaya-komnata-trattoriya-v-torgovom-tsentre-i-drugiye-novyye-mesta-v-almaty", "seen": "2026-11-17"}
+    ],
+    "check": "Номер дома только из одного источника; Instagram и телефон — проверить."
+  },
+  {
+    "name": "Bowler Coffee Roasters",
+    "category": "cafe",
+    "subtype": "specialty coffee",
+    "address": "ул. Кабанбай батыра, 65 (в другом источнике 77/79); точка на Зелёном базаре (ул. Жибек Жолы, 53)",
+    "district": "Медеуский (Кабанбай батыра, Зелёный базар / Жибек Жолы) — проверить",
+    "instagram": "@bowler_coffee_kokbazar (точка на Зелёном базаре); основной аккаунт — проверить",
+    "phone": "+7 707 730 08 10 или +7 707 730 09 10 — источники расходятся, проверить",
+    "avg_check": null,
+    "booking_today": "Брони не видно, формат кофейни-обжарщика — проверить",
+    "why": "Обжарщик с 2016 года, основатель-голландец, голландская выпечка; маленькая местная сеть со свежей историей в прессе (Digital Business, 18.10.2026), удобно для угощения и блогерских сюжетов.",
+    "sources": [
+      {"url": "https://europeancoffeetrip.com/speciality-coffee-almaty-kazakhstan/", "seen": "2026-11-17"},
+      {"url": "https://digitalbusiness.kz/2026-10-18/niderlandets-pereehal-v-kazahstan-i-otkril-kofeynyu-na-zelenom-bazare/", "seen": "2026-11-17"}
+    ],
+    "check": "Работает ли точка на Кабанбай батыра в 2026 и по какому адресу; посадка на базаре; телефон — проверить."
+  },
+  {
+    "name": "Kudos Specialty Coffee",
+    "category": "cafe",
+    "subtype": "specialty coffee",
+    "address": "ул. Наурызбай батыра, у стадиона «Динамо» — номер дома проверить",
+    "district": "центр (вероятно Алмалинский) — проверить",
+    "instagram": "@kudos.ala",
+    "phone": null,
+    "avg_check": null,
+    "booking_today": "Брони нет: небольшая точка навынос, делит помещение с цветочным магазином (Lokalee) — проверить",
+    "why": "Кофейня для бегунов с совместными пробежками; в апреле 2026 сделала с adidas кампанию «Жаным, ты сможешь» (Forbes.kz). Готовое комьюнити для блогерского клуба и «приведи друга».",
+    "sources": [
+      {"url": "https://forbes.kz/articles/kak-nebolshaya-almatinskaya-kofeynya-stala-partnerom-adidas", "seen": "2026-11-17"},
+      {"url": "https://www.lokalee.app/tours/almaty-running-tour", "seen": "2026-11-17"}
+    ],
+    "check": "Посадки мало: для каталога столиков слабее, для клуба сильнее. Адрес и чек — проверить."
+  },
+  {
+    "name": "Ichi Specialty Coffee",
+    "category": "cafe",
+    "subtype": "specialty coffee",
+    "address": "ул. Кабанбай батыра, 96 (2ГИС)",
+    "district": "центр, ул. Кабанбай батыра — район проверить",
+    "instagram": "@ichi_coffee",
+    "phone": null,
+    "avg_check": "3 000 ₸ (обзор) / 5 000 ₸ (2ГИС) — источники расходятся",
+    "booking_today": "Не найдено — проверить",
+    "why": "Specialty в японской эстетике: V60, Origami, AeroPress, безлактозное и кето-меню — понятная ниша для обзоров, чек в целевом диапазоне.",
+    "sources": [
+      {"url": "https://2gis.kz/almaty/firm/70000001045495665", "seen": "2026-11-17"},
+      {"url": "https://openkitchen.eda.yandex/article/places/guides/8-third-wave-coffee-spots-in-almaty", "seen": "2026-11-17"}
+    ],
+    "check": "Работает ли в 2026, телефон и число мест — проверить."
+  },
+  {
+    "name": "Dandy Pastry Studio",
+    "category": "cafe",
+    "subtype": "dessert / brunch",
+    "address": "ул. Кабанбай батыра, 65/76, 1 этаж (2ГИС)",
+    "district": "Медеуский (2ГИС)",
+    "instagram": null,
+    "phone": null,
+    "avg_check": null,
+    "booking_today": "Не найдено; зал маленький — проверить",
+    "why": "Кондитерская студия с красиво поданными завтраками в центре, открыта 08:00–21:00, 4,5 при 456 оценках; десерт сам просится в угощение.",
+    "sources": [
+      {"url": "https://2gis.kz/almaty/firm/70000001083263577", "seen": "2026-11-17"},
+      {"url": "https://wanderlog.com/place/details/3597150/dandy-pastry-studio", "seen": "2026-11-17"}
+    ],
+    "check": "В отзывах жалуются на тесноту и соотношение цены и качества; Instagram (ссылка в 2ГИС есть, хэндл не виден) и телефон — проверить."
+  },
+  {
+    "name": "Flask specialty coffee",
+    "category": "cafe",
+    "subtype": "specialty coffee",
+    "address": "ул. Курмангазы, 54, 1 этаж; также ТРЦ Esentai Mall (пр. Аль-Фараби, 77/8, 2 этаж)",
+    "district": "Алмалинский (Курмангазы) / Бостандыкский (Esentai Mall, Аль-Фараби) — проверить",
+    "instagram": "@flask_almt",
+    "phone": null,
+    "avg_check": "3 500–4 000 ₸ (restoran.kz, обзоры; 2ГИС для Esentai Mall — 4 000 ₸)",
+    "booking_today": "Не найдено; в точке на Курмангазы около 20 мест — проверить",
+    "why": "Specialty с корейским основателем, 2–3 точки (маленькая сеть), чек ровно в целевом диапазоне.",
+    "sources": [
+      {"url": "https://restoran.kz/coffee/92379-flask-specialty-coffee-po-kurmangazy", "seen": "2026-11-17"},
+      {"url": "https://2gis.kz/almaty/firm/70000001065705433", "seen": "2026-11-17"}
+    ],
+    "check": "Список точек — проверить (Барибаева, 36 и Nuno Concept Store, вероятно, устарели); на Курмангазы мало мест."
+  },
+  {
+    "name": "Jolly",
+    "category": "cafe",
+    "subtype": "bakery / specialty coffee",
+    "address": "пр. Абая, 109В, 1 этаж",
+    "district": "центр, пр. Абая — район проверить",
+    "instagram": "@jolly.almaty",
+    "phone": null,
+    "avg_check": "«от 3 000» в карточке Яндекса (валюта по ошибке ₽) — проверить",
+    "booking_today": "Не найдено — проверить",
+    "why": "Кофейня-пекарня с ремесленным хлебом и свежей выпечкой; вошла в подборку WE «8 популярных кофеен, которые любят местные» (октябрь 2025).",
+    "sources": [
+      {"url": "https://yandex.com/maps/org/jolly/14200831337/", "seen": "2026-11-17"},
+      {"url": "https://weproject.media/articles/detail/8-populyarnykh-almatinskikh-kofeen-kotorye-lyubyat-mestnye/", "seen": "2026-11-17"}
+    ],
+    "check": "Отзывы о кофе смешанные; есть другие точки Jolly (Мамыр-1, Globus) — проверить размер сети."
+  },
+  {
+    "name": "Holder Coffee",
+    "category": "cafe",
+    "subtype": "specialty coffee",
+    "address": "пр. Абая, 21 (угол ул. Валиханова)",
+    "district": "центр, пр. Абая — район проверить",
+    "instagram": "@holder_coffee",
+    "phone": "+7 701 349 66 12 (из гидов, может быть устаревшим)",
+    "avg_check": "≈2 000 ₸ (старый обзор)",
+    "booking_today": "Брони не видно — проверить",
+    "why": "Кофейня трёх друзей-бариста (с 2018 года): летняя терраса, настольные игры, книги — камерный «свой» формат для клуба.",
+    "sources": [
+      {"url": "https://europeancoffeetrip.com/speciality-coffee-almaty-kazakhstan/", "seen": "2026-11-17"},
+      {"url": "https://sxodim.com/almaty/place/holder-coffee", "seen": "2026-11-17"}
+    ],
+    "check": "Свежих (2025–2026) подтверждений работы не нашлось; чек ниже диапазона — проверить."
+  },
+  {
+    "name": "Julius",
+    "category": "cafe",
+    "subtype": "specialty coffee",
+    "address": "ул. Кабанбай батыра, 83",
+    "district": "центр, ул. Кабанбай батыра — район проверить",
+    "instagram": null,
+    "phone": null,
+    "avg_check": null,
+    "booking_today": "Брони нет: зал около 42 м² — проверить",
+    "why": "Узнаваемая красная дверь и красная La Marzocco, дизайн NAAW, зерно топовых обжарщиков (DAK, Massimo) — одна из самых фотографируемых кофеен города.",
+    "sources": [
+      {"url": "https://dailycoffeenews.com/2024/02/26/design-details-little-red-accents-at-julius-in-kazakhstan/", "seen": "2026-11-17"},
+      {"url": "https://openkitchen.eda.yandex/article/places/guides/pinterest-worthy-the-most-aesthetic-restaurants-in-almaty", "seen": "2026-11-17"}
+    ],
+    "check": "Заказчиком дизайна была ABR Group (крупный холдинг), теперь, по Яндекс Еде, кофейней управляет «Friends of Friends» — проверить независимость; мест мало; Instagram."
+  },
+  {
+    "name": "Double Coffee",
+    "category": "cafe",
+    "subtype": "specialty coffee / brunch",
+    "address": "ул. Наурызбай батыра, 94; ул. Гоголя, 58 (по гиду 2020 года)",
+    "district": "центр (вероятно Алмалинский) — проверить",
+    "instagram": "@doublecoffee_almaty",
+    "phone": null,
+    "avg_check": null,
+    "booking_today": "Не найдено — проверить",
+    "why": "Небольшая местная сеть: завтраки весь день, растительное молоко; в подборке WE «8 популярных кофеен, которые любят местные» (октябрь 2025).",
+    "sources": [
+      {"url": "https://sxodim.com/almaty/place/double-coffee", "seen": "2026-11-17"},
+      {"url": "https://yandex.com/maps/org/double_coffee/184930874182/", "seen": "2026-11-17"}
+    ],
+    "check": "Точка на Панфилова, 114 в Яндексе помечена «временно закрыто» — проверить, какие адреса работают."
+  },
+  {
+    "name": "Lua Pastry Studio",
+    "category": "cafe",
+    "subtype": "dessert / bakery",
+    "address": "пр. Сейфуллина, 574/2, 213 (Wolt); вторая кофейня на ул. Кабанбай батыра — номер проверить",
+    "district": "Бостандыкский (Сейфуллина) / центр (Кабанбай батыра) — проверить",
+    "instagram": null,
+    "phone": "+7 775 302 97 21 (Wolt)",
+    "avg_check": null,
+    "booking_today": "Не найдено; есть столики на улице — проверить",
+    "why": "Кондитерская студия, открывшая вторую кофейню в центре (Mustafin Mag): растущий местный бренд, десерт как угощение.",
+    "sources": [
+      {"url": "https://wolt.com/ru/kaz/almaty/restaurant/lua-pastry-studio", "seen": "2026-11-17"},
+      {"url": "https://wolt.com/en/kaz/almaty/brand/lua-pastry-studio", "seen": "2026-11-17"}
+    ],
+    "check": "Адрес центральной точки, Instagram и число мест — проверить."
+  },
+  {
+    "name": "La Tartine",
+    "category": "cafe",
+    "subtype": "bakery / brunch",
+    "address": "пр. Сейфуллина, 617, 1 этаж (Яндекс); точка в центре у Театра оперы и балета — проверить",
+    "district": "Бостандыкский / Алмалинский — проверить",
+    "instagram": null,
+    "phone": null,
+    "avg_check": "2 000–6 000 ₸ (точка в Бостандыкском районе) / 3 500–6 000 ₸ (центральная), по агрегаторам",
+    "booking_today": "Не найдено — проверить",
+    "why": "Французская пекарня-кафе с завтраками весь день, медовиком и миндальными круассанами — классика для угощения.",
+    "sources": [
+      {"url": "https://sxodim.com/almaty/place/la-tartine", "seen": "2026-11-17"},
+      {"url": "https://tabiji.pages.dev/popular-picks/almaty-bakeries", "seen": "2026-11-17"}
+    ],
+    "check": "Это сеть: число точек — проверить; отзывы о ценах и скорости обслуживания смешанные; Instagram."
+  },
+  {
+    "name": "Spectre Coffee",
+    "category": "cafe",
+    "subtype": "specialty coffee",
+    "address": "пр. Абая, 30, вход с ул. Сейфуллина или со двора (European Coffee Trip, около 2019 года)",
+    "district": "центр, пр. Абая — район проверить",
+    "instagram": "@spectre_coffee",
+    "phone": null,
+    "avg_check": null,
+    "booking_today": "Брони нет — проверить",
+    "why": "Один из пионеров третьей волны в Алматы (с 2017 года), обжарщик и поставщик; места у окна с видом на пр. Абая.",
+    "sources": [
+      {"url": "https://europeancoffeetrip.com/speciality-coffee-almaty-kazakhstan/", "seen": "2026-11-17"},
+      {"url": "https://yandex.com.ge/navi/org/spectre/211897033637/reviews", "seen": "2026-11-17"}
+    ],
+    "check": "Адрес из старого источника; встречаются Spectre Lab и упоминание бишкекских корней — проверить актуальную точку и формат."
+  },
+  {
+    "name": "Pause coffee x wine",
+    "category": "cafe",
+    "subtype": "specialty coffee / brunch",
+    "address": "ул. Утепова, 31, блок 21 (ЖК City)",
+    "district": "Бостандыкский (2ГИС)",
+    "instagram": "@pause.coffeewine.almaty",
+    "phone": null,
+    "avg_check": null,
+    "booking_today": "Не найдено — проверить",
+    "why": "Минималистичный интерьер, тихая атмосфера, можно с питомцами, 4,9 при 507 оценках; две точки — маленькая местная сеть.",
+    "sources": [
+      {"url": "https://2gis.kz/almaty/firm/70000001083966681", "seen": "2026-11-17"},
+      {"url": "https://weproject.media/articles/detail/8-populyarnykh-almatinskikh-kofeen-kotorye-lyubyat-mestnye/", "seen": "2026-11-17"}
+    ],
+    "check": "В названии «wine» — проверить, что вино не основной формат; адрес второй точки."
+  },
+  {
+    "name": "Sicilia Specialty Coffee",
+    "category": "cafe",
+    "subtype": "specialty coffee",
+    "address": "ул. Панфилова, 85",
+    "district": "центр, ул. Панфилова — район проверить",
+    "instagram": null,
+    "phone": null,
+    "avg_check": "≈1 500 ₸ (restoran.kz) — ниже целевого диапазона",
+    "booking_today": "Не найдено; около 20 мест — проверить",
+    "why": "Specialty на пешеходной Панфилова, 08:00–22:00 — удобная точка с прогулочным трафиком.",
+    "sources": [
+      {"url": "https://restoran.kz/coffee/99295-sicilia-specialty-coffee", "seen": "2026-11-17"}
+    ],
+    "check": "Чек ниже 2 500 ₸; Instagram и работа в 2026 — проверить; второй источник не найден."
+  },
+  {
+    "name": "Capito",
+    "category": "cafe",
+    "subtype": "brunch",
+    "address": "пр. Гагарина, 294 (Wolt); вторая точка на ул. Кунаева — проверить",
+    "district": "Бостандыкский — проверить",
+    "instagram": null,
+    "phone": null,
+    "avg_check": null,
+    "booking_today": "Не найдено — проверить",
+    "why": "Уютное пространство с библиотекой, детской зоной и розетками, 08:00–23:00 — разные зоны, из которых можно выбирать столик.",
+    "sources": [
+      {"url": "https://wolt.com/ru/kaz/almaty/restaurant/capito", "seen": "2026-11-17"},
+      {"url": "https://yandex.com.ge/maps/org/capito/65668443264/reviews/", "seen": "2026-11-17"}
+    ],
+    "check": "Есть Capito в Бишкеке — проверить, одна ли это сеть и насколько большая; Гагарина, 294 — на краю «центра»."
+  }
+]

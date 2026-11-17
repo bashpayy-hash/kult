@@ -1,0 +1,345 @@
+[
+  {
+    "name": "Каусар (Kausar), шайхана",
+    "category": "chaikhana",
+    "subtype": "чайхана / шайхана, халяль, плов и шашлык, семейный формат",
+    "address": "мкр. Самал-1, 2Б (основная точка, 24/7); другие филиалы: 5-й мкр., 12а; Мамыр-4, 197Б/1",
+    "district": "Медеуский (Самал-1); Ауэзовский (5-й мкр.)",
+    "instagram": "@kausar.almaty.shayhana",
+    "phone": null,
+    "avg_check": "3 500–4 000 ₸ (2ГИС: Самал-1 — 4 000, Мамыр-4 — 3 500; WeProject — ~3 500)",
+    "booking_today": "без брони, 24/7; телефон в карточке 2ГИС; меню на kausarmenu.kz",
+    "why": "Халяльная шайхана с 2012 года, 4 филиала, работает круглосуточно, детское меню; чек в нужной вилке; WeProject советует её для семейного ужина «без удара по кошельку».",
+    "sources": [
+      {"url": "https://2gis.kz/almaty/firm/70000001086700592", "seen": "2026-11-17"},
+      {"url": "https://www.instagram.com/kausar.almaty.shayhana/", "seen": "2026-11-17"},
+      {"url": "https://weproject.media/articles/detail/shashlyki-i-ryba-7-mest-v-almaty-gde-pouzhinat-s-semey-bez-udara-po-koshelku/", "seen": "2026-11-17"}
+    ],
+    "check": "проверить телефон; у «Каусара» есть отдельные аккаунты филиалов (@kausar_shaykhana, @kausar.adyrbekova — Адырбекова, 54); в Шымкенте и Таразе есть одноимённые сети, связь с алматинской не подтверждена"
+  },
+  {
+    "name": "Mahalla, чайхана",
+    "category": "chaikhana",
+    "subtype": "чайхана, восточная/узбекская кухня",
+    "address": "ул. Байсултанова, 1, мкр. Акжар (головная точка, всего 6 филиалов)",
+    "district": "Наурызбайский",
+    "instagram": "@mahalla.chayhana",
+    "phone": "указан в 2ГИС вместе с WhatsApp (номер не виден в выдаче, проверить)",
+    "avg_check": null,
+    "booking_today": "телефон и WhatsApp из карточки 2ГИС",
+    "why": "На 2ГИС рейтинг 4.5 по 1 924 оценкам и 718 отзывам, отметка «Номинант 2026»; небольшая местная сеть из 6 точек; в Instagram около 7,5 тыс. подписчиков.",
+    "sources": [
+      {"url": "https://2gis.kz/almaty/firm/70000001089043262", "seen": "2026-11-17"},
+      {"url": "https://www.instagram.com/mahalla.chayhana/", "seen": "2026-11-17"}
+    ],
+    "check": "проверить средний чек и адреса филиалов: головная точка на окраине, нужно найти центральные; проверить тапчаны и большие столы"
+  },
+  {
+    "name": "Халва, чайхана",
+    "category": "chaikhana",
+    "subtype": "чайхана, восточная кухня, тапчаны",
+    "address": "ул. Абишева, 13",
+    "district": "проверить",
+    "instagram": "@halva_almatyy",
+    "phone": null,
+    "avg_check": null,
+    "booking_today": "банкеты до 80 гостей — бронь, вероятно, по телефону или в Direct (проверить)",
+    "why": "В профиле: тапчаны, три зала, банкеты до 80 гостей. Для компаний и сторис это лучший формат посадки из найденных.",
+    "sources": [
+      {"url": "https://www.instagram.com/halva_almatyy/", "seen": "2026-11-17"}
+    ],
+    "check": "проверить: источник только Instagram; адрес, район, чек и рейтинг по 2ГИС не подтверждены. Карточка «Halva» на Яндексе (4.7, 517 оценок) может относиться к другому городу"
+  },
+  {
+    "name": "Lagmanhana №1 Sabro",
+    "category": "chaikhana",
+    "subtype": "уйгурская кухня, лагманхана, халяль",
+    "address": "по Instagram: Райымбека, 237в; Аксай-4, 79а; Жайдарман, 74А. По 2ГИС/Wikicity: пр. Рыскулова, 149; Желтоксан, 37а (4 филиала)",
+    "district": "несколько районов (проверить по точкам)",
+    "instagram": "@lagmanhana1_sabro",
+    "phone": "+7 727 381 35 29 (Рыскулова, 149, по Wikicity — проверить)",
+    "avg_check": "~4 500 ₸ (2ГИС, точка на Рыскулова, 149)",
+    "booking_today": "телефон; на месте без брони",
+    "why": "Около 42 тыс. подписчиков в Instagram, позиционирует себя как «лучший лагман в городе»; на точке Рыскулова, 149 рейтинг 4.7 по ~3 300 оценкам; чек в вилке.",
+    "sources": [
+      {"url": "https://www.instagram.com/lagmanhana1_sabro/", "seen": "2026-11-17"},
+      {"url": "https://wikicity.kz/search/almaty/uighur_cuisine?pl=tbJ6Ku0Z1Zj7FuYOvuZoiy", "seen": "2026-11-17"},
+      {"url": "https://2gis.kz/almaty/firm/70000001089528394", "seen": "2026-11-17"}
+    ],
+    "check": "проверить: у точки на Желтоксан, 37а рейтинг всего 3.7 (102 оценки); адреса в Instagram и 2ГИС расходятся; уточнить, какая точка лучшая для пилота"
+  },
+  {
+    "name": "Ас-казан (Asqazan), лагман-центр",
+    "category": "chaikhana",
+    "subtype": "уйгурская кухня, лагман-центр, халяль",
+    "address": "по данным 2022 г.: Муканова, 138; Барибаева, 33; пр. Гагарина, 242; Гоголя, 13; Жандосова, 186Б",
+    "district": "Алмалинский/Бостандыкский и другие (проверить по точкам)",
+    "instagram": "@asqazan_kz",
+    "phone": "8 708 741 61 65 (из профиля Instagram — проверить)",
+    "avg_check": null,
+    "booking_today": "без брони; телефон из профиля",
+    "why": "Более 30 видов лагмана, 16 лет на рынке, 5 филиалов в центре; гиды называют его самым известным лагман-центром города; недорого и большие порции.",
+    "sources": [
+      {"url": "https://www.instagram.com/asqazan_kz/", "seen": "2026-11-17"},
+      {"url": "https://sxodim.com/almaty/place/as-kazan", "seen": "2026-11-17"},
+      {"url": "https://www.livetheworld.com/activities/kazakhstan/lagman-centr-as-kazan-almaty", "seen": "2026-11-17"}
+    ],
+    "check": "проверить текущие адреса (список 2022 г.), чек и формат зала: возможно, это скорее столовая, чем место для компаний"
+  },
+  {
+    "name": "Rabbat, чайхана",
+    "category": "chaikhana",
+    "subtype": "чайхана, узбекская кухня",
+    "address": "ул. Розыбакиева, 133 (11:00–24:00); пр. Абылай хана, 24 (24/7)",
+    "district": "проверить (Абылай хана, 24 — центр)",
+    "instagram": "@rabbat_chaihana",
+    "phone": null,
+    "avg_check": null,
+    "booking_today": "не видно; одна точка круглосуточная, скорее без брони",
+    "why": "Узбекская чайхана с двумя точками, одна в центре и работает 24/7; удобна для поздних компаний.",
+    "sources": [
+      {"url": "https://www.instagram.com/rabbat_chaihana/", "seen": "2026-11-17"}
+    ],
+    "check": "проверить: единственный источник — Instagram. Нет рейтинга, чека и телефона. По адресу Абылай хана, 24 указаны и донерные (Ata/MegAta Doner), возможно это общий фудкорт или комплекс"
+  },
+  {
+    "name": "Baharat, чайхана",
+    "category": "chaikhana",
+    "subtype": "чайхана, восточная кухня, халяль",
+    "address": "ул. Шевченко, 94, ЖК Nur-ay Residence",
+    "district": "Алмалинский (проверить)",
+    "instagram": "@baharat_almaty",
+    "phone": null,
+    "avg_check": null,
+    "booking_today": "не видно",
+    "why": "Халяльная чайхана в самом центре, работает 10:00–00:00, «в лучших традициях Востока»; центральный адрес подходит для пилота.",
+    "sources": [
+      {"url": "https://www.instagram.com/baharat_almaty/", "seen": "2026-11-17"}
+    ],
+    "check": "проверить: источник только Instagram. Нет рейтинга, чека и данных о посадке на компании"
+  },
+  {
+    "name": "Palau (ПЛОВ • ШАЙХАНА • АЛМАТЫ)",
+    "category": "chaikhana",
+    "subtype": "плов-центр / шайхана, халяль",
+    "address": "пр. Абылай хана, 32, угол ул. Маметовой",
+    "district": "Алмалинский (проверить)",
+    "instagram": "@palau.halal",
+    "phone": null,
+    "avg_check": "1 500–7 500 ₸ (диапазон по точкам «Palau чайхана» в 2ГИС — проверить конкретную)",
+    "booking_today": "не видно; часы 10:00–23:00",
+    "why": "Узкая специализация на плове, халяль, центральный адрес; хороший кандидат на «казан в обед» для сторис.",
+    "sources": [
+      {"url": "https://www.instagram.com/palau.halal/", "seen": "2026-11-17"},
+      {"url": "https://2gis.kz/almaty/search/Palau%20%D1%87%D0%B0%D0%B9%D1%85%D0%B0%D0%BD%D0%B0", "seen": "2026-11-17"}
+    ],
+    "check": "проверить: в 2ГИС несколько точек «Palau», не ясно, одна ли это сеть; нет рейтинга и данных о зале"
+  },
+  {
+    "name": "Bes Qazan",
+    "category": "chaikhana",
+    "subtype": "плов-центр, восточная кухня",
+    "address": "ул. Богенбай батыра, 178; ул. Амангельды, 52",
+    "district": "Алмалинский",
+    "instagram": "@bes_qazan",
+    "phone": "указан в 2ГИС (проверить)",
+    "avg_check": null,
+    "booking_today": "телефон из 2ГИС; часы 08:00–24:00, первый казан в 11:00",
+    "why": "Плов из казана по расписанию в центре, на 2ГИС 4.3 по 1 189 оценкам. Открытие казана хорошо смотрится в сторис.",
+    "sources": [
+      {"url": "https://2gis.kz/kk/almaty/firm/70000001080818615", "seen": "2026-11-17"},
+      {"url": "https://www.instagram.com/bes_qazan/", "seen": "2026-11-17"}
+    ],
+    "check": "проверить: рейтинг 4.3 средний, в отзывах на Яндексе («Besh Kazan») жалобы на сервис; не путать с @beshkazan.kz («Ташкентский центр плова», адрес не найден)"
+  },
+  {
+    "name": "Тюбетейка, чайхана",
+    "category": "chaikhana",
+    "subtype": "чайхана, узбекская кухня, плов",
+    "address": "по старым данным: ул. Сатпаева, 32/1 (Весновка); Желтоксан, 148; мкр. Самал-1, 2",
+    "district": "Бостандыкский (Сатпаева) — проверить",
+    "instagram": "@tubeteika_kz (по WeProject 2020 — проверить)",
+    "phone": null,
+    "avg_check": "3 500–5 000 ₸ (Kapital.kz, старые данные)",
+    "booking_today": "по телефону (проверить)",
+    "why": "Классическая чайхана-долгожитель: 5 видов плова, казан открывают в 12:00 и 19:00, проводит фестивали плова; залы на 100–120 мест, центральная точка — до 350 гостей.",
+    "sources": [
+      {"url": "https://kapital.kz/lifestyle/79754/gurmanam-na-zametku.html", "seen": "2026-11-17"},
+      {"url": "https://forbes.kz/articles/festival_plova_v_tyubeteyke/amp", "seen": "2026-11-17"},
+      {"url": "https://weproject.media/articles/detail/7-restoranov-natsionalnoy-kazakhskoy-kukhni-v-almaty/", "seen": "2026-11-17"}
+    ],
+    "check": "проверить, работает ли в 2026 и какие точки живы: все адреса и чек из источников 2020 г. и старше. Входит в холдинг Palladium Family, то есть не совсем независимая"
+  },
+  {
+    "name": "Shipudim",
+    "category": "street",
+    "subtype": "шашлык, круглосуточно",
+    "address": "пр. Абылай хана, 18 (2ГИС, 5 филиалов); также ул. Желтоксан, 81 и на Алтынсарина",
+    "district": "центр (проверить по точкам)",
+    "instagram": "@shipudim",
+    "phone": "+7 777 470… (частично в 2ГИС — проверить)",
+    "avg_check": null,
+    "booking_today": "телефон; работает 24/7, есть доставка; сайт shipudim.kz",
+    "why": "Гид Aviasales называет его фаворитом по балансу цены, вкуса и уюта; «советский» шашлык «как на базаре»; 5 точек, рейтинг на Яндексе 4.8–5.0; подходит для мужских мясных сторис.",
+    "sources": [
+      {"url": "https://www.instagram.com/shipudim/", "seen": "2026-11-17"},
+      {"url": "https://2gis.kz/kk/almaty/firm/70000001086877813", "seen": "2026-11-17"},
+      {"url": "https://www.aviasales.kz/demalys/article/gajd-po-shashlychnym-almaty", "seen": "2026-11-17"}
+    ],
+    "check": "проверить средний чек: в гиде Aviasales чек 10 060 ₸, но неясно, на сколько человек. Проверить зал на компании, наличие алкоголя и отзыв об отравлении (Алтынсарина)"
+  },
+  {
+    "name": "Шашлычная «На Кирова»",
+    "category": "street",
+    "subtype": "шашлычная на углях, без пафоса",
+    "address": "ул. Богенбай батыра, 72, 1 этаж",
+    "district": "Алмалинский",
+    "instagram": null,
+    "phone": "+7 707 754 54 81",
+    "avg_check": "2 500–3 000 ₸ (The Village — 2 500; Sxodim — 3 000)",
+    "booking_today": "телефон (Яндекс указывает номер для брони); открывается в 10:00",
+    "why": "Легендарная городская шашлычная: попадает во все подборки (The Village, Tengri, Harper's Bazaar 2026), о ней снимал Эндрю Циммерн; дёшево, работает допоздна, баранина и утка.",
+    "sources": [
+      {"url": "https://www.the-village-kz.com/village/food/food-guide/31488-gde-mozhno-poest-shashlyk-v-almaty", "seen": "2026-11-17"},
+      {"url": "https://en.tengrinews.kz/guidefoods/Where-to-eat-shashlik-in-Almaty-263499", "seen": "2026-11-17"},
+      {"url": "https://andrewzimmern.com/shashlik-on-kirova", "seen": "2026-11-17"}
+    ],
+    "check": "Instagram не найден: в 2ГИС есть кнопка, но аккаунт не виден, проверить его активность. Проверить, не пиво ли основа идентичности: классический советский формат"
+  },
+  {
+    "name": "Шашлычный двор",
+    "category": "street",
+    "subtype": "шашлык, грузинская и восточная кухня",
+    "address": "ул. Айтиева, 7 (по Instagram); WeProject пишет «Шашлычный двор на Досмухамедова»",
+    "district": "проверить",
+    "instagram": "@shashlychniy_dvor_almaty",
+    "phone": null,
+    "avg_check": "3 000–7 000 ₸ (WeProject)",
+    "booking_today": "в 2ГИС есть «Написать в Instagram»; работает 24/7 (по другому посту — 11:00–06:00)",
+    "why": "Шашлык, живая музыка, работает до утра, на 2ГИС рейтинг высокий; WeProject включает его в семейные недорогие ужины.",
+    "sources": [
+      {"url": "https://www.instagram.com/shashlychniy_dvor_almaty/", "seen": "2026-11-17"},
+      {"url": "https://weproject.media/articles/detail/shashlyki-i-ryba-7-mest-v-almaty-gde-pouzhinat-s-semey-bez-udara-po-koshelku/", "seen": "2026-11-17"}
+    ],
+    "check": "проверить адрес (Айтиева или Досмухамедова), есть ли второй аккаунт @shashlychnyi_dvor_almaty_2, телефон. Из-за живой музыки и работы до утра проверить, не ресторан ли с упором на алкоголь"
+  },
+  {
+    "name": "«Наш двор», ресторанный комплекс",
+    "category": "street",
+    "subtype": "шашлык, тандыр, двор",
+    "address": "ул. Кабанбай батыра, 40",
+    "district": "проверить (центр)",
+    "instagram": null,
+    "phone": "+7 702 208 89 88 (Sxodim, по адресу Кабанбай батыра, 40 — проверить)",
+    "avg_check": "~3 500 ₸ (The Village, Sxodim)",
+    "booking_today": "телефон",
+    "why": "Больше 20 видов шашлыка, фирменное ассорти в тандыре на компанию (11 000 ₸), формат двора; есть в подборках The Village и Sxodim.",
+    "sources": [
+      {"url": "https://sxodim.com/almaty/place/restorannyy-kompleks-nash-dvor", "seen": "2026-11-17"},
+      {"url": "https://www.the-village-kz.com/village/food/food-guide/31488-gde-mozhno-poest-shashlyk-v-almaty", "seen": "2026-11-17"}
+    ],
+    "check": "Instagram не найден. Карточка Sxodim от 09.08.2022, проверить, работает ли в 2026. По этому же адресу в Sxodim значится «Лаффа», выяснить, не сменилось ли заведение"
+  },
+  {
+    "name": "«Венеция», шашлык",
+    "category": "street",
+    "subtype": "шашлык у реки",
+    "address": "ул. Каирбекова, 72",
+    "district": "проверить",
+    "instagram": null,
+    "phone": null,
+    "avg_check": "~6 500 ₸ (Digital Business, 2025)",
+    "booking_today": "не видно",
+    "why": "Самый залайканный ответ в народном опросе в Threads о лучшем шашлыке города (октябрь 2025); хвалят мясо и место у реки и парка, это хорошая сцена для сторис.",
+    "sources": [
+      {"url": "https://digitalbusiness.kz/2025-10-15/zhiteli-almati-nazvali-mesta-s-samim-vkusnim-shashlikom-i-vot-kuda-idti/", "seen": "2026-11-17"}
+    ],
+    "check": "проверить всё, кроме адреса: Instagram и телефон не найдены, источник один (опрос в соцсети), формат и алкоголь не известны"
+  },
+  {
+    "name": "«Шашлычок на Пастера» (Smile / Смайл)",
+    "category": "street",
+    "subtype": "шашлычная, шашлык и рыба",
+    "address": "ул. Макатаева, 29",
+    "district": "проверить (центр)",
+    "instagram": null,
+    "phone": null,
+    "avg_check": "~2 600 ₸ (The Village)",
+    "booking_today": "не видно",
+    "why": "Есть в подборке The Village и в народном опросе 2025 («Смайл»); недорого, работает допоздна, кроме шашлыка есть рыба и колбаски.",
+    "sources": [
+      {"url": "https://www.the-village-kz.com/village/food/food-guide/31488-gde-mozhno-poest-shashlyk-v-almaty", "seen": "2026-11-17"},
+      {"url": "https://digitalbusiness.kz/2025-10-15/zhiteli-almati-nazvali-mesta-s-samim-vkusnim-shashlikom-i-vot-kuda-idti/", "seen": "2026-11-17"}
+    ],
+    "check": "проверить, что «Смайл» и «Шашлычок на Пастера» — одно место. Instagram и телефон не найдены, посадка на компании не подтверждена"
+  },
+  {
+    "name": "Doner na Satpayeva / Doner na Abaya",
+    "category": "street",
+    "subtype": "донер, круглосуточно",
+    "address": "ул. Байтурсынова, 106 (+3 филиала); Doner na Abaya — ул. Ауэзова, 134",
+    "district": "Бостандыкский (проверить)",
+    "instagram": "@doner_na_satpayeva; @doner_na_abaya",
+    "phone": null,
+    "avg_check": "~2 240 ₸ (2ГИС)",
+    "booking_today": "без брони, 24/7; доставка через Glovo",
+    "why": "Самый народный донер центра: на 2ГИС 4.9 по ~11 300 оценкам (Doner na Abaya — 4.9 по ~4 900); активные Instagram и TikTok, местный оператор Satpai.Group. Подходит для механики «приведи друга».",
+    "sources": [
+      {"url": "https://www.instagram.com/doner_na_satpayeva/", "seen": "2026-11-17"},
+      {"url": "https://2gis.kz/almaty/firm/70000001092511045", "seen": "2026-11-17"},
+      {"url": "https://sxodim.com/almaty/article/doner-vkusnye-mesta-v-almaty-kotorye-ne-razocharuyut", "seen": "2026-11-17"}
+    ],
+    "check": "проверить зал и сколько мест (для каталога бронирования столиков донерная — пограничный кейс); у сети есть одноимённый аккаунт в Атырау (@doner_na_abaya_atyrauu), уточнить, франшиза ли это"
+  },
+  {
+    "name": "MegAta Doner / Ata Doner",
+    "category": "street",
+    "subtype": "донер, круглосуточно",
+    "address": "пр. Абылай хана, 24",
+    "district": "центр (проверить)",
+    "instagram": "@ata.doner.almaty (по Sxodim — проверить)",
+    "phone": null,
+    "avg_check": null,
+    "booking_today": "без брони, 24/7; доставка через Wolt",
+    "why": "На 2ГИС 4.9 по ~10 500 оценкам и отметка «Лучший стритфуд 2026»; центр, работает круглосуточно.",
+    "sources": [
+      {"url": "https://wolt.com/ru/kaz/almaty/restaurant/kervan", "seen": "2026-11-17"},
+      {"url": "https://sxodim.com/almaty/article/doner-vkusnye-mesta-v-almaty-kotorye-ne-razocharuyut", "seen": "2026-11-17"},
+      {"url": "https://2gis.kz/almaty/search/Doner%20almaty", "seen": "2026-11-17"}
+    ],
+    "check": "проверить, одно ли это заведение: «MegAta» в 2ГИС, «Ata Doner» в Sxodim, а на Wolt страница называется «kervan», возможна связь с Kervan Doner. Отдельно есть @atadoner_orbita. Проверить посадку"
+  },
+  {
+    "name": "Kervan Doner",
+    "category": "street",
+    "subtype": "донер",
+    "address": "мкр. Орбита-3, 3б; по Instagram — также угол Абая и Утеген батыра (24/7)",
+    "district": "Бостандыкский",
+    "instagram": "@kervan_doner_almaty",
+    "phone": null,
+    "avg_check": null,
+    "booking_today": "без брони; 09:00–03:00 (Орбита), точка на Абая — 24/7",
+    "why": "Sxodim включает его в подборку донеров, которые «не разочаруют»; активный Instagram, допоздна.",
+    "sources": [
+      {"url": "https://www.instagram.com/kervan_doner_almaty/", "seen": "2026-11-17"},
+      {"url": "https://sxodim.com/almaty/article/doner-vkusnye-mesta-v-almaty-kotorye-ne-razocharuyut", "seen": "2026-11-17"}
+    ],
+    "check": "проверить чек, рейтинг и зал; не входит ли в одну группу с MegAta (Wolt)"
+  },
+  {
+    "name": "Atash Doner",
+    "category": "street",
+    "subtype": "донер, азербайджанский чай, двор",
+    "address": "ул. Абдуллиных, 70 (по Spotted by Locals)",
+    "district": "проверить (центр)",
+    "instagram": null,
+    "phone": null,
+    "avg_check": "донер ~3 500 ₸ (Spotted by Locals, 07.2025)",
+    "booking_today": "не видно, вероятно без брони",
+    "why": "Местный гид Spotted by Locals (июль 2025) хвалит тихий двор с посадкой, азербайджанский чай и купеческий дом 1887 года. Красивая локация для сторис и редкий донер с нормальной посадкой.",
+    "sources": [
+      {"url": "https://www.spottedbylocals.com/almaty/atash-doner", "seen": "2026-11-17"}
+    ],
+    "check": "проверить: Instagram, телефон, точный адрес (Братьев Абдуллиных?), работает ли двор зимой; источник один"
+  }
+]

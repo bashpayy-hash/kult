@@ -1,0 +1,343 @@
+[
+  {
+    "name": "Aiza Neo Bistro",
+    "category": "restaurant",
+    "subtype": "нео-бистро, греческая / средиземноморская кухня",
+    "address": "пр. Абылай хана, 115 (на restoran.kz — 115/60)",
+    "district": "Алмалинский (проверить)",
+    "instagram": "@aiza.bistro.almaty",
+    "phone": null,
+    "avg_check": "~12 000 ₸ (2ГИС / restolife.kz, по сводке поиска)",
+    "booking_today": "в источниках не видно — проверить (2ГИС, Instagram)",
+    "why": "Самостоятельное нео-бистро с основательницей-владелицей: ~16K подписчиков, ~90 мест, интерьер «домашней таверны», живая музыка по пятницам, завтраки 08–14; шорт-лист WHERETOEAT 2024.",
+    "sources": [
+      {"url": "https://weproject.media/articles/detail/fika-t-r-i-aiza-neo-bistro-12-modnykh-mest-v-almaty-dlya-tekh-kto-lyubit-byt-v-trende/", "seen": "2026-11-17"},
+      {"url": "https://www.instagram.com/aiza.bistro.almaty/", "seen": "2026-11-17"},
+      {"url": "https://restoran.kz/restaurant/96715-aiza-neo-bistro", "seen": "2026-11-17"}
+    ],
+    "check": "Работает ли в 2026 (статья WE Project примерно 2024 года); номер дома; телефон; как бронируют. У основательницы (@aizada_ussenova) есть ещё @aizaterrace.almaty с подписью «restaurant & bar» — уточнить, что это не барная концепция. В 2ГИС есть страница филиалов — сколько точек."
+  },
+  {
+    "name": "Qaimaq",
+    "category": "restaurant",
+    "subtype": "современная казахская кухня (в части источников — также узбекская и уйгурская)",
+    "address": "пр. Абая, 46а",
+    "district": "Алмалинский (проверить)",
+    "instagram": "@qaimaq.asia",
+    "phone": null,
+    "avg_check": "источники расходятся: 7 000 ₸ (sxodim) против 20 000–25 000 ₸ (Tatler) — проверить",
+    "booking_today": "проверить",
+    "why": "Казахская кухня с необычным интерьером, большой террасой и тенистым садом; 5,0 в Яндексе (~1 970 оценок) — хорошая картинка для блогеров.",
+    "sources": [
+      {"url": "https://sxodim.com/almaty/article/vkus-tradiciy-restorany-kazahskoy-kuhni-v-almaty", "seen": "2026-11-17"},
+      {"url": "https://weproject.media/articles/detail/7-restoranov-natsionalnoy-kazakhskoy-kukhni-v-almaty/", "seen": "2026-11-17"},
+      {"url": "https://yandex.com.tr/maps/org/qaimaq/145912373614/", "seen": "2026-11-17"}
+    ],
+    "check": "Средний чек (расхождение втрое); владелец, нет ли сети; телефон; часы 12:00–00:00. В 2ГИС не путать с киоском Qaimaq на Ауэзова. Кухня в разных источниках описана по-разному."
+  },
+  {
+    "name": "Tarih",
+    "category": "restaurant",
+    "subtype": "современная казахская кухня",
+    "address": "пр. Абылай хана, 104",
+    "district": "Алмалинский (проверить)",
+    "instagram": "@tarih.restaurant (по Qazmonitor — проверить)",
+    "phone": null,
+    "avg_check": "~15 000 ₸ (sxodim)",
+    "booking_today": "проверить",
+    "why": "Казахская кухня в современной подаче (фирменное блюдо — коктал), несколько залов, в том числе «Абылай хан» в тёплых тонах: удобно для семейных и групповых визитов и для съёмки подачи.",
+    "sources": [
+      {"url": "https://sxodim.com/almaty/article/vkus-tradiciy-restorany-kazahskoy-kuhni-v-almaty", "seen": "2026-11-17"},
+      {"url": "https://qazmonitor.com/lifestyle/814/where-to-go-for-fancy-kazakh-food-and-wine", "seen": "2026-11-17"},
+      {"url": "https://sxodim.com/almaty/place/restoran-tarih-restaurant", "seen": "2026-11-17"}
+    ],
+    "check": "Часы работы в источниках расходятся; телефон; подтвердить Instagram; владелец. Материал Qazmonitor — про казахскую кухню и вино, но вино не главное в концепции заведения."
+  },
+  {
+    "name": "FIKA",
+    "category": "restaurant",
+    "subtype": "кафе-бистро, скандинавско-французская кухня, завтраки и бранчи",
+    "address": "ул. Кабанбай батыра, 104",
+    "district": "Алмалинский (проверить)",
+    "instagram": "@fika.almaty",
+    "phone": null,
+    "avg_check": "4 200 ₸ (OneTwoTrip, без даты — скорее всего устарело, проверить)",
+    "booking_today": "проверить; есть сайт fika-almaty.com",
+    "why": "Интерьер в здании 1950-х годов (Wallpaper*, лонг-лист Dezeen Awards 2024); «выбор пользователей» Ultima Guide 2026 в Алматы — очень фотогенично и уже любимо аудиторией. Pet-friendly, 08:00–23:00.",
+    "sources": [
+      {"url": "https://www.wallpaper.com/travel/restaurants/fika-cafe-studio-naaw-almaty-kazakhstan", "seen": "2026-11-17"},
+      {"url": "https://365info.kz/2026/08/ultima-guide-nazval-luchshie-restorany-i-bary-astany-i-almaty", "seen": "2026-11-17"},
+      {"url": "https://www.onetwotrip.com/ru/blog/?p=117783", "seen": "2026-11-17"}
+    ],
+    "check": "Средний чек может оказаться ниже 6 000 ₸; формат — кафе, а не ресторан; принимают ли бронь столов вообще; есть ли другие точки и кто владелец."
+  },
+  {
+    "name": "У Афанасича",
+    "category": "restaurant",
+    "subtype": "русская / советская и европейская кухня",
+    "address": "пр. Достык, 123/8 (выше Погранучилища)",
+    "district": "Медеуский",
+    "instagram": "@u_afanasicha (по WE Project 2023 — проверить)",
+    "phone": null,
+    "avg_check": "~8 000 ₸ (sxodim, подборка террас)",
+    "booking_today": "проверить",
+    "why": "Независимый «старожил» (больше 15 лет, по Visit Almaty) с летней террасой и устойчивой аудиторией — понятный партнёр для пилота.",
+    "sources": [
+      {"url": "https://sxodim.com/almaty/article/cafe-terraces-in-almaty", "seen": "2026-11-17"},
+      {"url": "https://visitalmaty.kz/?p=4229", "seen": "2026-11-17"},
+      {"url": "https://sxodim.com/almaty/place/u-afanasicha", "seen": "2026-11-17"}
+    ],
+    "check": "Телефон: номер, который выдала 2ГИС, относился к другому заведению. Актуальность Instagram. Это верхний Достык, а не ядро центра."
+  },
+  {
+    "name": "MÖTE",
+    "category": "restaurant",
+    "subtype": "европейская кухня (рыба, мясо, птица)",
+    "address": "пр. Достык, 50",
+    "district": "Медеуский",
+    "instagram": "@mote.almaty (проверить)",
+    "phone": null,
+    "avg_check": "~12 000 ₸ (2ГИС, по сводке поиска)",
+    "booking_today": "проверить",
+    "why": "Достык рядом с гостиницей «Казахстан» — самый центр; чек в целевом диапазоне; в выдаче 2ГИС попадает в рестораны с летней верандой.",
+    "sources": [
+      {"url": "https://sxodim.com/almaty/place/moete", "seen": "2026-11-17"},
+      {"url": "https://www.weproject.media/articles/detail/33-novykh-mesta-kotorye-otkrylis-etim-letom-v-almaty-i-nur-sultane/", "seen": "2026-11-17"}
+    ],
+    "check": "Работает ли в 2026: открытие описано в летней подборке времён «Нур-Султана» (2019–2022). Один источник относит его к корейской кухне. В описании есть винные пары — убедиться, что концепция не винная. Есть ли терраса."
+  },
+  {
+    "name": "TheM neo bistro",
+    "category": "restaurant",
+    "subtype": "нео-бистро во французском формате",
+    "address": "пр. Абая, 23 (по Яндекс Еде; в том же материале упоминается ул. Сатпаева, 3)",
+    "district": "Медеуский или Бостандыкский (проверить)",
+    "instagram": "@them.neobistro",
+    "phone": null,
+    "avg_check": null,
+    "booking_today": "проверить",
+    "why": "Проект шефа Александра Прошенкова: маленькая авторская группа, решения принимает шеф-владелец. Бранчи и ужины; по Mustafinmag, меню недавно обновили.",
+    "sources": [
+      {"url": "https://www.instagram.com/them.neobistro/", "seen": "2026-11-17"},
+      {"url": "https://sxodim.com/almaty/article/novye-zavedeniya-leta-v-almaty", "seen": "2026-11-17"},
+      {"url": "https://mustafinmag.kz/eda/gastronovosti-noyabrya-novye-mesta-i-blyuda-437", "seen": "2026-11-17"}
+    ],
+    "check": "Адрес; средний чек; Instagram маленький (~2,6K) — проверить, насколько активен. В био есть «wine» — убедиться, что концепция не винная."
+  },
+  {
+    "name": "POMO Bistro",
+    "category": "restaurant",
+    "subtype": "бистро «на каждый день»: завтраки, европейская кухня",
+    "address": "мкр Самал-2, 43 (по Tatler; Яндекс по этому адресу показывает Coffee Owl — проверить)",
+    "district": "Медеуский",
+    "instagram": null,
+    "phone": null,
+    "avg_check": "ценовой диапазон 5 000–12 000 ₸ (по сводке поиска со ссылкой на Открытую кухню — проверить)",
+    "booking_today": "проверить",
+    "why": "Открылось в 2026 году (Tatler, август 2026). Новому месту нужны гости и контент, так что мотивация участвовать в пилоте должна быть высокой.",
+    "sources": [
+      {"url": "https://tatlerasia.kz/ru/dining/food/novyye-mesta-almaty-i-astany-kuda-skhodit-v-2026-godu", "seen": "2026-11-17"}
+    ],
+    "check": "Instagram (найденный @pomorestorante с Алматы не связан), точный адрес, телефон, владелец. Есть винная карта, но концепция — бистро. Страницу Tatler видел только в сводке поиска."
+  },
+  {
+    "name": "Sandyq",
+    "category": "restaurant",
+    "subtype": "казахская кухня, ресторан-музей",
+    "address": "пр. Абылай хана, 55 (в Яндексе — ул. Алимжанова, 55); ~0,5 км от м. «Жибек Жолы»",
+    "district": "Алмалинский (проверить)",
+    "instagram": "@sandyq_restaurant",
+    "phone": "+7 775 007 32 82",
+    "avg_check": "источники расходятся: 6 000–7 000 ₸ и 10 000 ₸ (sxodim) против 15 000–20 000 ₸ (Tatler)",
+    "booking_today": "по телефону; номер для брони указан в био Instagram (по сводке поиска)",
+    "why": "Самый «показываемый» казахский интерьер в центре: 5,0 в Яндексе по тысячам оценок, ~144K подписчиков; туристы и блогеры уже ходят сюда.",
+    "sources": [
+      {"url": "https://sxodim.com/almaty/place/restoran-nacionalnoy-kuhni-sandyq", "seen": "2026-11-17"},
+      {"url": "https://www.instagram.com/sandyq_restaurant/", "seen": "2026-11-17"},
+      {"url": "https://yandex.com/maps/org/sandyq/7166309513/reviews/", "seen": "2026-11-17"}
+    ],
+    "check": "ВАЖНО: это уже сеть в нескольких городах (Астана, Алматы, Шымкент, Туркестан, Пекин) — может не пройти по критерию «небольшая сеть», и решения там, вероятно, медленнее. Tary по тому же адресу, вероятно, той же группы. Проверить средний чек."
+  },
+  {
+    "name": "ABAY",
+    "category": "restaurant",
+    "subtype": "казахская кухня",
+    "address": "ул. Омарова, 41/2",
+    "district": "Медеуский (проверить)",
+    "instagram": null,
+    "phone": null,
+    "avg_check": "~15 000 ₸ (sxodim)",
+    "booking_today": "по sxodim нужна предварительная бронь столика; канал брони не указан",
+    "why": "Казахская кухня с чеком в верхней части диапазона; спрос на бронь уже есть. Пн–пт 11–24, сб–вс 11–01.",
+    "sources": [
+      {"url": "https://sxodim.com/almaty/article/vkus-tradiciy-restorany-kazahskoy-kuhni-v-almaty", "seen": "2026-11-17"},
+      {"url": "https://sxodim.com/almaty/place/abay", "seen": "2026-11-17"}
+    ],
+    "check": "Instagram, телефон, владелец (не входит ли в холдинг), как выглядит зал."
+  },
+  {
+    "name": "Körşi",
+    "category": "restaurant",
+    "subtype": "казахская кухня",
+    "address": "ул. Досмухамедова, 83",
+    "district": "центр, Алмалинский (проверить)",
+    "instagram": null,
+    "phone": null,
+    "avg_check": "~9 000 ₸ (sxodim)",
+    "booking_today": "проверить",
+    "why": "Казахская кухня в центре с чеком в целевом диапазоне; ежедневно 12:00–23:00.",
+    "sources": [
+      {"url": "https://sxodim.com/almaty/article/vkus-tradiciy-restorany-kazahskoy-kuhni-v-almaty", "seen": "2026-11-17"}
+    ],
+    "check": "Адрес подтверждён только одним источником; Instagram, телефон, зал, работает ли."
+  },
+  {
+    "name": "KOSMOS",
+    "category": "restaurant",
+    "subtype": "греческая кухня",
+    "address": "пр. Аль-Фараби, 140/2",
+    "district": "Бостандыкский (проверить)",
+    "instagram": null,
+    "phone": null,
+    "avg_check": null,
+    "booking_today": "проверить",
+    "why": "Новая концепция 2026 года («Греция без перелёта», тестовое открытие 22 мая 2026 по WE Project): месту нужна узнаваемость.",
+    "sources": [
+      {"url": "https://weproject.media/articles/detail/v-almaty-otkryvaetsya-kosmos-restoran-kotoryy-perenosit-v-gretsiyu-bez-pereleta/", "seen": "2026-11-17"}
+    ],
+    "check": "Открылся ли на самом деле и работает ли; чек; Instagram; владелец (нет ли группы). Аль-Фараби, 140 — на краю «центра»."
+  },
+  {
+    "name": "Bitanga",
+    "category": "restaurant",
+    "subtype": "современная украинская кухня",
+    "address": "адреса расходятся: мкр Самал-2, 111 (Открытая кухня) или ул. Панфилова, 114",
+    "district": "Медеуский или Алмалинский (проверить)",
+    "instagram": null,
+    "phone": null,
+    "avg_check": "ценовой диапазон 5 000–12 000 ₸ (Открытая кухня)",
+    "booking_today": "проверить; есть доставка через Wolt",
+    "why": "Редкая для города кухня; ежедневно 12:00–24:00 (по Wolt).",
+    "sources": [
+      {"url": "https://openkitchen.eda.yandex/article/places/guides/chto-novogo-almaty-4-otkrytiy-v-gorode", "seen": "2026-11-17"},
+      {"url": "https://sxodim.com/almaty/place/restoran-bitanga", "seen": "2026-11-17"},
+      {"url": "https://wolt.com/kk/kaz/almaty/restaurant/bitanga", "seen": "2026-11-17"}
+    ],
+    "check": "Адрес. Самал-2, 111 — это и адрес Bestia из Line Group, у которой есть пивные бары: проверить, не та же ли группа. На Zoon 2,0 по 5 отзывам. Instagram. Работает ли."
+  },
+  {
+    "name": "Шеф Бек",
+    "category": "restaurant",
+    "subtype": "корейская кухня",
+    "address": "ул. Искендерова, 35Б",
+    "district": "проверить",
+    "instagram": null,
+    "phone": null,
+    "avg_check": "~5 000 ₸ (2ГИС) — ниже целевого диапазона",
+    "booking_today": "проверить",
+    "why": "Очень популярное место: 4,9 при ~7 700 оценках в 2ГИС — большая база гостей для бронирований.",
+    "sources": [
+      {"url": "https://2gis.kz/almaty/search/%D0%9A%D0%BE%D1%80%D0%B5%D0%B9%D1%81%D0%BA%D0%B8%D0%B5%20%D1%80%D0%B5%D1%81%D1%82%D0%BE%D1%80%D0%B0%D0%BD%D1%8B", "seen": "2026-11-17"}
+    ],
+    "check": "Чек ниже 6 000 ₸; район; Instagram; есть ли зал, который стоит показывать."
+  },
+  {
+    "name": "Хачапури Хинкальевич",
+    "category": "restaurant",
+    "subtype": "грузинская кухня, небольшая местная сеть",
+    "address": "ул. Кабанбай батыра, 68; пр. Достык, 29; пр. Абая, 60",
+    "district": "Медеуский / Алмалинский (по точкам, проверить)",
+    "instagram": null,
+    "phone": null,
+    "avg_check": "~4 000 ₸ (Telegram «Давай Сходим», без даты)",
+    "booking_today": "проверить",
+    "why": "Местная грузинская сеть из трёх точек в центре: можно запустить пилот в одной точке и потом расширить.",
+    "sources": [
+      {"url": "https://esquire.kz/gamardzhoba-genacvale-7-luchshih-gruzinskih-restoranov-v-almaty", "seen": "2026-11-17"},
+      {"url": "https://t.me/s/sxodim?before=4853", "seen": "2026-11-17"}
+    ],
+    "check": "Чек, скорее всего, ниже диапазона; сколько филиалов в 2026; Instagram."
+  },
+  {
+    "name": "Гамарджоба",
+    "category": "restaurant",
+    "subtype": "грузинская кухня",
+    "address": "ул. Масанчи, 75 (на Zoon есть также точка в мкр Айнабулак-1, 6Б)",
+    "district": "Алмалинский или Бостандыкский (проверить)",
+    "instagram": null,
+    "phone": null,
+    "avg_check": "5 000–7 000 ₸ (restoran.kz)",
+    "booking_today": "проверить",
+    "why": "Грузинская кухня в центре с чеком у нижней границы диапазона.",
+    "sources": [
+      {"url": "https://restoran.kz/cafe/94434-gamardzhoba", "seen": "2026-11-17"},
+      {"url": "https://zoon.kz/almaty/restaurants/kafe_gamardzhoba/", "seen": "2026-11-17"}
+    ],
+    "check": "Работает ли; Instagram; телефон; формат — скорее кафе."
+  },
+  {
+    "name": "Shavlego",
+    "category": "restaurant",
+    "subtype": "грузинская кухня (шефы из Кахетии, Мегрелии и Тбилиси)",
+    "address": "ул. Наурызбай батыра, 76 (данные 2017 года)",
+    "district": "Алмалинский (проверить)",
+    "instagram": null,
+    "phone": null,
+    "avg_check": "~5 000 ₸ (Telegram «Давай Сходим»)",
+    "booking_today": "проверить",
+    "why": "Грузинская кухня по старинным рецептам; самостоятельное заведение.",
+    "sources": [
+      {"url": "https://sxodim.com/almaty/place/shavlego", "seen": "2026-11-17"},
+      {"url": "https://statsnet.co/companies/kz/150303406", "seen": "2026-11-17"}
+    ],
+    "check": "Адрес устарел (2017). ТОО SHAVLEGO зарегистрировано в 2022 году на пр. Гагарина, 146 — возможно, был переезд. Instagram. Работает ли."
+  },
+  {
+    "name": "Coffeeon SaiGon",
+    "category": "restaurant",
+    "subtype": "вьетнамская кухня",
+    "address": "ул. Кабанбай батыра, 122 (второй филиал — ул. Желтоксан, 148)",
+    "district": "Алмалинский (проверить)",
+    "instagram": null,
+    "phone": null,
+    "avg_check": "~5 000 ₸ (2ГИС)",
+    "booking_today": "проверить",
+    "why": "Азиатская кухня в центре; две точки — маленькая местная сеть.",
+    "sources": [
+      {"url": "https://2gis.kz/almaty/search/%D0%9F%D0%BE%D0%B5%D1%81%D1%82%D1%8C%20%D0%B2%D1%8C%D0%B5%D1%82%D0%BD%D0%B0%D0%BC%D1%81%D0%BA%D0%B0%D1%8F%20%D0%BA%D1%83%D1%85%D0%BD%D1%8F", "seen": "2026-11-17"}
+    ],
+    "check": "НИЗКАЯ УВЕРЕННОСТЬ. 2ГИС называет его «ресто-бар» — убедиться, что концепция не барная. Чек ниже диапазона. Instagram."
+  },
+  {
+    "name": "Leo's Cafe & Terrace",
+    "category": "restaurant",
+    "subtype": "кафе с террасой (кухню проверить)",
+    "address": "пр. Назарбаева (номер дома не найден)",
+    "district": "проверить",
+    "instagram": null,
+    "phone": null,
+    "avg_check": "~5 000 ₸ (sxodim, подборка террас; материалу ~8 месяцев)",
+    "booking_today": "проверить",
+    "why": "Терраса в центре — запасной вариант для «террасного» сегмента каталога.",
+    "sources": [
+      {"url": "https://sxodim.com/almaty/article/cafe-terraces-in-almaty", "seen": "2026-11-17"}
+    ],
+    "check": "НИЗКАЯ УВЕРЕННОСТЬ: нет адреса, Instagram, кухни и владельца; чек ниже диапазона."
+  },
+  {
+    "name": "Здесь и Сейчас",
+    "category": "restaurant",
+    "subtype": "итальянское бистро",
+    "address": null,
+    "district": "проверить",
+    "instagram": "@zis.bistro",
+    "phone": null,
+    "avg_check": null,
+    "booking_today": "проверить",
+    "why": "Итальянское бистро в Алматы (по Instagram) — запасной вариант для итальянского сегмента без холдинговых брендов.",
+    "sources": [
+      {"url": "https://www.instagram.com/zis.bistro/", "seen": "2026-11-17"}
+    ],
+    "check": "НИЗКАЯ УВЕРЕННОСТЬ: известны только название и Instagram. Проверить адрес, район, чек, активность и работает ли."
+  }
+]
