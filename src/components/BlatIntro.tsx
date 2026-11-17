@@ -9,6 +9,8 @@ export function BlatIntro({ t, short = false }: { t: Dict; short?: boolean }) {
       {short ? null : (
         <>
           <p className="rise rise-1 mt-4 max-w-[38rem] text-[17px] text-ink-2 md:text-[19px]">{B.lead}</p>
+          {/* market-mirror, 16 Nov 2026: «бесплатно — где подвох?» was the first objection (58%). */}
+          <p className="rise rise-1 mt-3 max-w-[38rem] border-l-2 border-accent pl-4 text-[15px] text-ink">{B.noCatch}</p>
           <h2 className="rise rise-2 mt-10 text-[24px]">{B.howTitle}</h2>
           <ol className="rise rise-2 mt-4 grid gap-3 md:grid-cols-3">
             {B.how.map((step, i) => (

@@ -246,6 +246,7 @@ export default async function Overview({ searchParams }: { searchParams: Promise
               <p className="label">{t.blat.adviseTitle}</p>
               <h2 id="blat-title" className="mt-2 text-[32px] md:text-[44px]">{t.blat.title}</h2>
               <p className="mt-4 text-[17px] text-ink-2">{t.blat.lead}</p>
+              <p className="mt-3 border-l-2 border-accent pl-4 text-[15px] text-ink">{t.blat.noCatch}</p>
               <Link href="/blat" className="btn btn-soft mt-7">{t.blat.howTitle} →</Link>
             </div>
             <ol className="reveal grid content-start gap-3" style={{ ["--c" as string]: 1 }}>
