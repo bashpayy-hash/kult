@@ -36,6 +36,8 @@ export type Venue = {
   photo_path: string | null;
   logo_path: string | null;
   host_token: string;
+  /** The back office at /m/<token>: invoices, stock, supplier orders (18 Nov 2026). */
+  manager_token: string | null;
   status: Status;
   notes: string | null;
   application_id: string | null;

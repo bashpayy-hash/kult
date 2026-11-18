@@ -94,9 +94,9 @@ export async function reviewApplication(fd: FormData): Promise<void> {
     if (!exists) {
       const slug = await freeSlug("venues", slugify(app.venue_name || ""));
       await sql`
-        insert into venues (slug, name, category, instagram, contact_name, phone, avg_check, host_token, application_id)
+        insert into venues (slug, name, category, instagram, contact_name, phone, avg_check, host_token, manager_token, application_id)
         values (${slug}, ${app.venue_name}, ${app.category}, ${app.instagram}, ${app.contact_name}, ${app.phone},
-                ${app.avg_check}, ${newHostToken()}, ${id})`;
+                ${app.avg_check}, ${newHostToken()}, ${newHostToken()}, ${id})`;
     }
   }
   await sql`update applications set status = 'approved', review_note = coalesce(${note}, review_note), reviewed_at = now() where id = ${id}`;
@@ -255,10 +255,10 @@ export async function createVenue(_prev: FormState, fd: FormData): Promise<FormS
   try {
     const slug = await freeSlug("venues", v.slugInput || slugify(v.name));
     [{ id }] = await db()<{ id: string }[]>`
-      insert into venues (slug, name, category, description, description_kk, address, city, lat, lng, instagram, contact_name, phone, avg_check, status, notes, host_token,
+      insert into venues (slug, name, category, description, description_kk, address, city, lat, lng, instagram, contact_name, phone, avg_check, status, notes, host_token, manager_token,
                           is_listed, featured, open_time, close_time, slot_minutes, hold_minutes)
       values (${slug}, ${v.name}, ${v.category}, ${v.description}, ${v.description_kk}, ${v.address}, ${v.city}, ${v.lat}, ${v.lng}, ${v.instagram},
-              ${v.contact_name}, ${v.phone}, ${v.avg_check}, ${v.status}, ${v.notes}, ${newHostToken()},
+              ${v.contact_name}, ${v.phone}, ${v.avg_check}, ${v.status}, ${v.notes}, ${newHostToken()}, ${newHostToken()},
               ${v.is_listed}, ${v.featured}, ${v.open_time}, ${v.close_time}, ${v.slot_minutes}, ${v.hold_minutes})
       returning id`;
   } catch (e) {
@@ -420,6 +420,15 @@ export async function regenerateHostToken(fd: FormData): Promise<void> {
   const id = str(fd, "id", 40);
   if (!isUuid(id)) return;
   await db()`update venues set host_token = ${newHostToken()} where id = ${id}`;
+  revalidatePath(`/admin/venues/${id}`);
+}
+
+/** New manager link (the back office: invoices, stock, orders); the old one stops working. */
+export async function regenerateManagerToken(fd: FormData): Promise<void> {
+  await requireAdmin();
+  const id = str(fd, "id", 40);
+  if (!isUuid(id)) return;
+  await db()`update venues set manager_token = ${newHostToken()} where id = ${id}`;
   revalidatePath(`/admin/venues/${id}`);
 }
 

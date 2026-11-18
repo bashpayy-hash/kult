@@ -64,6 +64,7 @@ export default async function Join() {
                   {L.partner.title}
                 </h2>
                 <p className="mt-4 max-w-[36rem] text-ink-2">{L.partner.lead}</p>
+                <p className="mt-3 max-w-[36rem] text-ink-2">{L.partner.backoffice}</p>
                 <p className="mt-3 max-w-[36rem] font-medium text-ink">{L.partner.cost}</p>
               </div>
               <div>

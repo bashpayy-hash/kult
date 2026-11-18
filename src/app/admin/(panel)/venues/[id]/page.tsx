@@ -11,6 +11,7 @@ import {
   deleteOffer,
   deleteVenue,
   regenerateHostToken,
+  regenerateManagerToken,
   removeEntryPhoto,
   createReward,
   removeReward,
@@ -62,6 +63,7 @@ export default async function VenuePage({ params }: { params: Promise<{ id: stri
   const halls = plan.halls.length ? plan.halls : [{ id: randomUUID(), name: "Основной зал", name_kk: "Негізгі зал", width: 100, height: 64 }];
   const base = siteUrl();
   const hostUrl = `${base}/h/${v.host_token}`;
+  const managerUrl = v.manager_token ? `${base}/m/${v.manager_token}` : null;
   const photo = publicImageUrl(v.photo_path);
   const logo = publicImageUrl(v.logo_path);
   const [offerWithPerk] = await sql`select 1 from offers where venue_id = ${id} and active and guest_perk is not null limit 1`;
@@ -116,6 +118,27 @@ export default async function VenuePage({ params }: { params: Promise<{ id: stri
             <a href={hostUrl} target="_blank" rel="noopener noreferrer" className="link-quiet text-[14px]">Открыть</a>
             <ButtonForm action={regenerateHostToken} fields={{ id: v.id }} label="Выпустить новую" confirmText="Старая ссылка хостес перестанет работать. Продолжить?" />
           </div>
+        </div>
+      </Section>
+
+      <Section title="Ссылка для управляющего">
+        <div className="flex flex-col gap-4 rounded-tile-r bg-tile p-5 md:p-6">
+          <p className="text-[14px] text-ink-3">
+            Бэк-офис места: накладные по фото с проверкой сумм и цен, склад с точкой заказа, заказы поставщикам в WhatsApp.
+            Здесь видны деньги, поэтому ссылка отдельная от хостес — только владельцу или управляющему.
+          </p>
+          {managerUrl ? (
+            <>
+              <p className="break-all rounded-[var(--radius-inner)] bg-raised px-4 py-3 font-mono text-[14px] text-ink">{managerUrl}</p>
+              <div className="flex flex-wrap items-center gap-3">
+                <CopyButton text={managerUrl} label="Скопировать ссылку" />
+                <a href={managerUrl} target="_blank" rel="noopener noreferrer" className="link-quiet text-[14px]">Открыть</a>
+                <ButtonForm action={regenerateManagerToken} fields={{ id: v.id }} label="Выпустить новую" confirmText="Старая ссылка управляющего перестанет работать. Продолжить?" />
+              </div>
+            </>
+          ) : (
+            <ButtonForm action={regenerateManagerToken} fields={{ id: v.id }} label="Выпустить ссылку" className="btn btn-soft btn-sm self-start" />
+          )}
         </div>
       </Section>
 

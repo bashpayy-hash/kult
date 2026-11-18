@@ -5,7 +5,7 @@ import { randomUUID } from "node:crypto";
 import { mkdir, readFile, writeFile, unlink } from "node:fs/promises";
 import path from "node:path";
 
-export type Bucket = "venue-photos" | "story-proofs";
+export type Bucket = "venue-photos" | "story-proofs" | "invoices";
 
 const ALLOWED = new Set(["image/jpeg", "image/png", "image/webp"]);
 const MAX_BYTES = 5 * 1024 * 1024;
