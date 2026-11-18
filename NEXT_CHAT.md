@@ -72,7 +72,8 @@ React 19, Tailwind 4 (токены в `src/app/tokens.css`), postgres.js по
     `invoice_lines`, `stock_items`, демо для Sora Bistro.
   - Код: `src/lib/backoffice.ts` (загрузка, проверки, черновик заказа),
     `src/lib/backofficeAi.ts` (чтение накладной, счёт полки),
-    `src/app/m/[token]/*`. Ссылка — в админке у места.
+    `src/app/m/[token]/*`. Ссылка — в админке у места; демо Sora Bistro —
+    `/m/demo-manager-sora-bistro-0003` (миграция 0011).
   - Текст для заведений на `/join` и `docs/OUTREACH.md` дополнен.
   - Распознавание по фото локально не проверено (нет ключа ИИ); на живом
     сайте ключ даёт Netlify AI Gateway, как для ИИ-плана зала.
