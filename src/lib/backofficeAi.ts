@@ -71,7 +71,7 @@ const SHELF_SCHEMA = {
   },
 } as const;
 
-async function ask<T>(system: string, text: string, image: Sketch, schema: object): Promise<T> {
+async function ask<T>(system: string, text: string, image: Sketch | null, schema: object): Promise<T> {
   const client = new Anthropic({ maxRetries: 1, timeout: 55_000 });
   // Streamed, low effort: inside the 60-second limit of a Netlify function.
   const stream = client.messages.stream({
@@ -79,7 +79,14 @@ async function ask<T>(system: string, text: string, image: Sketch, schema: objec
     max_tokens: 16000,
     system,
     output_config: { effort: "low", format: { type: "json_schema", schema: schema as Record<string, unknown> } },
-    messages: [{ role: "user", content: [{ type: "image", source: { type: "base64", media_type: image.mediaType, data: image.data } }, { type: "text", text }] }],
+    messages: [
+      {
+        role: "user",
+        content: image
+          ? [{ type: "image", source: { type: "base64", media_type: image.mediaType, data: image.data } }, { type: "text", text }]
+          : [{ type: "text", text }],
+      },
+    ],
   });
   const msg = await stream.finalMessage();
   if (msg.stop_reason === "refusal") throw new Error("refusal");
@@ -122,6 +129,45 @@ export async function countShelfPhoto(image: Sketch, known: { name: string; unit
   );
   return {
     items: (r.items || []).slice(0, 60).map((i) => ({ name: String(i.name || "").slice(0, 120), count: Number(i.count) || 0, unit: String(i.unit || "").slice(0, 12), sure: !!i.sure })).filter((i) => i.name),
+    note: String(r.note || "").slice(0, 300),
+  };
+}
+
+export type DishDraft = { items: { name: string; qty: number }[]; note: string };
+
+const DISH_SCHEMA = {
+  type: "object",
+  additionalProperties: false,
+  required: ["items", "note"],
+  properties: {
+    items: {
+      type: "array",
+      items: {
+        type: "object",
+        additionalProperties: false,
+        required: ["name", "qty"],
+        properties: {
+          name: { type: "string", description: "Exactly one of the venue's stock item names from the list." },
+          qty: { type: "number", description: "Per portion, in that item's unit." },
+        },
+      },
+    },
+    note: { type: "string", description: "One short sentence in Russian: what the dish usually also needs that is not in the list, else an empty string." },
+  },
+} as const;
+
+/** A dish's ingredients per portion, from the venue's own stock list: a draft for the cook to correct (19 Nov 2026). */
+export async function draftDishItems(dish: string, known: { name: string; unit: string | null }[]): Promise<DishDraft> {
+  const list = known.map((k) => `${k.name}${k.unit ? ` (${k.unit})` : ""}`).join("; ");
+  const r = await ask<DishDraft>(
+    `You help a restaurant in Almaty cost its menu. Given a dish and the venue's stock list, pick the items one portion uses, with typical quantities per portion in each item's unit (kg, l, pcs, bunch). Use only names from the list, exactly as written. Typical restaurant portions; never guess an item that is not in the list — mention it in note instead.`,
+    `Блюдо: ${dish}. Склад: ${list}.`,
+    null,
+    DISH_SCHEMA,
+  );
+  const names = new Set(known.map((k) => k.name));
+  return {
+    items: (r.items || []).filter((i) => names.has(i.name) && Number(i.qty) > 0).slice(0, 30).map((i) => ({ name: i.name, qty: Math.round(Number(i.qty) * 1000) / 1000 })),
     note: String(r.note || "").slice(0, 300),
   };
 }

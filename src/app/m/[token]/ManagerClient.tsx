@@ -1,7 +1,8 @@
 "use client";
 
 import { useState, type ReactNode } from "react";
-import { countShelf, readInvoice, saveInvoice, setCounts } from "./actions";
+import { useFormStatus } from "react-dom";
+import { countShelf, markOrderSent, readInvoice, saveDish, saveInvoice, setCounts, suggestDish } from "./actions";
 import { ImageInput } from "@/app/admin/_ui";
 import { FormError, SubmitButton } from "@/components/form";
 import type { Issue, Supplier } from "@/lib/backoffice";
@@ -28,17 +29,107 @@ export function Panel({ title, children, defaultOpen = false }: { title: string;
   );
 }
 
-/** «Изменить» under a row: the form appears in place. */
-export function Toggle({ label, children }: { label: string; children: ReactNode }) {
+/**
+ * «Изменить» under a row: the form appears in place. `end` sits on the same
+ * line, right-aligned: the row's one button (e.g. «Отметить оплату»).
+ */
+export function Toggle({ label, children, end, start }: { label: string; children: ReactNode; end?: ReactNode; start?: ReactNode }) {
   const [open, setOpen] = useState(false);
   return (
-    <div>
-      <button type="button" aria-expanded={open} onClick={() => setOpen(!open)} className="link-quiet text-[14px]">
-        {open ? "Свернуть" : label}
-      </button>
-      {open ? <div className="sheet-in mt-4">{children}</div> : null}
+    <div className="mt-2">
+      <div className={start ? "flex flex-col sm:flex-row sm:items-center sm:justify-between sm:gap-6" : "flex items-center justify-between gap-4"}>
+        {start}
+        <button type="button" aria-expanded={open} onClick={() => setOpen(!open)} className="link-quiet tap shrink-0 self-start text-[14px] sm:self-auto">
+          {open ? "Свернуть" : label}
+        </button>
+        {end}
+      </div>
+      {open ? <div className="sheet-in mt-2 pb-1">{children}</div> : null}
     </div>
   );
+}
+
+async function copyText(text: string) {
+  try {
+    await navigator.clipboard.writeText(text);
+  } catch {
+    const ta = document.createElement("textarea");
+    ta.value = text;
+    document.body.appendChild(ta);
+    ta.select();
+    document.execCommand("copy");
+    ta.remove();
+  }
+}
+
+/**
+ * One action per supplier: WhatsApp opens with the order typed, and the
+ * order is noted as sent, so the invoice that comes back is checked
+ * against it. Without a number: copy and note.
+ */
+export function SendOrder({ token, supplierKey, wa, text }: { token: string; supplierKey: string; wa: string | null; text: string }) {
+  const [busy, setBusy] = useState(false);
+  const [copied, setCopied] = useState(false);
+  const mark = async () => {
+    setBusy(true);
+    const fd = new FormData();
+    fd.set("token", token);
+    fd.set("supplier", supplierKey);
+    await markOrderSent(fd);
+    setBusy(false);
+  };
+  return (
+    <div className="mt-4 flex flex-wrap items-center gap-x-5 gap-y-2">
+      {wa ? (
+        <button
+          type="button"
+          disabled={busy}
+          className="btn btn-primary btn-sm"
+          onClick={() => {
+            window.open(wa, "_blank", "noopener");
+            void mark();
+          }}
+        >
+          Отправить в WhatsApp
+        </button>
+      ) : (
+        <button
+          type="button"
+          disabled={busy}
+          className="btn btn-primary btn-sm"
+          onClick={async () => {
+            await copyText(text);
+            await mark();
+          }}
+        >
+          Скопировать и отметить отправленным
+        </button>
+      )}
+      {wa ? (
+        <button
+          type="button"
+          className="link-quiet tap text-[14px]"
+          onClick={async () => {
+            await copyText(text);
+            setCopied(true);
+            setTimeout(() => setCopied(false), 1600);
+          }}
+        >
+          {copied ? "Скопировано" : "Скопировать текст"}
+        </button>
+      ) : null}
+    </div>
+  );
+}
+
+/** Under a slow AI button: what the wait is, while it lasts. */
+function Waiting({ text }: { text: string }) {
+  const { pending } = useFormStatus();
+  return pending ? (
+    <p role="status" className="text-[14px] text-ink-3">
+      {text}
+    </p>
+  ) : null;
 }
 
 type Line = { name: string; qty: string; unit: string; price: string; sum: string };
@@ -67,6 +158,7 @@ export function InvoiceNew({ token, suppliers, ai, today }: { token: string; sup
   const [total, setTotal] = useState("");
   const [lines, setLines] = useState<Line[]>([emptyLine()]);
   const [issues, setIssues] = useState<Issue[]>([]);
+  const [impacts, setImpacts] = useState<{ dish: string; delta: number }[]>([]);
 
   const reset = () => {
     setStep("photo");
@@ -127,6 +219,7 @@ export function InvoiceNew({ token, suppliers, ai, today }: { token: string; sup
       return;
     }
     setIssues(r.issues);
+    setImpacts(r.impacts);
     setStep("done");
   }
 
@@ -138,19 +231,34 @@ export function InvoiceNew({ token, suppliers, ai, today }: { token: string; sup
       <div role="status" className="sheet-in rounded-tile-r bg-tile p-5">
         {issues.length ? (
           <>
-            <p className="text-[17px] font-medium text-danger">Проверьте перед оплатой</p>
-            <ul className="mt-3 flex flex-col gap-2 text-[15px] text-ink">
-              {issues.map((x, i) => (
-                <li key={i}>— {x.text}</li>
-              ))}
-            </ul>
-            <p className="mt-3 text-[14px] text-ink-3">Накладная сохранена, товар добавлен на склад.</p>
+            <p className="text-[17px] text-ink">Накладная сохранена, товар добавлен на склад.</p>
+            {/* The same mark as on the invoice in the list: a red rule and one red line of heading. */}
+            <div className="mt-4 border-l-2 border-danger pl-4">
+              <p className="text-[13px] font-semibold text-danger">Проверьте перед оплатой</p>
+              <ul className="mt-1 flex flex-col gap-1 text-[15px] text-ink-2">
+                {issues.map((x, i) => (
+                  <li key={i}>{x.text}</li>
+                ))}
+              </ul>
+            </div>
           </>
         ) : (
           <p className="text-[17px] text-ink">
             <span className="font-medium text-success">Всё сходится.</span> Накладная сохранена, товар добавлен на склад.
           </p>
         )}
+        {impacts.length ? (
+          <div className="mt-4 border-t border-line pt-4">
+            <p className="text-[13px] font-semibold text-ink-3">Подорожание задело блюда</p>
+            <ul className="mt-1 flex flex-col gap-1 text-[15px] text-ink">
+              {impacts.map((x) => (
+                <li key={x.dish}>
+                  {x.dish}: <span className="num text-danger">+{money(x.delta)}</span> на порцию
+                </li>
+              ))}
+            </ul>
+          </div>
+        ) : null}
         <button type="button" onClick={reset} className="btn btn-soft btn-sm mt-5">
           Внести ещё одну
         </button>
@@ -172,14 +280,15 @@ export function InvoiceNew({ token, suppliers, ai, today }: { token: string; sup
               </label>
               <ImageInput name="photo" id="inv-photo" required />
               <FormError error={error ?? undefined} />
-              <div className="flex flex-wrap items-center gap-4">
+              <div className="flex flex-wrap items-center gap-x-5 gap-y-2">
                 <SubmitButton className="btn btn-primary btn-sm" pendingLabel="Читаю накладную…">
                   Распознать
                 </SubmitButton>
-                <button type="button" onClick={manual} className="link-quiet text-[14px]">
+                <button type="button" onClick={manual} className="link-quiet tap text-[14px]">
                   Ввести вручную
                 </button>
               </div>
+              <Waiting text="Обычно 5–20 секунд. Можно не уходить со страницы." />
             </form>
           </>
         ) : (
@@ -243,7 +352,7 @@ export function InvoiceNew({ token, suppliers, ai, today }: { token: string; sup
             <div className="flex items-center gap-3">
               <input aria-label={`Строка ${i + 1}: товар`} className="field min-w-0 flex-1" placeholder="Товар" maxLength={120} value={l.name} onChange={(e) => set(i, "name", e.target.value)} />
               {lines.length > 1 ? (
-                <button type="button" aria-label={`Убрать строку ${i + 1}`} onClick={() => setLines((ls) => ls.filter((_, j) => j !== i))} className="link-quiet shrink-0 text-[14px]">
+                <button type="button" aria-label={`Убрать строку ${i + 1}`} onClick={() => setLines((ls) => ls.filter((_, j) => j !== i))} className="link-quiet tap shrink-0 text-[14px]">
                   Убрать
                 </button>
               ) : null}
@@ -294,7 +403,7 @@ export function InvoiceNew({ token, suppliers, ai, today }: { token: string; sup
         <SubmitButton className="btn btn-primary btn-sm" pendingLabel="Проверяю…">
           Сохранить и проверить
         </SubmitButton>
-        <button type="button" onClick={reset} className="link-quiet text-[14px]">
+        <button type="button" onClick={reset} className="link-quiet tap text-[14px]">
           Отмена
         </button>
       </div>
@@ -371,7 +480,7 @@ export function ShelfCount({ token }: { token: string }) {
           <SubmitButton className="btn btn-primary btn-sm" disabled={!rows.some((r) => r.on)}>
             Записать остатки
           </SubmitButton>
-          <button type="button" onClick={() => setRows(null)} className="link-quiet text-[14px]">
+          <button type="button" onClick={() => setRows(null)} className="link-quiet tap text-[14px]">
             Отмена
           </button>
         </div>
@@ -392,9 +501,164 @@ export function ShelfCount({ token }: { token: string }) {
         <SubmitButton className="btn btn-primary btn-sm" pendingLabel="Считаю…">
           Посчитать
         </SubmitButton>
+        <Waiting text="Обычно 5–20 секунд." />
         {saved ? (
           <span role="status" className="text-[14px] text-success">
             Остатки записаны
+          </span>
+        ) : null}
+      </div>
+    </form>
+  );
+}
+
+type StockOption = { id: string; name: string; unit: string | null; price: number | null };
+type DishRow = { stock_item_id: string; qty: string };
+
+/**
+ * A dish: name, price in the menu, one portion from the stock. The cost and
+ * the share of the menu price update as the cook types. «Подсказать состав»
+ * asks Claude for a draft from the venue's own stock list (19 Nov 2026).
+ */
+export function DishForm({
+  token,
+  stock,
+  ai,
+  dish,
+}: {
+  token: string;
+  stock: StockOption[];
+  ai: boolean;
+  dish?: { id: string; name: string; menu_price: number | null; items: { stock_item_id: string; qty: number }[] };
+}) {
+  const blank = (): DishRow => ({ stock_item_id: "", qty: "" });
+  const [name, setName] = useState(dish?.name ?? "");
+  const [price, setPrice] = useState(show(dish?.menu_price ?? null));
+  const [rows, setRows] = useState<DishRow[]>(dish ? dish.items.map((i) => ({ stock_item_id: i.stock_item_id, qty: show(i.qty) })) : [blank()]);
+  const [note, setNote] = useState("");
+  const [error, setError] = useState<string | null>(null);
+  const [saved, setSaved] = useState(false);
+  const [thinking, setThinking] = useState(false);
+
+  const costOf = (r: DishRow) => {
+    const s = stock.find((x) => x.id === r.stock_item_id);
+    const q = num(r.qty);
+    return s?.price != null && q != null ? s.price * q : null;
+  };
+  const cost = rows.reduce((sum, r) => sum + (costOf(r) ?? 0), 0);
+  const menu = num(price);
+  const set = (i: number, k: keyof DishRow, v: string) => setRows((rs) => rs.map((r, j) => (j === i ? { ...r, [k]: v } : r)));
+
+  async function suggest() {
+    setError(null);
+    setNote("");
+    setThinking(true);
+    const fd = new FormData();
+    fd.set("token", token);
+    fd.set("name", name);
+    const r = await suggestDish(fd);
+    setThinking(false);
+    if (!r.ok) {
+      setError(r.error);
+      return;
+    }
+    if (r.items.length) setRows(r.items.map((i) => ({ stock_item_id: i.stock_item_id, qty: show(i.qty) })));
+    setNote(r.note ? `${r.note} Граммовки — черновик: проверьте по техкарте.` : "Граммовки — черновик: проверьте по техкарте.");
+  }
+
+  async function save(fd: FormData) {
+    setError(null);
+    setSaved(false);
+    fd.set("items", JSON.stringify(rows.filter((r) => r.stock_item_id).map((r) => ({ stock_item_id: r.stock_item_id, qty: num(r.qty) }))));
+    const r = await saveDish(fd);
+    if (!r.ok) {
+      setError(r.error);
+      return;
+    }
+    setSaved(true);
+    if (!dish) {
+      setName("");
+      setPrice("");
+      setRows([blank()]);
+      setNote("");
+    }
+  }
+
+  const id = dish?.id ?? "new";
+  return (
+    <form action={save} className="flex flex-col gap-4">
+      <input type="hidden" name="token" value={token} />
+      {dish ? <input type="hidden" name="id" value={dish.id} /> : null}
+      <div className="grid grid-cols-[2fr_1fr] gap-3">
+        <label className="flex min-w-0 flex-col gap-2">
+          <span className="label">Блюдо</span>
+          <input name="name" className="field min-w-0" maxLength={80} required value={name} onChange={(e) => setName(e.target.value)} placeholder="Шакшука" />
+        </label>
+        <label className="flex min-w-0 flex-col gap-2">
+          <span className="label">В меню, ₸</span>
+          <input name="menu_price" className="field num min-w-0" inputMode="decimal" value={price} onChange={(e) => setPrice(e.target.value)} />
+        </label>
+      </div>
+
+      <fieldset className="flex flex-col gap-2">
+        <legend className="label mb-2 flex w-full items-center justify-between gap-3">
+          <span>На одну порцию</span>
+          {ai ? (
+            <button type="button" onClick={suggest} disabled={thinking || !name.trim()} className="link-quiet tap text-[14px] font-normal disabled:opacity-50">
+              {thinking ? "Думаю…" : "Подсказать состав"}
+            </button>
+          ) : null}
+        </legend>
+        {note ? <p className="text-[14px] text-ink-3">{note}</p> : null}
+        {rows.map((r, i) => {
+          const s = stock.find((x) => x.id === r.stock_item_id);
+          const c = costOf(r);
+          return (
+            <div key={i} className="grid grid-cols-[minmax(0,1fr)_5.5rem] items-end gap-2 border-t border-line pt-3">
+              <select aria-label={`Продукт ${i + 1}`} className="field min-w-0" value={r.stock_item_id} onChange={(e) => set(i, "stock_item_id", e.target.value)}>
+                <option value="">Продукт со склада</option>
+                {stock.map((x) => (
+                  <option key={x.id} value={x.id}>
+                    {x.name}
+                  </option>
+                ))}
+              </select>
+              <label className="flex min-w-0 flex-col gap-1">
+                <span className="text-[12px] text-ink-3">{s?.unit ? `Сколько, ${s.unit}` : "Сколько"}</span>
+                <input aria-label={`Продукт ${i + 1}: сколько`} className="field num min-w-0 px-2" inputMode="decimal" value={r.qty} onChange={(e) => set(i, "qty", e.target.value)} />
+              </label>
+              <div className="col-span-2 flex items-center justify-between text-[13px] text-ink-3">
+                <span>{c != null ? money(c) : s && s.price == null ? "у продукта ещё нет цены" : ""}</span>
+                {rows.length > 1 ? (
+                  <button type="button" onClick={() => setRows((rs) => rs.filter((_, j) => j !== i))} className="link-quiet tap text-[13px]">
+                    Убрать
+                  </button>
+                ) : null}
+              </div>
+            </div>
+          );
+        })}
+        <button type="button" onClick={() => setRows((rs) => [...rs, blank()])} className="link-quiet tap self-start text-[14px]">
+          Добавить продукт
+        </button>
+      </fieldset>
+
+      <p className="border-t border-line pt-4 text-[15px] text-ink-2">
+        Себестоимость <span className="num text-ink">{money(cost)}</span>
+        {menu ? (
+          <>
+            {" "}
+            · <span className="num text-ink">{Math.round((cost / menu) * 100)}%</span> от цены в меню
+          </>
+        ) : null}
+      </p>
+
+      <FormError error={error ?? undefined} />
+      <div className="flex flex-wrap items-center gap-4">
+        <SubmitButton className="btn btn-primary btn-sm">{dish ? "Сохранить" : "Добавить блюдо"}</SubmitButton>
+        {saved ? (
+          <span role="status" id={`dish-ok-${id}`} className="text-[14px] text-success">
+            Сохранено
           </span>
         ) : null}
       </div>

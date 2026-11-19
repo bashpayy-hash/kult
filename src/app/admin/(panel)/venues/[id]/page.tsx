@@ -124,7 +124,7 @@ export default async function VenuePage({ params }: { params: Promise<{ id: stri
       <Section title="Ссылка для управляющего">
         <div className="flex flex-col gap-4 rounded-tile-r bg-tile p-5 md:p-6">
           <p className="text-[14px] text-ink-3">
-            Бэк-офис места: накладные по фото с проверкой сумм и цен, склад с точкой заказа, заказы поставщикам в WhatsApp.
+            Бэк-офис места: накладные по фото с проверкой сумм, цен и заказа, оплаты, склад со списаниями, заказы поставщикам в WhatsApp, себестоимость блюд.
             Здесь видны деньги, поэтому ссылка отдельная от хостес — только владельцу или управляющему.
           </p>
           {managerUrl ? (

@@ -187,6 +187,10 @@ input[type="file"].field::file-selector-button {
   transition: color var(--dur-hover) var(--ease-color), text-decoration-color var(--dur-hover) var(--ease-color);
 }
 .link-quiet:hover { color: var(--color-ink); text-decoration-color: var(--color-ink-3); }
+/* A text action with a full-size touch target (44px tall) and no visible box
+   (design critique of the back office, 19 Nov 2026: «Изменить», «Удалить»
+   were 20px tall). */
+.tap { display: inline-flex; align-items: center; min-height: 44px; }
 .link-paper {
   color: var(--color-paper-ink);
   text-decoration: underline; text-decoration-color: var(--color-paper-ink-3); text-underline-offset: 4px;
