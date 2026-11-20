@@ -63,6 +63,9 @@ React 19, Tailwind 4 (токены в `src/app/tokens.css`), postgres.js по
 | `/admin/*` | дашборд, заявки, участницы, заведения, ссылки, CSV |
 
 ## 5. Что сделано
+- 20 ноября: на обложке в руке Чик ягодный коктейль без алкоголя вместо
+  воды с лимоном (`DESIGN.md`, «Обложка: коктейль в руке Чик»), файлы
+  `public/plates/cover-mocktail-*`.
 - 19 ноября: бэк-офис, стадия 2, и полировка по `/design:design-critique`
   (`DESIGN.md`, «Бэк-офис, стадия 2…»).
   - Миграция 0012: `supplier_orders`, `invoices.paid_at` и `order_id`,

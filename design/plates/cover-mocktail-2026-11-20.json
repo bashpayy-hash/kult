@@ -1,0 +1,25 @@
+{
+ "date": "2026-11-20",
+ "use": "home cover (src/app/page.tsx, COVER in src/lib/covers.ts)",
+ "owner_quote": "здесь нарисуй коктейль в руке",
+ "service": "Higgsfield",
+ "model": "gpt_image_2_6 (quality high, 2k)",
+ "idea": "Only Chick's glass changes: water with lemon becomes a non-alcoholic berry cocktail (highball, ice, mint, lime wheel, striped paper straw). No stemmed glass and no bottles: alcohol may not be advertised in Kazakhstan, and Chick's rules keep it out of her hand.",
+ "wide": {
+  "job": "966c1e3d-d8ef-4107-a375-c4c288706500",
+  "reference": "985d26bd-655f-44d1-a645-dfc0e7b712a4 (cover-mix wide)",
+  "master": "design/plates/cover-mocktail-2026-11-20/wide-master.webp"
+ },
+ "tall": {
+  "job": "5141482f-e3e6-4d47-bf91-6c573196a2e6",
+  "reference": "f0fa94f8-27cc-4444-9c32-59fa53712318 (cover-mix tall)",
+  "master": "design/plates/cover-mocktail-2026-11-20/tall-master.webp"
+ },
+ "site": [
+  "public/plates/cover-mocktail-tall-800.webp",
+  "public/plates/cover-mocktail-tall-1200.webp",
+  "public/plates/cover-mocktail-wide-1600.webp",
+  "public/plates/cover-mocktail-wide-2400.webp"
+ ],
+ "replaces": "cover-mix-2026-11-15 (same picture, water with lemon); new file names so caches drop the old one"
+}

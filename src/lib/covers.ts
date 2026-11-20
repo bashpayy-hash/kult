@@ -64,13 +64,16 @@ export const NOT_FOUND_COVER = plate("chick-404", "#7ca5ac");
  * совместить с такими characters… было бы вообще чик»): a collage — the
  * rooftop terrace over Almaty at golden hour, Kok-Tobe and the pink-gold
  * range stay a real photograph, and the three friends at the table are cut
- * paper, Chick in the middle with her one gold earring and a glass of water
- * with lemon (Higgsfield, GPT Image 2.6, design/plates/cover-mix-2026-11-15.json).
+ * paper, Chick in the middle with her one gold earring. 20 Nov 2026 (owner:
+ * «здесь нарисуй коктейль в руке»): her water became a berry cocktail without
+ * alcohol — highball, ice, mint, lime, a striped straw; no stemmed glass, so it
+ * does not read as alcohol, which may not be advertised in Kazakhstan
+ * (Higgsfield, GPT Image 2.6, design/plates/cover-mocktail-2026-11-20.json).
  * A tall cut for phones, a wide one for computers, each in two widths.
  */
 export const COVER = {
-  tall: { src: "/plates/cover-mix-tall-800.webp", srcSet: "/plates/cover-mix-tall-800.webp 800w, /plates/cover-mix-tall-1200.webp 1200w" },
-  wide: { src: "/plates/cover-mix-wide-1600.webp", srcSet: "/plates/cover-mix-wide-1600.webp 1600w, /plates/cover-mix-wide-2400.webp 2400w" },
+  tall: { src: "/plates/cover-mocktail-tall-800.webp", srcSet: "/plates/cover-mocktail-tall-800.webp 800w, /plates/cover-mocktail-tall-1200.webp 1200w" },
+  wide: { src: "/plates/cover-mocktail-wide-1600.webp", srcSet: "/plates/cover-mocktail-wide-1600.webp 1600w, /plates/cover-mocktail-wide-2400.webp 2400w" },
   bg: "#3a2618",
 };
 
