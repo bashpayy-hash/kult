@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { ViewTransition } from "react";
 import { publicImageUrl } from "@/lib/storage";
 import { coverFor } from "@/lib/covers";
 import { clock, openNow } from "@/lib/booking";
@@ -27,14 +28,20 @@ export function VenueCard({ v, t, lang, free, nowMin }: { v: CatalogVenue; t: Di
   return (
     <article className="relative flex h-full flex-col">
       <Link href={`/v/${v.slug}`} className="group block" aria-label={v.name}>
-        <Plate
-          src={photo ?? cover.src}
-          srcSet={photo ? undefined : cover.srcSet}
-          sizes="(min-width: 1024px) 30vw, (min-width: 640px) 45vw, 92vw"
-          bg={cover.bg}
-          aspect="aspect-square sm:aspect-[4/5]"
-          focus={photo ? undefined : cover.focus}
-        />
+        {/* The plate flies to the top of the venue's page and grows into its
+            picture (23 Nov 2026, owner: «делай тогда, что стоит сделать» —
+            page transitions from a list of site ideas). Same name there:
+            VenueView. `default="none"`: it moves only as this pair. */}
+        <ViewTransition name={venuePlateName(v.id)} share={PLATE_SHARE} default="none">
+          <Plate
+            src={photo ?? cover.src}
+            srcSet={photo ? undefined : cover.srcSet}
+            sizes="(min-width: 1024px) 30vw, (min-width: 640px) 45vw, 92vw"
+            bg={cover.bg}
+            aspect="aspect-square sm:aspect-[4/5]"
+            focus={photo ? undefined : cover.focus}
+          />
+        </ViewTransition>
       </Link>
       <div className="flex flex-1 flex-col gap-2 pt-4">
         <p className="label">{t.categories[v.category]}</p>
@@ -56,7 +63,7 @@ export function VenueCard({ v, t, lang, free, nowMin }: { v: CatalogVenue; t: Di
               <p className="label mb-2">{free.day === "today" ? C.freeToday : C.freeTomorrow}</p>
               <div className="grid grid-cols-3 gap-2">
                 {free.slots.map((m) => (
-                  <Link key={m} href={`/v/${v.slug}?d=${free.date}&t=${m}#book`} className="cell num min-w-0 text-[17px]">
+                  <Link key={m} href={`/v/${v.slug}?d=${free.date}&t=${m}#book`} transitionTypes={[TO_BOOKING]} className="cell num min-w-0 text-[17px]">
                     {clock(m)}
                   </Link>
                 ))}
@@ -70,6 +77,14 @@ export function VenueCard({ v, t, lang, free, nowMin }: { v: CatalogVenue; t: Di
     </article>
   );
 }
+
+/** One name per venue for the plate that morphs between the catalog and the venue page. */
+export const venuePlateName = (venueId: string) => `venue-plate-${venueId}`;
+/** A time tapped on a card opens the page scrolled to the booking, far below
+ * the picture: the plate would fly off the top of the screen, so that
+ * navigation carries this type and the pair does not morph. */
+export const TO_BOOKING = "to-booking";
+export const PLATE_SHARE = { [TO_BOOKING]: "none", default: "plate-morph" };
 
 /** A horizontally scrolling row that bleeds to the screen edge on phones. */
 export function Rail({ children }: { children: React.ReactNode }) {

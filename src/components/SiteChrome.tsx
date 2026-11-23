@@ -30,7 +30,7 @@ export function SiteHeader({ lang, t, logoHref = "/" }: { lang: Lang; t: Dict; l
 export function SiteFooter({ t, flush = false }: { t: Dict; flush?: boolean }) {
   return (
     // `flush`: the page ends on a paper band, so no dark gap before the footer.
-    <footer className={`px-edge border-t border-line py-10 text-[14px] text-ink-3 ${flush ? "mt-0 border-t-0" : "mt-24 md:mt-32"}`}>
+    <footer className={`px-edge @container overflow-hidden border-t border-line pt-10 text-[14px] text-ink-3 ${flush ? "mt-0 border-t-0" : "mt-24 md:mt-32"}`}>
       <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
         <Link href="/" className="inline-flex min-h-11 items-center gap-2.5 text-ink-2" aria-label="Бөлек">
           <Mark size={18} />
@@ -54,6 +54,12 @@ export function SiteFooter({ t, flush = false }: { t: Dict; flush?: boolean }) {
           </Link>
         </div>
       </div>
+      {/* The page ends on the name, huge and fading into the ground (23 Nov 2026,
+          «делай тогда, что стоит сделать»); decoration, so hidden from readers. */}
+      <p aria-hidden="true" className="footer-word mt-14 md:mt-20">
+        <Mark />
+        <span>бөлек</span>
+      </p>
     </footer>
   );
 }

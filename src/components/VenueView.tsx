@@ -1,7 +1,9 @@
 import { BookingWidget } from "@/components/BookingWidget";
 import { BookBar } from "@/components/BookBar";
 import { Monogram } from "@/components/Monogram";
+import { ViewTransition } from "react";
 import { Plate } from "@/components/Plate";
+import { PLATE_SHARE, venuePlateName } from "@/components/VenueCard";
 import { VenueEntry, type EntryShot } from "@/components/VenueEntry";
 import { PickForm } from "@/components/Blat";
 import { openNow, ZONES, type PlanHall, type PlanItem, type VenueHours } from "@/lib/booking";
@@ -120,22 +122,25 @@ export async function VenueView({
             <p className="mt-2 text-[12px] text-ink-3">{t.blat.pickLabel(pick.name)}</p>
           </div>
         ) : null}
-        {/* The way in, else the venue's own photo, else its category's collage plate. */}
+        {/* The way in, else the venue's own photo, else its category's collage plate.
+            The catalog card's plate lands here (same name in VenueCard). */}
         <div className="rise">
-          {shots.length ? (
-            <VenueEntry shots={shots} name={d.venue_name} bookLabel={SERVICE.includes(d.category) ? b.titleService : b.title} bg={cover.bg} lang={lang} />
-          ) : (
-          <Plate
-            src={photo ?? cover.src}
-            srcSet={photo ? undefined : cover.srcSet}
-            sizes="(min-width: 768px) 40vw, 92vw"
-            bg={cover.bg}
-            alt={photo ? d.venue_name : ""}
-            aspect="aspect-square sm:aspect-[4/5]"
-          focus={photo ? undefined : cover.focus}
-            priority
-          />
-          )}
+          <ViewTransition name={venuePlateName(d.venue_id)} share={PLATE_SHARE} default="none">
+            {shots.length ? (
+              <VenueEntry shots={shots} name={d.venue_name} bookLabel={SERVICE.includes(d.category) ? b.titleService : b.title} bg={cover.bg} lang={lang} />
+            ) : (
+              <Plate
+                src={photo ?? cover.src}
+                srcSet={photo ? undefined : cover.srcSet}
+                sizes="(min-width: 768px) 40vw, 92vw"
+                bg={cover.bg}
+                alt={photo ? d.venue_name : ""}
+                aspect="aspect-square sm:aspect-[4/5]"
+                focus={photo ? undefined : cover.focus}
+                priority
+              />
+            )}
+          </ViewTransition>
         </div>
 
         <div className="rise rise-1">

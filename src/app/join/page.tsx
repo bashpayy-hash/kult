@@ -38,6 +38,8 @@ export default async function Join() {
             </div>
           </div>
         </section>
+        {/* The paper ends in a halftone screen (23 Nov 2026), as the home page's club band begins in one. */}
+        <div aria-hidden="true" className="halftone-into-paper from-paper" />
 
         <section id="join" className="px-edge scroll-mt-6 py-12 md:py-20" aria-labelledby="join-title">
           <div className="border-t border-line pt-10">

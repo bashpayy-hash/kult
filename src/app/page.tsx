@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { Fragment } from "react";
 import { getDict } from "@/lib/i18n";
 import { SiteFooter, SiteHeader } from "@/components/SiteChrome";
 import { Rail, VenueCard } from "@/components/VenueCard";
@@ -126,7 +127,18 @@ export default async function Overview({ searchParams }: { searchParams: Promise
           <div aria-hidden="true" className="absolute inset-0 bg-[linear-gradient(to_bottom,rgba(35,25,23,0)_30svh,rgba(35,25,23,0.7)_45svh,rgba(35,25,23,1)_61svh)] md:bg-[linear-gradient(to_bottom,rgba(35,25,23,0)_16%,rgba(35,25,23,0.5)_42%,rgba(35,25,23,0.86)_70%,rgba(35,25,23,1)_100%)]" />
           <div className="px-edge relative flex flex-col justify-end pb-8 pt-[43svh] md:min-h-[84vh] md:pb-14 md:pt-28">
             <p className="enter label text-ink first-letter:uppercase" style={{ ["--i" as string]: 0 }}>{formatDay(today, lang, true)}</p>
-            <h1 id="hero-title" className="enter mt-3 max-w-[12ch] text-[52px] leading-[0.98] tracking-[-0.035em] text-ink md:text-[96px]" style={{ ["--i" as string]: 1 }}>{C.title}</h1>
+            {/* Set word by word, once (23 Nov 2026, «делай тогда, что стоит сделать»):
+                the words are hidden from readers, the heading's label reads them whole. */}
+            <h1 id="hero-title" aria-label={C.title} className="words mt-3 max-w-[12ch] text-[52px] leading-[0.98] tracking-[-0.035em] text-ink md:text-[96px]">
+              {C.title.split(" ").map((word, i) => (
+                <Fragment key={i}>
+                  {i ? " " : null}
+                  <span aria-hidden="true" className="w">
+                    <span style={{ ["--w" as string]: i }}>{word}</span>
+                  </span>
+                </Fragment>
+              ))}
+            </h1>
             <p className="enter mt-4 max-w-[34rem] text-[17px] text-ink-2 md:text-[19px]" style={{ ["--i" as string]: 2 }}>{C.count(total)}</p>
             <div className="enter mt-6 flex flex-wrap gap-2.5 md:mt-7 md:gap-3" style={{ ["--i" as string]: 3 }}>
               <a href={nearest.length ? "#nearest" : "#places"} className="btn btn-primary">{C.heroCta}</a>
@@ -260,7 +272,8 @@ export default async function Overview({ searchParams }: { searchParams: Promise
           </div>
         </section>
 
-        {/* The club on paper. */}
+        {/* The club on paper; the paper starts as a halftone screen (23 Nov 2026). */}
+        <div aria-hidden="true" className="halftone-into-paper" />
         <section className="bg-paper text-paper-ink" aria-labelledby="club">
           <div className="px-edge grid items-center gap-8 py-14 md:grid-cols-[4fr_8fr] md:gap-16 md:py-20">
             <div className="reveal max-w-[20rem]">

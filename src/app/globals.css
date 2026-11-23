@@ -260,6 +260,68 @@ input[type="file"].field::file-selector-button {
 .logo:hover .logo-mark path:first-child { transform: translateY(-10px); }
 .logo:hover .logo-mark path:last-child { transform: translateY(10px); }
 
+/* ── Four touches from a list of «less AI-made» site ideas (23 Nov 2026,
+   owner: «Да, делай тогда, что стоит сделать»). Kept: the ones that speak
+   print. Left out on purpose: mesh and pixel gradients, fluted glass (the
+   «AI look» the site dropped on 12 Nov), text scramble, custom cursors
+   (guests come from Instagram on phones), click sounds. ──────────────── */
+
+/* 1. Page transition: a catalog plate flies to the top of the venue's page
+   and becomes its picture (React <ViewTransition share="plate-morph">); the
+   rest of the page cross-fades under it. Short, on the site's ease-out, and
+   the page stays clickable while it runs. */
+::view-transition { pointer-events: none; }
+::view-transition-group(.plate-morph) { animation-duration: 440ms; animation-timing-function: var(--ease-out); }
+::view-transition-old(root), ::view-transition-new(root) { animation-duration: 200ms; }
+
+/* 2. The cover title is set word by word: each word rises out of its own
+   slot like the departure-board figures (.tick), 70 ms apart, once per load.
+   The slot keeps room under the line for descenders (у, д). */
+@keyframes word-up { from { transform: translateY(120%); } to { transform: none; } }
+.words > .w { display: inline-block; overflow: hidden; vertical-align: top; padding-bottom: 0.14em; margin-bottom: -0.14em; }
+.words > .w > span {
+  display: inline-block;
+  animation: word-up 760ms var(--ease-out) both;
+  animation-delay: calc(60ms + min(var(--w, 0), 5) * 70ms);
+}
+
+/* 3. Halftone: where a dark page meets a paper band, the paper starts as a
+   dot screen that grows until it is solid — how a printer fades one ink
+   into another, not a soft gradient. A static SVG tile; no cost per frame. */
+.halftone-into-paper {
+  height: 72px;
+  background: url("/textures/halftone-ramp.svg") repeat-x left bottom / 48px 72px;
+}
+@media (min-width: 768px) {
+  .halftone-into-paper { height: 96px; background-size: 64px 96px; }
+}
+/* The same screen under a paper band: solid at the top, dots shrinking away. */
+.halftone-into-paper.from-paper { transform: scaleY(-1); }
+
+/* 4. The footer ends on the name, set huge in the ground's own tone and
+   fading out into it, like the last page of a report. The halves of «ө»
+   part as it scrolls into view, as the small mark does on load. */
+.footer-word {
+  display: flex; align-items: flex-end; gap: 0.06em;
+  /* Sized to the footer's own width (it is a size container): the mark and
+     the word measure 3.35 em, so 28.5% of the width leaves a hair to spare. */
+  font-size: clamp(64px, 24vw, 440px); font-size: max(64px, 28.5cqi); font-weight: 700; line-height: 0.8; letter-spacing: -0.06em;
+  color: var(--color-line);
+  margin-bottom: -0.1em;
+  -webkit-mask-image: linear-gradient(to bottom, #000 35%, transparent 100%);
+  mask-image: linear-gradient(to bottom, #000 35%, transparent 100%);
+  user-select: none;
+}
+.footer-word svg { width: 0.74em; height: 0.74em; flex: none; margin-bottom: 0.015em; }
+@keyframes part-up-far { from { transform: translateY(15px); } to { transform: none; } }
+@keyframes part-down-far { from { transform: translateY(-15px); } to { transform: none; } }
+@supports (animation-timeline: view()) {
+  /* The word sits at the very end of the page, so it never reaches the middle
+     of the screen: the halves part while it enters. */
+  .footer-word svg path:first-child { animation: part-up-far linear both; animation-timeline: view(); animation-range: entry 5% entry 75%; }
+  .footer-word svg path:last-child { animation: part-down-far linear both; animation-timeline: view(); animation-range: entry 5% entry 75%; }
+}
+
 /* Map: the places drop onto the plate as it scrolls in (the plate names
    its view timeline --plate; --n staggers along the scroll), and the city
    you look at keeps a slow ring on the country inset. */
@@ -344,7 +406,8 @@ input[type="file"].field::file-selector-button {
     animation-delay: 0ms !important;
     transition-duration: 1ms !important;
   }
-  .reveal, .pulse-ring, .pin > span { animation: none !important; }
+  .reveal, .pulse-ring, .pin > span, .footer-word svg path { animation: none !important; }
+  ::view-transition-group(*), ::view-transition-old(*), ::view-transition-new(*) { animation: none !important; }
 }
 
 /* Chips and picks (12 Nov 2026). A filter chip that is on gets an amber
